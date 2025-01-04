@@ -1,7 +1,8 @@
 <script setup>
-import { ref } from "vue";
+import { ref, inject } from "vue";
 import { useData } from "vitepress";
-import { data as authors } from "../../data/authors.data.js";
+
+const authors = inject("authors") || {};
 
 const { page } = useData();
 const frontmatter = page.value.frontmatter;

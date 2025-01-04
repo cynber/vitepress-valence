@@ -1,6 +1,6 @@
 {
   "name": "@cynber/vitepress-components",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Collection of reusable Vue components tailored for use in VitePress projects",
   "main": "index.js",
   "module": "index.js",
