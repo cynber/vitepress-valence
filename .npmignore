@@ -1,0 +1,5 @@
+node_modules
+.vscode
+.gitignore
+.gitattributes
+vite.config.js

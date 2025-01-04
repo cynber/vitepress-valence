@@ -1,0 +1,1 @@
+export { default as JSONTable } from './src/JSONTable.vue';

@@ -1,0 +1,34 @@
+{
+  "name": "@cynber/vitepress-components",
+  "version": "0.1.0",
+  "description": "Collection of reusable Vue components tailored for use in VitePress projects",
+  "main": "index.js",
+  "module": "index.js",
+  "files": [
+    "index.js",
+    "src"
+  ],
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/cynber/vitepress-component-library.git"
+  },
+  "keywords": [
+    "vitepress",
+    "components",
+    "vue",
+    "vite"
+  ],
+  "author": "cynber",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/cynber/vitepress-component-library/issues"
+  },
+  "homepage": "https://github.com/cynber/vitepress-component-library#readme",
+  "peerDependencies": {
+    "vue": "^3.4.0",
+    "vitepress": "^1.3.0"
+  }
+}
