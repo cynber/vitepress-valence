@@ -9,6 +9,7 @@ export default defineConfig({
         lib: {
             entry: path.resolve(__dirname, 'index.js'),
             name: 'VitepressComponents',
+            formats: ['es', 'cjs'],
             fileName: (format) => `vitepress-components.${format}.js`,
         },
         rollupOptions: {
