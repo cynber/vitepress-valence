@@ -1,6 +1,7 @@
 node_modules
+*.tgz
 .vscode
 .gitignore
 .gitattributes
 vite.config.js
-*.tgz
+src/
