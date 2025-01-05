@@ -5,10 +5,12 @@ import { resolve } from 'path'
 export default defineConfig({
   plugins: [vue()],
   build: {
+    target: 'esnext',
+    minify: false,
     lib: {
       entry: resolve(__dirname, 'src/index.js'),
       name: 'VitepressComponents',
-      fileName: 'vitepress-components'
+      fileName: (format) => `vitepress-components.${format === 'es' ? 'js' : 'umd.cjs'}`
     },
     rollupOptions: {
       external: ['vue', 'vitepress', '@iconify/vue'],
