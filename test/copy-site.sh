@@ -1,5 +1,7 @@
 #!/bin/bash
 
+# This script copies the VitePress site template to a new directory and updates the site title.
+
 # ==============================
 # |     Helper functions       |
 # ==============================
@@ -78,13 +80,35 @@ fi
 
 if [ -d "$NEW_DIR" ]; then
   log "error" "Directory '$NEW_DIR' already exists."
-  exit 1
+  log "tip" "Removing '$NEW_DIR'..."
+  rm -rf "$NEW_DIR"
 fi
 
 mkdir "$NEW_DIR"
 log "info" "Created directory '$NEW_DIR'"
 
-rsync -av --exclude='node_modules/' --exclude='.git/' "$SOURCE_DIR"/ "$NEW_DIR"/
+rsync -aq --exclude='node_modules/' --exclude='.git/' "$SOURCE_DIR"/ "$NEW_DIR"/
 
-log "info" "Copied files from '$SOURCE_DIR' to '$NEW_DIR' excluding 'node_modules/' and '.git/'"
-log "success" "Website copied successfully to '$NEW_DIR'."
+log "info" "Copied files from '$SOURCE_DIR', excluding 'node_modules/' and '.git/'"
+
+INDEX_MD="$NEW_DIR/docs/index.md"
+CONFIG_MTS="$NEW_DIR/docs/.vitepress/config.mts"
+
+if [ -f "$INDEX_MD" ]; then
+  log "info" "Updating $INDEX_MD..."
+  sed -i.bak "s#^  name: .*#  name: \"$NEW_DIR\"#" "$INDEX_MD"
+  sed -i.bak "s#^  text: .*#  text: \"@cynber/vitepress-components\"#" "$INDEX_MD"
+  rm "$INDEX_MD.bak"
+else
+  echo "Warning: $INDEX_MD does not exist."
+fi
+
+if [ -f "$CONFIG_MTS" ]; then
+  log "info" "Updating $CONFIG_MTS..."
+  sed -i.bak "s#^  title: .*#  title: \"$NEW_DIR\",#" "$CONFIG_MTS"
+  rm "$CONFIG_MTS.bak"
+else
+  echo "Warning: $CONFIG_MTS does not exist."
+fi
+
+log "success" "Successfully created a new VitePress site in '$NEW_DIR'"
