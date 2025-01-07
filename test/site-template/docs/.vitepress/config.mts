@@ -4,6 +4,11 @@ import { defineConfig } from 'vitepress'
 export default defineConfig({
   title: "@cynber/vitepress-components",
   description: "Test site for components",
+  vite: {
+    ssr: {
+      noExternal: ['@cynber/vitepress-components']
+    }
+  },
   themeConfig: {
     // https://vitepress.dev/reference/default-theme-config
     nav: [

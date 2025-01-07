@@ -1,6 +1,6 @@
 {
   "name": "@cynber/vitepress-components",
-  "version": "0.1.10",
+  "version": "0.1.12",
   "description": "Collection of reusable Vue components tailored for use in VitePress projects",
   "repository": {
     "type": "git",
