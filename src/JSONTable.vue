@@ -2,17 +2,17 @@
   <div>
     <h3 v-if="title" class="title">{{ title }}</h3>
     <div class="table-container">
-      <table v-if="jsonData.length && headers.length" class="styled-table">
+      <table v-if="sortedData.length && columns.length" class="styled-table">
         <thead>
           <tr>
             <th
-              v-for="header in headers"
-              :key="header"
-              @click="sortTable(header)"
-              :class="{ sortable: true, active: sortColumn === header }"
+              v-for="column in columns"
+              :key="column.key"
+              @click="sortTable(column.key)"
+              :class="{ sortable: true, active: sortColumn === column.key }"
             >
-              {{ headerTitles[header] || header }}
-              <span v-if="sortColumn === header">
+              {{ column.title || column.key }}
+              <span v-if="sortColumn === column.key">
                 {{ sortAsc ? "↑" : "↓" }}
               </span>
             </th>
@@ -20,31 +20,11 @@
         </thead>
         <tbody>
           <tr v-for="(row, rowIndex) in sortedData" :key="rowIndex">
-            <td v-for="header in headers" :key="header">
-              <template v-if="isLink(row[header])">
-                <a :href="row[header]" :target="getLinkTarget(row[header])">
-                  <Icon :icon="getLinkIcon(row[header])" class="icon" />
-                </a>
-              </template>
-              <template v-else-if="typeof row[header] === 'boolean'">
-                <Icon
-                  :icon="row[header] ? 'lets-icons:check-fill' : 'healthicons:no-outline'"
-                  :style="{
-                    color: row[header] ? 'var(--vp-c-green-3)' : 'var(--vp-c-red-3)',
-                  }"
-                  class="icon"
-                />
-              </template>
-              <template v-else-if="header === badgeFields && Array.isArray(row[header])">
-                <div class="badge-container">
-                  <span v-for="tag in row[header]" :key="tag" class="badge">{{
-                    tag
-                  }}</span>
-                </div>
-              </template>
-              <template v-else>
-                {{ row[header] }}
-              </template>
+            <td v-for="column in columns" :key="column.key">
+              <component
+                :is="getCellComponent(column.format)"
+                :value="getNestedValue(row, column.key)"
+              ></component>
             </td>
           </tr>
         </tbody>
@@ -57,43 +37,33 @@
 <script>
 import { Icon } from "@iconify/vue";
 
+// Import cell components
+import TextCell from "./cells/TextCell.vue";
+import LinkCell from "./cells/LinkCell.vue";
+import BooleanCell from "./cells/BooleanCell.vue";
+import TagsCell from "./cells/TagsCell.vue";
+
 export default {
   name: "JsonTable",
+  components: {
+    Icon,
+    TextCell,
+    LinkCell,
+    BooleanCell,
+    TagsCell,
+  },
   props: {
-    jsonPath: {
-      type: String,
-      default: null,
-    },
+    jsonPath: String,
     jsonDataProp: {
       type: Array,
-      default() {
-        return [];
-      },
+      default: () => [],
     },
-    headers: {
+    columns: {
       type: Array,
-      default() {
-        return [];
-      },
+      default: () => [],
     },
-    headerTitles: {
-      type: Object,
-      default() {
-        return {};
-      },
-    },
-    title: {
-      type: String,
-      default: "",
-    },
-    badgeFields: {
-      type: String,
-      default: "",
-    },
-    defaultSortField: {
-      type: String,
-      default: "",
-    },
+    title: String,
+    defaultSortField: String,
     defaultSortDirection: {
       type: String,
       default: "ascending",
@@ -115,16 +85,25 @@ export default {
         return this.jsonData;
       }
       return [...this.jsonData].sort((a, b) => {
-        if (a[this.sortColumn] < b[this.sortColumn]) return this.sortAsc ? 1 : -1;
-        if (a[this.sortColumn] > b[this.sortColumn]) return this.sortAsc ? -1 : 1;
+        const aValue = this.getNestedValue(a, this.sortColumn);
+        const bValue = this.getNestedValue(b, this.sortColumn);
+        if (aValue === null || aValue === undefined) return 1;
+        if (bValue === null || bValue === undefined) return -1;
+        if (aValue < bValue) return this.sortAsc ? -1 : 1;
+        if (aValue > bValue) return this.sortAsc ? 1 : -1;
         return 0;
       });
     },
   },
   watch: {
     jsonData(newData) {
-      if (!this.headers.length && newData.length) {
-        this.headers = Object.keys(newData[0]);
+      if (!this.columns.length && newData.length) {
+        const sampleRow = newData[0];
+        this.columns = Object.keys(sampleRow).map((key) => ({
+          key: key,
+          title: key,
+          format: "text",
+        }));
       }
     },
     jsonDataProp: {
@@ -132,8 +111,13 @@ export default {
       handler(newData) {
         if (newData.length) {
           this.jsonData = newData;
-          if (this.headers.length === 0 && newData.length) {
-            this.headers = Object.keys(newData[0]);
+          if (this.columns.length === 0 && newData.length) {
+            const sampleRow = newData[0];
+            this.columns = Object.keys(sampleRow).map((key) => ({
+              key: key,
+              title: key,
+              format: "text",
+            }));
           }
           if (this.defaultSortField) {
             this.sortTable(this.defaultSortField);
@@ -158,29 +142,37 @@ export default {
         }
       }
     },
-    sortTable(column) {
-      if (this.sortColumn === column) {
+    getNestedValue(obj, path) {
+      return path
+        .split(".")
+        .reduce((acc, part) => (acc && acc[part] !== undefined ? acc[part] : null), obj);
+    },
+    sortTable(columnKey) {
+      if (this.sortColumn === columnKey) {
         this.sortAsc = !this.sortAsc;
       } else {
-        this.sortColumn = column;
+        this.sortColumn = columnKey;
         this.sortAsc = true;
       }
     },
-    getLinkIcon(url) {
-      return url.startsWith("http") ? "octicon:link-external-16" : "carbon:link";
-    },
-    getLinkTarget(url) {
-      return url.startsWith("http") ? "_blank" : "_self";
-    },
-    isLink(value) {
-      return (
-        typeof value === "string" && (value.startsWith("http") || value.startsWith("/"))
-      );
+    getCellComponent(format) {
+      switch (format) {
+        case "link":
+          return "LinkCell";
+        case "boolean":
+          return "BooleanCell";
+        case "tags":
+          return "TagsCell";
+        default:
+          return "TextCell";
+      }
     },
   },
   mounted() {
     if (!this.jsonDataProp.length) {
       this.fetchJson();
+    } else {
+      this.jsonData = this.jsonDataProp;
     }
   },
 };

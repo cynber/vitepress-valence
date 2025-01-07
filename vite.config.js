@@ -18,7 +18,7 @@ export default defineConfig({
         globals: {
           vue: 'Vue',
           vitepress: 'VitePress',
-          '@iconify/vue': 'Iconify'
+          '@iconify/vue': 'IconifyVue'
         }
       }
     }
