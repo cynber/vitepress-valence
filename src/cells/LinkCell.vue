@@ -1,9 +1,9 @@
 <template>
-  <div>
-    <a :href="href" target="_blank" v-if="displayAs === 'icon'">
+  <div class="link-cell">
+    <a :href="href" target="_blank" v-if="displayAs === 'icon'" class="icon-link">
       <Icon :icon="icon" :style="{ color: iconColor }" class="icon" />
     </a>
-    <a :href="href" target="_blank" v-else-if="displayAs === 'text'">
+    <a :href="href" target="_blank" v-else-if="displayAs === 'text'" class="text-link">
       {{ linkText }}
     </a>
     <span v-else>{{ href }}</span>
@@ -76,15 +76,25 @@ export default {
 </script>
 
 <style scoped>
-a {
+.link-cell {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.icon-link,
+.text-link {
   color: var(--vp-c-brand);
   text-decoration: none;
   display: flex;
   align-items: center;
 }
-a:hover {
+
+.icon-link:hover,
+.text-link:hover {
   text-decoration: underline;
 }
+
 .icon {
   width: 1.5em;
   height: 1.5em;

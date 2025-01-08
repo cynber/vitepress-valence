@@ -1,16 +1,20 @@
 <template>
-  <div v-if="displayAs === 'icon'">
-    <Icon
-      :icon="value ? trueIcon || defaultTrueIcon : falseIcon || defaultFalseIcon"
-      :style="{ color: value ? trueColor : falseColor }"
-      class="icon"
-    />
-  </div>
-  <div v-else-if="displayAs === 'text'">
-    <span>{{ value ? trueText || defaultTrueText : falseText || defaultFalseText }}</span>
-  </div>
-  <div v-else>
-    <span>{{ value }}</span>
+  <div class="boolean-cell">
+    <div v-if="displayAs === 'icon'" class="icon-container">
+      <Icon
+        :icon="value ? trueIcon || defaultTrueIcon : falseIcon || defaultFalseIcon"
+        :style="{ color: value ? trueColor : falseColor }"
+        class="icon"
+      />
+    </div>
+    <div v-else-if="displayAs === 'text'" class="text-container">
+      <span>{{
+        value ? trueText || defaultTrueText : falseText || defaultFalseText
+      }}</span>
+    </div>
+    <div v-else class="default-container">
+      <span>{{ value }}</span>
+    </div>
   </div>
 </template>
 
@@ -61,6 +65,20 @@ export default {
 </script>
 
 <style scoped>
+.boolean-cell {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.icon-container,
+.text-container,
+.default-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
 .icon {
   width: 1.5em;
   height: 1.5em;

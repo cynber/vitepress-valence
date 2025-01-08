@@ -43,6 +43,8 @@ import TextCell from "./cells/TextCell.vue";
 import LinkCell from "./cells/LinkCell.vue";
 import BooleanCell from "./cells/BooleanCell.vue";
 import TagsCell from "./cells/TagsCell.vue";
+import NumberCell from "./cells/NumberCell.vue";
+import IconCell from "./cells/IconCell.vue";
 
 export default {
   name: "JsonTable",
@@ -52,6 +54,8 @@ export default {
     LinkCell,
     BooleanCell,
     TagsCell,
+    NumberCell,
+    IconCell,
   },
   props: {
     jsonPath: String,
@@ -164,6 +168,10 @@ export default {
           return "BooleanCell";
         case "tags":
           return "TagsCell";
+        case "number":
+          return "NumberCell";
+        case "icon":
+          return "IconCell";
         default:
           return "TextCell";
       }
@@ -218,13 +226,6 @@ th {
 th.sortable:hover,
 th.active {
   background-color: var(--vp-c-brand-soft);
-}
-
-.icon {
-  display: block;
-  margin: 0 auto;
-  width: 1.5em;
-  height: 1.5em;
 }
 
 .badge-container {
