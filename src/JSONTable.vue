@@ -24,6 +24,7 @@
               <component
                 :is="getCellComponent(column.format)"
                 :value="getNestedValue(row, column.key)"
+                v-bind="column.options"
               ></component>
             </td>
           </tr>

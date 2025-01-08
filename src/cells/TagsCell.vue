@@ -1,6 +1,13 @@
 <template>
   <div class="badge-container">
-    <span v-for="tag in value" :key="tag" class="badge">{{ tag }}</span>
+    <span
+      v-for="tag in value"
+      :key="tag"
+      class="badge"
+      :style="{ backgroundColor: tagColors[tag] || defaultTagColor }"
+    >
+      {{ tag }}
+    </span>
   </div>
 </template>
 
@@ -11,6 +18,14 @@ export default {
     value: {
       type: Array,
       default: () => [],
+    },
+    tagColors: {
+      type: Object,
+      default: () => ({}),
+    },
+    defaultTagColor: {
+      type: String,
+      default: "var(--vp-c-brand-soft)",
     },
   },
 };
@@ -24,7 +39,6 @@ export default {
 }
 
 .badge {
-  background-color: var(--vp-c-brand-soft);
   border-radius: 12px;
   padding: 0.2em 0.6em;
   color: var(--vp-c-text-soft);
@@ -34,6 +48,6 @@ export default {
 }
 
 .badge:hover {
-  background-color: var(--vp-c-brand-strong);
+  opacity: 0.8;
 }
 </style>
