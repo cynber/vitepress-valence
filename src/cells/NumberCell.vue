@@ -26,9 +26,11 @@ export default {
       if (this.formatter && typeof this.formatter === "function") {
         return this.formatter(this.value);
       }
+      const hasFractionalPart = this.value % 1 !== 0;
+      const fractionDigits = hasFractionalPart ? this.decimals : 0;
       return this.value.toLocaleString(undefined, {
-        minimumFractionDigits: this.decimals,
-        maximumFractionDigits: this.decimals,
+        minimumFractionDigits: fractionDigits,
+        maximumFractionDigits: fractionDigits,
       });
     },
   },
