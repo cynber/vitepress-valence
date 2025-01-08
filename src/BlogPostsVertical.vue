@@ -2,12 +2,12 @@
   <div class="blog-post-list-container">
     <!-- Debug Format -->
     <div v-if="format === 'debug'">
-      <pre>{{ JSON.stringify(filteredPosts, null, 2) }}</pre>
+      <pre>{{ JSON.stringify(displayedPosts, null, 2) }}</pre>
     </div>
 
     <!-- Vertical Cards Format -->
     <div v-else-if="format === 'verticalCards'" class="cards-container">
-      <div v-for="post in filteredPosts" :key="post.url" class="post-card">
+      <div v-for="post in displayedPosts" :key="post.url" class="post-card">
         <a :href="post.url" class="card-link">
           <div class="card-content">
             <div class="card-info">
@@ -84,6 +84,14 @@ const props = defineProps({
   excludeCategories: {
     type: Array,
     default: () => [],
+  },
+  excludeURLs: {
+    type: Array,
+    default: () => [],
+  },
+  maxCards: {
+    type: Number,
+    default: null,
   },
 });
 
@@ -162,8 +170,27 @@ const filteredPosts = computed(() => {
       return false;
     }
 
+    // Exclude URLs
+    if (props.excludeURLs.length > 0) {
+      const postURL = post.url.replace(/\.html$/, "");
+      const isExcluded = props.excludeURLs.some((excludeURL) => {
+        const normalizedExcludeURL = excludeURL.replace(/\.html$/, "");
+        return normalizedExcludeURL === postURL;
+      });
+      if (isExcluded) {
+        return false;
+      }
+    }
+
     return true;
   });
+});
+
+const displayedPosts = computed(() => {
+  if (props.maxCards !== null && props.maxCards >= 0) {
+    return filteredPosts.value.slice(0, props.maxCards);
+  }
+  return filteredPosts.value;
 });
 
 function formatDate(date) {

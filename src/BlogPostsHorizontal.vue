@@ -2,12 +2,12 @@
   <div class="featured-posts-container">
     <!-- Debug Format -->
     <div v-if="false">
-      <pre>{{ JSON.stringify(filteredPosts, null, 2) }}</pre>
+      <pre>{{ JSON.stringify(displayedPosts, null, 2) }}</pre>
     </div>
 
     <!-- Featured Posts Cards -->
     <div class="cards-wrapper">
-      <div v-for="post in filteredPosts" :key="post.url" class="featured-post-card">
+      <div v-for="post in displayedPosts" :key="post.url" class="featured-post-card">
         <a :href="post.url" class="card-link">
           <div class="card-image">
             <img
@@ -81,6 +81,14 @@ const props = defineProps({
   excludeCategories: {
     type: Array,
     default: () => [],
+  },
+  excludeURLs: {
+    type: Array,
+    default: () => [],
+  },
+  maxCards: {
+    type: Number,
+    default: null,
   },
 });
 
@@ -159,8 +167,27 @@ const filteredPosts = computed(() => {
       return false;
     }
 
+    // Exclude URLs
+    if (props.excludeURLs.length > 0) {
+      const postURL = post.url.replace(/\.html$/, "");
+      const isExcluded = props.excludeURLs.some((excludeURL) => {
+        const normalizedExcludeURL = excludeURL.replace(/\.html$/, "");
+        return normalizedExcludeURL === postURL;
+      });
+      if (isExcluded) {
+        return false;
+      }
+    }
+
     return true;
   });
+});
+
+const displayedPosts = computed(() => {
+  if (props.maxCards !== null && props.maxCards >= 0) {
+    return filteredPosts.value.slice(0, props.maxCards);
+  }
+  return filteredPosts.value;
 });
 
 function formatDate(date) {
@@ -187,7 +214,7 @@ function getAuthorName(authorKey) {
   flex-wrap: wrap;
   gap: 1.5rem;
   padding: 16px;
-  justify-content: flex-start;
+  justify-content: center;
   background-color: var(--vp-c-bg-soft);
   border-radius: 8px;
   border: 1px solid var(--vp-c-divider);
