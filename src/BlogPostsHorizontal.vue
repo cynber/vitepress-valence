@@ -1,101 +1,13 @@
-<script setup>
-import { inject, computed } from "vue";
-
-const props = defineProps({
-  posts: {
-    type: Array,
-    required: false,
-  },
-  renderDrafts: {
-    type: Boolean,
-    default: false,
-  },
-  startDate: {
-    type: [Date, String],
-    default: null,
-  },
-  endDate: {
-    type: [Date, String],
-    default: null,
-  },
-  sortOrder: {
-    type: String,
-    default: "desc",
-    validator: (value) => ["asc", "desc"].includes(value),
-  },
-});
-
-const injectedPostsData = inject("postsData", []);
-const authors = inject("authors", {});
-const posts = computed(() => props.posts || injectedPostsData);
-
-const featuredPosts = computed(() => {
-  return posts.value.filter((post) => post.frontmatter.featured);
-});
-
-const sortedFeaturedPosts = computed(() => {
-  const sorted = [...featuredPosts.value];
-  sorted.sort((a, b) => {
-    const dateA = new Date(a.frontmatter.date);
-    const dateB = new Date(b.frontmatter.date);
-    if (props.sortOrder === "asc") {
-      return dateA - dateB;
-    } else {
-      return dateB - dateA;
-    }
-  });
-  return sorted;
-});
-
-const filteredFeaturedPosts = computed(() => {
-  return sortedFeaturedPosts.value.filter((post) => {
-    const { frontmatter } = post;
-
-    if (!props.renderDrafts && frontmatter.draft) {
-      return false;
-    }
-
-    const postDate = new Date(frontmatter.date);
-
-    if (props.startDate && postDate < new Date(props.startDate)) {
-      return false;
-    }
-    if (props.endDate && postDate > new Date(props.endDate)) {
-      return false;
-    }
-
-    return true;
-  });
-});
-
-function formatDate(date) {
-  return new Date(date).toLocaleDateString(undefined, {
-    year: "numeric",
-    month: "long",
-    day: "numeric",
-  });
-}
-
-function getAuthorName(authorKey) {
-  const author = authors[authorKey];
-  return author ? author.name : authorKey;
-}
-</script>
-
 <template>
   <div class="featured-posts-container">
     <!-- Debug Format -->
     <div v-if="false">
-      <pre>{{ JSON.stringify(filteredFeaturedPosts, null, 2) }}</pre>
+      <pre>{{ JSON.stringify(filteredPosts, null, 2) }}</pre>
     </div>
 
     <!-- Featured Posts Cards -->
     <div class="cards-wrapper">
-      <div
-        v-for="post in filteredFeaturedPosts"
-        :key="post.url"
-        class="featured-post-card"
-      >
+      <div v-for="post in filteredPosts" :key="post.url" class="featured-post-card">
         <a :href="post.url" class="card-link">
           <div class="card-image">
             <img
@@ -125,13 +37,149 @@ function getAuthorName(authorKey) {
   </div>
 </template>
 
+<script setup>
+import { inject, computed } from "vue";
+
+const props = defineProps({
+  posts: {
+    type: Array,
+    required: false,
+  },
+  renderDrafts: {
+    type: Boolean,
+    default: false,
+  },
+  startDate: {
+    type: [Date, String],
+    default: null,
+  },
+  endDate: {
+    type: [Date, String],
+    default: null,
+  },
+  sortOrder: {
+    type: String,
+    default: "desc",
+    validator: (value) => ["asc", "desc"].includes(value),
+  },
+  featuredOnly: {
+    type: Boolean,
+    default: false,
+  },
+  filterAuthors: {
+    type: Array,
+    default: () => [],
+  },
+  excludeAuthors: {
+    type: Array,
+    default: () => [],
+  },
+  filterCategories: {
+    type: Array,
+    default: () => [],
+  },
+  excludeCategories: {
+    type: Array,
+    default: () => [],
+  },
+});
+
+const injectedPostsData = inject("postsData", []);
+const authors = inject("authors", {});
+
+const posts = computed(() => props.posts || injectedPostsData);
+
+const sortedPosts = computed(() => {
+  const sorted = [...posts.value];
+  sorted.sort((a, b) => {
+    const dateA = new Date(a.frontmatter.date);
+    const dateB = new Date(b.frontmatter.date);
+    if (props.sortOrder === "asc") {
+      return dateA - dateB;
+    } else {
+      return dateB - dateA;
+    }
+  });
+  return sorted;
+});
+
+const filteredPosts = computed(() => {
+  return sortedPosts.value.filter((post) => {
+    const { frontmatter } = post;
+
+    // Filter by featured
+    if (props.featuredOnly && !frontmatter.featured) {
+      return false;
+    }
+
+    // Render drafts
+    if (!props.renderDrafts && frontmatter.draft) {
+      return false;
+    }
+
+    const postDate = new Date(frontmatter.date);
+
+    // Date range filtering
+    if (props.startDate && postDate < new Date(props.startDate)) {
+      return false;
+    }
+    if (props.endDate && postDate > new Date(props.endDate)) {
+      return false;
+    }
+
+    // Filter authors
+    if (
+      props.filterAuthors.length > 0 &&
+      !props.filterAuthors.includes(frontmatter.author)
+    ) {
+      return false;
+    }
+
+    // Exclude authors
+    if (
+      props.excludeAuthors.length > 0 &&
+      props.excludeAuthors.includes(frontmatter.author)
+    ) {
+      return false;
+    }
+
+    // Filter categories
+    if (
+      props.filterCategories.length > 0 &&
+      !props.filterCategories.includes(frontmatter.category)
+    ) {
+      return false;
+    }
+
+    // Exclude categories
+    if (
+      props.excludeCategories.length > 0 &&
+      props.excludeCategories.includes(frontmatter.category)
+    ) {
+      return false;
+    }
+
+    return true;
+  });
+});
+
+function formatDate(date) {
+  return new Date(date).toLocaleDateString(undefined, {
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+  });
+}
+
+function getAuthorName(authorKey) {
+  const author = authors[authorKey];
+  return author ? author.name : authorKey;
+}
+</script>
+
 <style scoped>
 .featured-posts-container {
   padding: 1rem 0;
-  background-color: var(--vp-c-bg-soft);
-  border-radius: 8px;
-  border: 1px solid var(--vp-c-divider);
-  box-shadow: inset 0 1px 4px rgba(0, 0, 0, 0.05);
 }
 
 .cards-wrapper {
@@ -140,6 +188,10 @@ function getAuthorName(authorKey) {
   gap: 1.5rem;
   padding: 16px;
   justify-content: flex-start;
+  background-color: var(--vp-c-bg-soft);
+  border-radius: 8px;
+  border: 1px solid var(--vp-c-divider);
+  box-shadow: inset 0 1px 4px rgba(0, 0, 0, 0.05);
 }
 
 .featured-post-card {

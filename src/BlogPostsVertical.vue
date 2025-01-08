@@ -1,3 +1,40 @@
+<template>
+  <div class="blog-post-list-container">
+    <!-- Debug Format -->
+    <div v-if="format === 'debug'">
+      <pre>{{ JSON.stringify(filteredPosts, null, 2) }}</pre>
+    </div>
+
+    <!-- Vertical Cards Format -->
+    <div v-else-if="format === 'verticalCards'" class="cards-container">
+      <div v-for="post in filteredPosts" :key="post.url" class="post-card">
+        <a :href="post.url" class="card-link">
+          <div class="card-content">
+            <div class="card-info">
+              <div class="post-title">{{ post.frontmatter.title }}</div>
+              <div class="post-meta">
+                <span class="post-date">{{ formatDate(post.frontmatter.date) }}</span>
+                <span v-if="post.frontmatter.author" class="post-author">
+                  by {{ getAuthorName(post.frontmatter.author) }}
+                </span>
+              </div>
+              <div class="post-tags">
+                <span v-if="post.frontmatter.category" class="tag">
+                  {{ post.frontmatter.category }}
+                </span>
+              </div>
+              <div class="post-excerpt">{{ post.frontmatter.excerpt }}</div>
+            </div>
+            <div class="card-image" v-if="post.frontmatter.banner">
+              <img :src="post.frontmatter.banner" alt="Banner Image" />
+            </div>
+          </div>
+        </a>
+      </div>
+    </div>
+  </div>
+</template>
+
 <script setup>
 import { inject, computed } from "vue";
 
@@ -28,6 +65,26 @@ const props = defineProps({
     default: "desc",
     validator: (value) => ["asc", "desc"].includes(value),
   },
+  featuredOnly: {
+    type: Boolean,
+    default: false,
+  },
+  filterAuthors: {
+    type: Array,
+    default: () => [],
+  },
+  excludeAuthors: {
+    type: Array,
+    default: () => [],
+  },
+  filterCategories: {
+    type: Array,
+    default: () => [],
+  },
+  excludeCategories: {
+    type: Array,
+    default: () => [],
+  },
 });
 
 const injectedPostsData = inject("postsData", []);
@@ -53,16 +110,55 @@ const filteredPosts = computed(() => {
   return sortedPosts.value.filter((post) => {
     const { frontmatter } = post;
 
+    // Filter by featured
+    if (props.featuredOnly && !frontmatter.featured) {
+      return false;
+    }
+
+    // Render drafts
     if (!props.renderDrafts && frontmatter.draft) {
       return false;
     }
 
     const postDate = new Date(frontmatter.date);
 
+    // Date range filtering
     if (props.startDate && postDate < new Date(props.startDate)) {
       return false;
     }
     if (props.endDate && postDate > new Date(props.endDate)) {
+      return false;
+    }
+
+    // Filter authors
+    if (
+      props.filterAuthors.length > 0 &&
+      !props.filterAuthors.includes(frontmatter.author)
+    ) {
+      return false;
+    }
+
+    // Exclude authors
+    if (
+      props.excludeAuthors.length > 0 &&
+      props.excludeAuthors.includes(frontmatter.author)
+    ) {
+      return false;
+    }
+
+    // Filter categories
+    if (
+      props.filterCategories.length > 0 &&
+      !props.filterCategories.includes(frontmatter.category)
+    ) {
+      return false;
+    }
+
+    // Exclude categories
+    if (
+      props.excludeCategories.length > 0 &&
+      props.excludeCategories.includes(frontmatter.category)
+    ) {
       return false;
     }
 
@@ -83,45 +179,6 @@ function getAuthorName(authorKey) {
   return author ? author.name : authorKey;
 }
 </script>
-
-<template>
-  <div class="blog-post-list-container">
-    <!-- Debug Format -->
-    <div v-if="format === 'debug'">
-      <pre>{{ JSON.stringify(filteredPosts, null, 2) }}</pre>
-    </div>
-
-    <!-- Vertical Cards Format -->
-    <div v-else-if="format === 'verticalCards'" class="cards-container">
-      <div v-for="post in filteredPosts" :key="post.url" class="post-card">
-        <a :href="post.url" class="card-link">
-          <div class="card-content">
-            <div class="card-info">
-              <div class="post-title">{{ post.frontmatter.title }}</div>
-              <div class="post-meta">
-                <span class="post-date">
-                  {{ formatDate(post.frontmatter.date) }}
-                </span>
-                <span v-if="post.frontmatter.author" class="post-author">
-                  by {{ getAuthorName(post.frontmatter.author) }}
-                </span>
-              </div>
-              <div class="post-tags">
-                <span v-if="post.frontmatter.category" class="tag">
-                  {{ post.frontmatter.category }}
-                </span>
-              </div>
-              <div class="post-excerpt">{{ post.frontmatter.excerpt }}</div>
-            </div>
-            <div class="card-image" v-if="post.frontmatter.banner">
-              <img :src="post.frontmatter.banner" alt="Banner Image" />
-            </div>
-          </div>
-        </a>
-      </div>
-    </div>
-  </div>
-</template>
 
 <style scoped>
 .blog-post-list-container {
@@ -145,7 +202,8 @@ function getAuthorName(authorKey) {
   overflow: hidden;
   border: 1px solid var(--vp-c-divider);
   box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
-  transition: box-shadow 0.3s ease-in-out, border-color 0.3s ease-in-out, transform 0.2s ease-in-out;
+  transition: box-shadow 0.3s ease-in-out, border-color 0.3s ease-in-out,
+    transform 0.2s ease-in-out;
 }
 
 .post-card:hover {

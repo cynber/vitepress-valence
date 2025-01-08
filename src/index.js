@@ -1,4 +1,4 @@
 export { default as JSONTable } from './JSONTable.vue'
 export { default as BlogPostHeader } from './BlogPostHeader.vue'
-export { default as BlogPostList } from './BlogPostList.vue'
-export { default as BlogFeaturedPosts } from './BlogFeaturedPosts.vue'
+export { default as BlogPostsVertical } from './BlogPostsVertical.vue'
+export { default as BlogPostsHorizontal } from './BlogPostsHorizontal.vue'
