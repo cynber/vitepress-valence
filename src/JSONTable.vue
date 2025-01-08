@@ -2,7 +2,7 @@
   <div>
     <h3 v-if="title" class="title">{{ title }}</h3>
     <div class="table-container">
-      <table v-if="sortedData.length && columns.length" class="styled-table">
+      <table v-if="displayedData.length && columns.length" class="styled-table">
         <thead>
           <tr>
             <th
@@ -19,7 +19,7 @@
           </tr>
         </thead>
         <tbody>
-          <tr v-for="(row, rowIndex) in sortedData" :key="rowIndex">
+          <tr v-for="(row, rowIndex) in displayedData" :key="rowIndex">
             <td v-for="column in columns" :key="column.key">
               <component
                 :is="getCellComponent(column.format)"
@@ -67,6 +67,10 @@ export default {
       type: Array,
       default: () => [],
     },
+    filters: {
+      type: Object,
+      default: null,
+    },
     title: String,
     defaultSortField: String,
     defaultSortDirection: {
@@ -85,11 +89,18 @@ export default {
     };
   },
   computed: {
-    sortedData() {
-      if (!this.sortColumn) {
+    filteredData() {
+      if (!this.filters) {
         return this.jsonData;
       }
-      return [...this.jsonData].sort((a, b) => {
+      return this.jsonData.filter((item) => this.evaluateFilter(this.filters, item));
+    },
+    displayedData() {
+      const data = this.filteredData;
+      if (!this.sortColumn) {
+        return data;
+      }
+      return data.slice().sort((a, b) => {
         const aValue = this.getNestedValue(a, this.sortColumn);
         const bValue = this.getNestedValue(b, this.sortColumn);
         if (aValue === null || aValue === undefined) return 1;
@@ -174,6 +185,51 @@ export default {
           return "IconCell";
         default:
           return "TextCell";
+      }
+    },
+    evaluateFilter(filter, item) {
+      if (filter.type === "and") {
+        return filter.conditions.every((subFilter) =>
+          this.evaluateFilter(subFilter, item)
+        );
+      } else if (filter.type === "or") {
+        return filter.conditions.some((subFilter) =>
+          this.evaluateFilter(subFilter, item)
+        );
+      } else if (filter.type === "condition") {
+        const { key, operator, value } = filter;
+        const itemValue = this.getNestedValue(item, key);
+        return this.applyOperator(itemValue, operator, value);
+      } else {
+        console.warn("Unknown filter type:", filter.type);
+        return true;
+      }
+    },
+    applyOperator(a, operator, b) {
+      switch (operator) {
+        case "equals":
+          return a === b;
+        case "notEquals":
+          return a !== b;
+        case "greaterThan":
+          return a > b;
+        case "greaterThanOrEqual":
+          return a >= b;
+        case "lessThan":
+          return a < b;
+        case "lessThanOrEqual":
+          return a <= b;
+        case "includes":
+          return Array.isArray(a) && a.includes(b);
+        case "notIncludes":
+          return Array.isArray(a) && !a.includes(b);
+        case "contains":
+          return typeof a === "string" && a.includes(b);
+        case "notContains":
+          return typeof a === "string" && !a.includes(b);
+        default:
+          console.warn("Unknown operator:", operator);
+          return false;
       }
     },
   },
