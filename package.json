@@ -1,6 +1,6 @@
 {
   "name": "@cynber/vitepress-components",
-  "version": "0.1.18",
+  "version": "0.1.19",
   "description": "Collection of reusable Vue components tailored for use in VitePress projects",
   "keywords": [
     "vitepress",

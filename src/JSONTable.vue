@@ -136,7 +136,8 @@ export default {
             }));
           }
           if (this.defaultSortField) {
-            this.sortTable(this.defaultSortField);
+            this.sortColumn = this.defaultSortField;
+            this.sortAsc = this.defaultSortDirection === "ascending";
           }
         } else if (this.jsonPath) {
           this.fetchJson();
@@ -151,7 +152,8 @@ export default {
           const response = await fetch(this.jsonPath);
           this.jsonData = await response.json();
           if (this.defaultSortField) {
-            this.sortTable(this.defaultSortField);
+            this.sortColumn = this.defaultSortField;
+            this.sortAsc = this.defaultSortDirection === "ascending";
           }
         } catch (error) {
           console.error("Error fetching JSON:", error);
@@ -238,6 +240,10 @@ export default {
       this.fetchJson();
     } else {
       this.jsonData = this.jsonDataProp;
+      if (this.defaultSortField) {
+        this.sortColumn = this.defaultSortField;
+        this.sortAsc = this.defaultSortDirection === "ascending";
+      }
     }
   },
 };
