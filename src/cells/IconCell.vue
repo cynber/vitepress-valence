@@ -1,6 +1,11 @@
 <template>
   <div class="icon-cell">
-    <Icon v-if="icon" :icon="icon" :style="{ color: iconColor }" class="icon" />
+    <Icon
+      v-if="icon"
+      :icon="icon"
+      :style="{ color: iconColor, width: computedWidth, height: computedHeight }"
+      class="icon"
+    />
     <span v-else>{{ value }}</span>
   </div>
 </template>
@@ -32,6 +37,14 @@ export default {
       type: String,
       default: "var(--vp-c-brand)",
     },
+    width: {
+      type: String,
+      default: "1.5em",
+    },
+    height: {
+      type: String,
+      default: "1.5em",
+    },
   },
   computed: {
     icon() {
@@ -39,6 +52,12 @@ export default {
     },
     iconColor() {
       return this.iconColorMap[this.value] || this.defaultIconColor;
+    },
+    computedWidth() {
+      return this.width;
+    },
+    computedHeight() {
+      return this.height;
     },
   },
 };
@@ -49,10 +68,5 @@ export default {
   display: flex;
   justify-content: center;
   align-items: center;
-}
-
-.icon {
-  width: 1.5em;
-  height: 1.5em;
 }
 </style>

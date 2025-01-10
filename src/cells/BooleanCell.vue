@@ -3,14 +3,18 @@
     <div v-if="displayAs === 'icon'" class="icon-container">
       <Icon
         :icon="value ? trueIcon || defaultTrueIcon : falseIcon || defaultFalseIcon"
-        :style="{ color: value ? trueColor : falseColor }"
+        :style="{
+          color: value ? trueColor : falseColor,
+          width: iconWidth,
+          height: iconHeight,
+        }"
         class="icon"
       />
     </div>
     <div v-else-if="displayAs === 'text'" class="text-container">
-      <span>{{
-        value ? trueText || defaultTrueText : falseText || defaultFalseText
-      }}</span>
+      <span :style="{ color: value ? trueColor : falseColor }">
+        {{ value ? trueText || defaultTrueText : falseText || defaultFalseText }}
+      </span>
     </div>
     <div v-else class="default-container">
       <span>{{ value }}</span>
@@ -29,13 +33,28 @@ export default {
       type: Boolean,
       required: true,
     },
+    trueColor: {
+      type: String,
+      default: "var(--vp-c-green-3)",
+    },
+    falseColor: {
+      type: String,
+      default: "var(--vp-c-red-3)",
+    },
+    displayAs: {
+      type: String,
+      default: "icon",
+      validator(value) {
+        return ["icon", "text"].includes(value);
+      },
+    },
     trueIcon: {
       type: String,
-      default: "akar-icons:circle-check-fill",
+      default: "ic:twotone-check-box",
     },
     falseIcon: {
       type: String,
-      default: "akar-icons:circle-x-fill",
+      default: "material-symbols:close-rounded",
     },
     trueText: {
       type: String,
@@ -45,20 +64,13 @@ export default {
       type: String,
       default: "False",
     },
-    displayAs: {
+    iconWidth: {
       type: String,
-      default: "icon",
-      validator(value) {
-        return ["icon", "text"].includes(value);
-      },
+      default: "1.5em",
     },
-    trueColor: {
+    iconHeight: {
       type: String,
-      default: "var(--vp-c-green-3)",
-    },
-    falseColor: {
-      type: String,
-      default: "var(--vp-c-red-3)",
+      default: "1.5em",
     },
   },
 };
@@ -77,10 +89,5 @@ export default {
   display: flex;
   justify-content: center;
   align-items: center;
-}
-
-.icon {
-  width: 1.5em;
-  height: 1.5em;
 }
 </style>
