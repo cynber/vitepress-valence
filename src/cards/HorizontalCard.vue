@@ -1,30 +1,38 @@
 <template>
-  <div class="card">
+  <div class="horizontal-card">
     <component
       :is="disableLinks ? 'div' : 'a'"
       :href="!disableLinks ? url : null"
       class="card-link"
     >
-      <div v-if="image && !hideImage" class="card-image">
-        <img :src="image" alt="Banner Image" />
-      </div>
-      <div class="card-info">
-        <h3 class="card-title">{{ title }}</h3>
-        <div class="card-meta">
-          <span v-if="!hideAuthor && author" class="card-author">by {{ author }}</span>
-          <span v-if="!hideDate" class="post-date">{{ date }}</span>
+      <div class="card-content">
+        <div class="card-info">
+          <div class="card-title">{{ title }}</div>
+          <div class="card-meta">
+            <span v-if="!hideAuthor" class="card-author">By {{ author }}</span>
+            <span v-if="!hideDate" class="card-date">{{ date }}</span>
+          </div>
+          <div class="card-excerpt">{{ excerpt }}</div>
+          <div v-if="!hideCategory" class="card-tags">
+            <span class="tag">{{ category }}</span>
+          </div>
         </div>
-        <p class="card-body">{{ excerpt }}</p>
-        <div v-if="!hideCategory && category" class="card-tags">
-          <span class="tag">{{ category }}</span>
+        <div v-if="image && !hideImage" class="card-image">
+          <img :src="image" alt="Banner" />
         </div>
       </div>
     </component>
+    <div v-if="isExternal && showDomain" class="card-footer">
+      <hr />
+      <small>Source: {{ domain }}</small>
+    </div>
   </div>
 </template>
 
 <script setup>
-defineProps({
+import { computed } from "vue";
+
+const props = defineProps({
   title: String,
   excerpt: String,
   author: String,
@@ -36,12 +44,22 @@ defineProps({
   hideDate: Boolean,
   hideImage: Boolean,
   hideCategory: Boolean,
+  showDomain: Boolean,
   disableLinks: Boolean,
+  isExternal: Boolean,
+});
+
+const domain = computed(() => {
+  try {
+    return new URL(props.url).hostname.replace("www.", "");
+  } catch {
+    return "";
+  }
 });
 </script>
 
 <style scoped>
-.card {
+.horizontal-card {
   background-color: var(--vp-c-bg);
   border-radius: 16px;
   overflow: hidden;
@@ -49,12 +67,10 @@ defineProps({
   box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
   transition: box-shadow 0.3s ease-in-out, border-color 0.3s ease-in-out,
     transform 0.2s ease-in-out;
-  flex: 1 1 300px;
-  min-width: 300px;
-  max-width: calc(33.333% - 1rem);
+  margin-bottom: 1rem;
 }
 
-.card:hover {
+.horizontal-card:hover {
   border-color: var(--vp-c-border);
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
   transform: translateY(-2px);
@@ -63,14 +79,27 @@ defineProps({
 .card-link {
   text-decoration: none;
   color: inherit;
+  display: block;
+}
+
+.card-content {
   display: flex;
-  flex-direction: column;
-  height: 100%;
+  flex-direction: row;
+  align-items: center;
+  padding: 10px;
+  gap: 10px;
+}
+
+.card-info {
+  flex: 1;
+  min-width: 0;
+  padding: 10px;
 }
 
 .card-image {
-  width: 100%;
+  flex: 0 0 45%;
   aspect-ratio: 16 / 9;
+  margin: 10px;
   overflow: hidden;
 }
 
@@ -78,17 +107,12 @@ defineProps({
   width: 100%;
   height: 100%;
   object-fit: cover;
-}
-
-.card-info {
-  padding: 1rem;
-  display: flex;
-  flex-direction: column;
-  flex: 1;
+  border-radius: 8px;
 }
 
 .card-title {
-  font-size: 1.25rem;
+  font-size: 1.5rem;
+  font-weight: 500;
   margin: 0 0 0.5rem 0;
   display: -webkit-box;
   -webkit-line-clamp: 2;
@@ -99,17 +123,33 @@ defineProps({
   line-height: 1.2;
 }
 
+.card-excerpt {
+  font-size: 1rem;
+  margin: 0 0 1rem 0;
+  color: var(--vp-c-text-2);
+  display: -webkit-box;
+  -webkit-line-clamp: 5;
+  line-clamp: 5;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
 .card-meta {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  flex-wrap: wrap;
   gap: 0.5rem;
   font-size: 0.9rem;
-  color: var(--vp-c-text-2);
+  color: var(--vp-c-text-3);
+  margin-bottom: 0.5rem;
 }
 
 .card-tags {
-  margin-bottom: 0.75rem;
+  margin-top: 0.5rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
 }
 
 .tag {
@@ -120,40 +160,47 @@ defineProps({
   border-radius: 9999px;
   border: 1px solid var(--vp-c-divider);
   font-size: 0.8rem;
-  margin-right: 0.5rem;
   transition: background-color 0.3s ease-in-out, border 0.3s ease-in-out;
 }
 
-.card:hover .tag {
+.horizontal-card:hover .tag {
   background-color: var(--vp-c-brand-soft);
   border: 1px solid var(--vp-c-border);
 }
 
-.card-body {
+.card-footer {
+  padding: 0 1rem 1rem;
+  text-align: right;
+}
+
+.card-footer hr {
+  margin: 0;
+  border: none;
+  border-top: 1px solid var(--vp-c-divider);
+}
+
+.card-footer small {
   color: var(--vp-c-text-2);
-  display: -webkit-box;
-  -webkit-line-clamp: 3;
-  line-clamp: 3;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-  flex: 1;
 }
 
-@media screen and (max-width: 1024px) {
-  .card {
-    max-width: calc(50% - 1rem);
-  }
-}
-
-@media screen and (max-width: 650px) {
-  .card {
-    flex: 1 1 100%;
-    max-width: 100%;
-    min-width: unset;
+@media screen and (max-width: 768px) {
+  .card-content {
+    flex-direction: column;
   }
 
-  .cards-wrapper {
-    gap: 1rem;
+  .card-image {
+    flex: 0 0 auto;
+    width: calc(100% - 20px);
+    margin: 10px;
+  }
+
+  .card-meta {
+    justify-content: flex-start;
+    align-items: flex-start;
+  }
+
+  .card-meta .card-date {
+    margin-left: auto;
   }
 }
 </style>
