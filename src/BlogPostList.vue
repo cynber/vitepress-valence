@@ -29,9 +29,15 @@ const props = defineProps({
     type: Array,
     required: false,
   },
-  renderDrafts: {
-    type: Boolean,
-    default: false,
+  format: {
+    type: String,
+    default: "vertical",
+    validator: (value) => ["debug", "vertical", "horizontal"].includes(value),
+  },
+  sortOrder: {
+    type: String,
+    default: "descending",
+    validator: (value) => ["ascending", "descending"].includes(value),
   },
   startDate: {
     type: [Date, String],
@@ -41,15 +47,9 @@ const props = defineProps({
     type: [Date, String],
     default: null,
   },
-  format: {
-    type: String,
-    default: "vertical",
-    validator: (value) => ["debug", "vertical", "horizontal"].includes(value),
-  },
-  sortOrder: {
-    type: String,
-    default: "desc",
-    validator: (value) => ["asc", "desc"].includes(value),
+  renderDrafts: {
+    type: Boolean,
+    default: false,
   },
   featuredOnly: {
     type: Boolean,
@@ -95,13 +95,21 @@ const props = defineProps({
     type: Boolean,
     default: false,
   },
-  showDomain: {
+  hideDomain: {
     type: Boolean,
     default: false,
   },
   disableLinks: {
     type: Boolean,
     default: false,
+  },
+  titleLines: {
+    type: Number,
+    default: null,
+  },
+  excerptLines: {
+    type: Number,
+    default: null,
   },
 });
 
@@ -136,7 +144,7 @@ const sortedPosts = computed(() => {
   sorted.sort((a, b) => {
     const dateA = new Date(a.frontmatter.date);
     const dateB = new Date(b.frontmatter.date);
-    return props.sortOrder === "asc" ? dateA - dateB : dateB - dateA;
+    return props.sortOrder === "ascending" ? dateA - dateB : dateB - dateA;
   });
   return sorted;
 });
@@ -223,7 +231,7 @@ function getCardProps(post) {
     title: post.frontmatter.title,
     excerpt: post.frontmatter.excerpt,
     url: post.url,
-    showDomain: props.showDomain,
+    hideDomain: props.hideDomain,
     isExternal: isExternalLink(post.url),
     author: getAuthorName(post.frontmatter.author),
     date: formatDate(post.frontmatter.date),
@@ -234,6 +242,8 @@ function getCardProps(post) {
     hideImage: props.hideImage,
     hideCategory: props.hideCategory,
     disableLinks: props.disableLinks,
+    titleLines: props.titleLines,
+    excerptLines: props.excerptLines,
   };
 }
 </script>

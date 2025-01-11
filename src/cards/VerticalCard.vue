@@ -9,15 +9,23 @@
         <img :src="image" alt="Banner Image" />
       </div>
       <div class="card-info">
-        <h3 class="card-title">{{ title }}</h3>
+        <h3 class="card-title" :style="{ '--line-clamp-title': titleLines || 2 }">
+          {{ title }}
+        </h3>
         <div class="card-meta">
           <span v-if="!hideAuthor && author" class="card-author">by {{ author }}</span>
           <span v-if="!hideDate" class="post-date">{{ date }}</span>
         </div>
-        <p class="card-body">{{ excerpt }}</p>
+        <p class="card-body" :style="{ '--line-clamp-excerpt': excerptLines || 3 }">
+          {{ excerpt }}
+        </p>
         <div v-if="!hideCategory && category" class="card-tags">
           <span class="tag">{{ category }}</span>
         </div>
+      </div>
+      <div v-if="isExternal && !hideDomain" class="card-footer">
+        <hr />
+        <small>Source: {{ domain }}</small>
       </div>
     </component>
   </div>
@@ -36,7 +44,11 @@ defineProps({
   hideDate: Boolean,
   hideImage: Boolean,
   hideCategory: Boolean,
+  hideDomain: Boolean,
   disableLinks: Boolean,
+  isExternal: Boolean,
+  titleLines: Number,
+  excerptLines: Number,
 });
 </script>
 
@@ -91,8 +103,8 @@ defineProps({
   font-size: 1.25rem;
   margin: 0 0 0.5rem 0;
   display: -webkit-box;
-  -webkit-line-clamp: 2;
-  line-clamp: 2;
+  -webkit-line-clamp: var(--line-clamp-title, 2);
+  line-clamp: var(--line-clamp-title, 2);
   -webkit-box-orient: vertical;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -132,11 +144,26 @@ defineProps({
 .card-body {
   color: var(--vp-c-text-2);
   display: -webkit-box;
-  -webkit-line-clamp: 3;
-  line-clamp: 3;
+  -webkit-line-clamp: var(--line-clamp-excerpt, 3);
+  line-clamp: var(--line-clamp-excerpt, 3);
   -webkit-box-orient: vertical;
   overflow: hidden;
   flex: 1;
+}
+
+.card-footer {
+  padding: 0 1rem 1rem;
+  text-align: right;
+}
+
+.card-footer hr {
+  margin: 0;
+  border: none;
+  border-top: 1px solid var(--vp-c-divider);
+}
+
+.card-footer small {
+  color: var(--vp-c-text-2);
 }
 
 @media screen and (max-width: 1024px) {

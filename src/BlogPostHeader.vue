@@ -1,29 +1,16 @@
-<script setup>
-import { ref, inject } from "vue";
-import { useData } from "vitepress";
-
-const authors = inject("authors") || {};
-
-const { page } = useData();
-const frontmatter = page.value.frontmatter;
-const author = ref(authors[frontmatter.author] || {});
-
-const returnLink = ref(frontmatter.returnLink || "/");
-const returnText = ref(frontmatter.returnText || "← Back Home");
-</script>
-
 <template>
-  <a class="return-text" :href="returnLink">{{ returnText }}</a>
+  <a class="return-text" :href="returnLinkValue">{{ returnTextValue }}</a>
+
   <header class="post-header">
-    <h1 class="post-title">{{ frontmatter.title }}</h1>
+    <h1 v-if="!props.hideTitle" class="post-title">{{ frontmatter.title }}</h1>
     <img
-      v-if="frontmatter.banner"
+      v-if="!props.hideBanner && frontmatter.banner"
       :src="frontmatter.banner"
       alt="Banner Image"
       class="banner-image"
     />
     <div class="post-info">
-      <div v-if="author.name" class="author-section">
+      <div v-if="!props.hideAuthor && author.name" class="author-section">
         <img :src="author.avatar" alt="Author's Avatar" class="author-avatar" />
         <div class="author-details">
           <a :href="author.url" class="author-name">{{ author.name }}</a>
@@ -31,7 +18,7 @@ const returnText = ref(frontmatter.returnText || "← Back Home");
         </div>
       </div>
       <div class="meta-data">
-        <p v-if="frontmatter.date">
+        <p v-if="!props.hideDate && frontmatter.date">
           {{
             new Date(frontmatter.date).toLocaleDateString(undefined, {
               year: "numeric",
@@ -40,11 +27,59 @@ const returnText = ref(frontmatter.returnText || "← Back Home");
             })
           }}
         </p>
-        <p v-if="frontmatter.category">Category: {{ frontmatter.category }}</p>
+        <p v-if="!props.hideCategory && frontmatter.category">
+          Category: {{ frontmatter.category }}
+        </p>
       </div>
     </div>
   </header>
 </template>
+
+<script setup>
+import { ref, inject } from "vue";
+import { useData } from "vitepress";
+
+const props = defineProps({
+  returnLink: {
+    type: String,
+    default: "/",
+  },
+  returnText: {
+    type: String,
+    default: "Back Home",
+  },
+  hideTitle: {
+    type: Boolean,
+    default: false,
+  },
+  hideDate: {
+    type: Boolean,
+    default: false,
+  },
+  hideAuthor: {
+    type: Boolean,
+    default: false,
+  },
+  hideCategory: {
+    type: Boolean,
+    default: false,
+  },
+  hideBanner: {
+    type: Boolean,
+    default: false,
+  },
+});
+
+const authors = inject("authors") || {};
+
+const { page } = useData();
+const frontmatter = page.value.frontmatter;
+const author = ref(authors[frontmatter.author] || {});
+const returnLinkValue = ref(props.returnLink || frontmatter.returnLinkValue || "/");
+const returnTextValue = ref(
+  "← " + props.returnText || frontmatter.returnTextValue || "← Back Home"
+);
+</script>
 
 <style scoped>
 .return-text {

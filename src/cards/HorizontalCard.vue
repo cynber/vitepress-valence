@@ -7,12 +7,16 @@
     >
       <div class="card-content">
         <div class="card-info">
-          <div class="card-title">{{ title }}</div>
+          <div class="card-title" :style="{ '--line-clamp-title': titleLines || 2 }">
+            {{ title }}
+          </div>
           <div class="card-meta">
             <span v-if="!hideAuthor" class="card-author">By {{ author }}</span>
             <span v-if="!hideDate" class="card-date">{{ date }}</span>
           </div>
-          <div class="card-excerpt">{{ excerpt }}</div>
+          <div class="card-excerpt" :style="{ '--line-clamp-excerpt': excerptLines || 5 }">
+            {{ excerpt }}
+          </div>
           <div v-if="!hideCategory" class="card-tags">
             <span class="tag">{{ category }}</span>
           </div>
@@ -22,10 +26,6 @@
         </div>
       </div>
     </component>
-    <div v-if="isExternal && showDomain" class="card-footer">
-      <hr />
-      <small>Source: {{ domain }}</small>
-    </div>
   </div>
 </template>
 
@@ -44,9 +44,11 @@ const props = defineProps({
   hideDate: Boolean,
   hideImage: Boolean,
   hideCategory: Boolean,
-  showDomain: Boolean,
+  hideDomain: Boolean,
   disableLinks: Boolean,
   isExternal: Boolean,
+  titleLines: Number,
+  excerptLines: Number,
 });
 
 const domain = computed(() => {
@@ -115,8 +117,8 @@ const domain = computed(() => {
   font-weight: 500;
   margin: 0 0 0.5rem 0;
   display: -webkit-box;
-  -webkit-line-clamp: 2;
-  line-clamp: 2;
+  -webkit-line-clamp: var(--line-clamp-title, 2);
+  line-clamp: var(--line-clamp-title, 2);
   -webkit-box-orient: vertical;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -128,8 +130,8 @@ const domain = computed(() => {
   margin: 0 0 1rem 0;
   color: var(--vp-c-text-2);
   display: -webkit-box;
-  -webkit-line-clamp: 5;
-  line-clamp: 5;
+  -webkit-line-clamp: var(--line-clamp-excerpt, 5);
+  line-clamp: var(--line-clamp-excerpt, 5);
   -webkit-box-orient: vertical;
   overflow: hidden;
 }
@@ -166,21 +168,6 @@ const domain = computed(() => {
 .horizontal-card:hover .tag {
   background-color: var(--vp-c-brand-soft);
   border: 1px solid var(--vp-c-border);
-}
-
-.card-footer {
-  padding: 0 1rem 1rem;
-  text-align: right;
-}
-
-.card-footer hr {
-  margin: 0;
-  border: none;
-  border-top: 1px solid var(--vp-c-divider);
-}
-
-.card-footer small {
-  color: var(--vp-c-text-2);
 }
 
 @media screen and (max-width: 768px) {
