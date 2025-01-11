@@ -10,6 +10,7 @@
   flex-wrap: wrap;
   gap: 1.5rem;
   padding: 16px;
+  margin: 16px auto;
   justify-content: center;
   background-color: var(--vp-c-bg-soft);
   border-radius: 8px;

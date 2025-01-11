@@ -24,14 +24,19 @@
         </div>
       </div>
       <div v-if="isExternal && !hideDomain" class="card-footer">
-        <hr />
-        <small>Source: {{ domain }}</small>
+        <!-- <hr class="card-footer-hr" /> -->
+        <div class="footer-content">
+          <Icon :icon="'gridicons:external'" class="external-icon" />
+        </div>
       </div>
     </component>
   </div>
 </template>
 
 <script setup>
+import { Icon } from "@iconify/vue";
+import { computed } from "vue";
+
 defineProps({
   title: String,
   excerpt: String,
@@ -84,6 +89,7 @@ defineProps({
   width: 100%;
   aspect-ratio: 16 / 9;
   overflow: hidden;
+  border-bottom: 1px solid var(--vp-c-border);
 }
 
 .card-image img {
@@ -152,18 +158,24 @@ defineProps({
 }
 
 .card-footer {
-  padding: 0 1rem 1rem;
-  text-align: right;
-}
-
-.card-footer hr {
-  margin: 0;
-  border: none;
+  padding: .5rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+  color: var(--vp-c-text-2);
   border-top: 1px solid var(--vp-c-divider);
 }
 
-.card-footer small {
-  color: var(--vp-c-text-2);
+.footer-content {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.external-icon {
+  width: 1.2em;
+  height: 1.2em;
 }
 
 @media screen and (max-width: 1024px) {

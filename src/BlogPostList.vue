@@ -216,23 +216,13 @@ function getAuthorName(authorKey) {
   return author ? author.name : authorKey;
 }
 
-function isExternalLink(url) {
-  if (!url) return false;
-  try {
-    const link = new URL(url, window.location.origin);
-    return link.origin !== window.location.origin;
-  } catch {
-    return false;
-  }
-}
-
 function getCardProps(post) {
   return {
     title: post.frontmatter.title,
     excerpt: post.frontmatter.excerpt,
     url: post.url,
     hideDomain: props.hideDomain,
-    isExternal: isExternalLink(post.url),
+    isExternal: false,
     author: getAuthorName(post.frontmatter.author),
     date: formatDate(post.frontmatter.date),
     image: post.frontmatter.banner,

@@ -110,6 +110,7 @@ const domain = computed(() => {
   height: 100%;
   object-fit: cover;
   border-radius: 8px;
+  border: 1px solid var(--vp-c-border);
 }
 
 .card-title {
@@ -169,6 +170,11 @@ const domain = computed(() => {
   background-color: var(--vp-c-brand-soft);
   border: 1px solid var(--vp-c-border);
 }
+
+/* .horizontal-card:hover  .card-image {
+  border: 1px solid var(--vp-c-brand);
+  border-radius: 8px;
+} */
 
 @media screen and (max-width: 768px) {
   .card-content {

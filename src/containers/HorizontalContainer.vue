@@ -10,6 +10,7 @@
   flex-direction: column;
   gap: 2rem;
   padding: 16px;
+  margin: 16px auto;
   border-radius: 8px;
   border: 1px solid var(--vp-c-divider);
   background-color: var(--vp-c-bg-soft);
