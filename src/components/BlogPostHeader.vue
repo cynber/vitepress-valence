@@ -10,11 +10,11 @@
       class="banner-image"
     />
     <div class="post-info">
-      <div v-if="!props.hideAuthor && author.value.name" class="author-section">
-        <img :src="author.value.avatar" alt="Author's Avatar" class="author-avatar" />
+      <div v-if="!props.hideAuthor && author.name" class="author-section">
+        <img :src="author.avatar" alt="Author's Avatar" class="author-avatar" />
         <div class="author-details">
-          <a :href="author.value.url" class="author-name">{{ author.value.name }}</a>
-          <p class="author-description">{{ author.value.description }}</p>
+          <a :href="author.url" class="author-name">{{ author.name }}</a>
+          <p class="author-description">{{ author.description }}</p>
         </div>
       </div>
       <div class="meta-data">

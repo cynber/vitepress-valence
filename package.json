@@ -1,7 +1,7 @@
 {
   "name": "@cynber/vitepress-valence",
-  "version": "0.1.0",
-  "description": "Collection of reusable Vue components, configuration, and utilities for VitePress projects.",
+  "version": "0.1.1",
+  "description": "Get even more out of VitePress with VitePress Valence, a comprehensive suite of components that add additional functionality, style, and customization to your VitePress projects.",
   "keywords": [
     "vitepress",
     "components",
@@ -14,9 +14,9 @@
     "news",
     "cards"
   ],
-  "homepage": "https://cynber.dev/projects/vitepress-components/",
+  "homepage": "https://cynber.dev/projects/vitepress-valence/",
   "bugs": {
-    "url": "https://github.com/cynber/vitepress-component-library/issues"
+    "url": "https://github.com/cynber/vitepress-valence/issues"
   },
   "license": "MIT",
   "author": "cynber",
@@ -26,7 +26,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/cynber/vitepress-component-library.git"
+    "url": "git+https://github.com/cynber/vitepress-valence.git"
   },
   "publishConfig": {
     "access": "public"

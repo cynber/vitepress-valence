@@ -65,8 +65,8 @@ interface BlogPostListProps {
   hideCategory?: boolean;
   hideDomain?: boolean;
   disableLinks?: boolean;
-  titleLines?: number | null;
-  excerptLines?: number | null;
+  titleLines?: number;
+  excerptLines?: number;
 }
 
 const props = defineProps<BlogPostListProps>();

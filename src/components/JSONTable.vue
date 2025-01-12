@@ -22,7 +22,7 @@
           <tr v-for="(row, rowIndex) in displayedData" :key="rowIndex">
             <td v-for="column in columns" :key="column.key">
               <component
-                :is="getCellComponent(column.format)"
+                :is="getCellComponent(column.format || 'text')"
                 :value="getNestedValue(row, column.key)"
                 v-bind="column.options"
               ></component>
