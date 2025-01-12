@@ -1,7 +1,7 @@
 {
-  "name": "@cynber/vitepress-components",
-  "version": "0.1.24",
-  "description": "Collection of reusable Vue components tailored for use in VitePress projects",
+  "name": "@cynber/vitepress-valence",
+  "version": "0.1.0",
+  "description": "Collection of reusable Vue components, configuration, and utilities for VitePress projects.",
   "keywords": [
     "vitepress",
     "components",
@@ -9,7 +9,10 @@
     "vite",
     "JSON",
     "table",
-    "blog"
+    "blog",
+    "announcements",
+    "news",
+    "cards"
   ],
   "homepage": "https://cynber.dev/projects/vitepress-components/",
   "bugs": {
@@ -28,41 +31,48 @@
   "publishConfig": {
     "access": "public"
   },
+  "scripts": {
+    "build": "rimraf dist && vue-tsc --noEmit && vite build",
+    "prepublishOnly": "npm run build",
+    "type-check": "vue-tsc"
+  },
   "files": [
-    "dist"
+    "dist",
+    "src"
   ],
-  "main": "./dist/vitepress-components.umd.cjs",
-  "module": "./dist/vitepress-components.js",
+  "main": "./dist/vitepress-valence.umd.cjs",
+  "module": "./dist/vitepress-valence.es.js",
+  "types": "./dist/types/index.d.ts",
   "exports": {
     ".": {
       "import": {
-        "types": "./dist/index.d.ts",
-        "default": "./dist/vitepress-components.js"
+        "types": "./dist/types/index.d.ts",
+        "default": "./dist/vitepress-valence.es.js"
       },
-      "require": "./dist/vitepress-components.umd.cjs"
+      "require": "./dist/vitepress-valence.umd.cjs"
     },
     "./style.css": "./dist/style.css"
   },
   "type": "module",
-  "scripts": {
-    "dev": "vite",
-    "build": "vite build",
-    "preview": "vite preview",
-    "prepublish": "npm run build"
-  },
   "peerDependencies": {
-    "vue": "^3.3.0",
+    "@iconify/vue": "^4.1.2",
     "vitepress": "^1.0.0",
-    "@iconify/vue": "^4.1.2"
+    "vue": "^3.3.0"
   },
   "dependencies": {
-    "@iconify/vue": "^4.1.2"
+    "@iconify/vue": "^4.3.0"
   },
   "devDependencies": {
     "@iconify/vue": "^4.1.2",
-    "@vitejs/plugin-vue": "^4.5.0",
-    "vite": "^5.0.0",
-    "vue": "^3.3.0",
-    "vitepress": "^1.0.0"
+    "@types/node": "^22.10.5",
+    "@vitejs/plugin-vue": "^4.6.2",
+    "eslint": "^9.18.0",
+    "rimraf": "^6.0.1",
+    "sass": "^1.83.1",
+    "typescript": "^5.7.3",
+    "vite": "^5.4.11",
+    "vitepress": "^1.5.0",
+    "vue": "^3.5.13",
+    "vue-tsc": "^2.2.0"
   }
 }

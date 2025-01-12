@@ -1,26 +1,36 @@
 import { defineConfig } from 'vite'
 import vue from '@vitejs/plugin-vue'
-import { resolve } from 'path'
+import path from 'path'
 
 export default defineConfig({
   plugins: [vue()],
+  css: {
+    preprocessorOptions: {
+      scss: {
+        api: 'modern-compiler'
+      }
+    }
+  },
   build: {
-    target: 'esnext',
-    minify: false,
     lib: {
-      entry: resolve(__dirname, 'src/index.js'),
-      name: 'VitepressComponents',
-      fileName: (format) => `vitepress-components.${format === 'es' ? 'js' : 'umd.cjs'}`
+      entry: path.resolve(__dirname, 'src/index.ts'),
+      name: 'VitePressValence',
+      formats: ['es', 'umd'],
+      fileName: (format) => `vitepress-valence.${format}.js`,
     },
     rollupOptions: {
       external: ['vue', 'vitepress', '@iconify/vue'],
       output: {
+        exports: 'named', // Prevent Rollup warning for named exports
         globals: {
           vue: 'Vue',
           vitepress: 'VitePress',
-          '@iconify/vue': 'IconifyVue'
-        }
-      }
-    }
+          '@iconify/vue': 'IconifyVue',
+        },
+      },
+    },
+    emptyOutDir: false, // Retain 'dist/types' for TypeScript declarations
+    target: 'esnext',
+    minify: true,
   }
 })

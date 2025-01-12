@@ -1,9 +1,16 @@
-# vitepress-components
+# VitePress Valence
 
-Collection of reusable Vue components tailored for use in VitePress projects.
+[![GitHub license](https://img.shields.io/github/license/cynber/vitepress-valence)]
+<!-- [![GitHub release](https://img.shields.io/github/v/release/cynber/vitepress-valence)]
+[![GitHub issues](https://img.shields.io/github/issues/cynber/vitepress-valence)]
+[![GitHub pull requests](https://img.shields.io/github/issues-pr/cynber/vitepress-valence)]
+[![GitHub contributors](https://img.shields.io/github/contributors/cynber/vitepress-valence)]
+[![GitHub forks](https://img.shields.io/github/forks/cynber/vitepress-valence)]
+[![GitHub stars](https://img.shields.io/github/stars/cynber/vitepress-valence)] -->
+[![NPM version](https://img.shields.io/npm/v/vitepress-valence)]
+[![NPM downloads](https://img.shields.io/npm/dt/vitepress-valence)]
 
-This is a work in progress, and a learning experience for me. I'm open to feedback and suggestions.
+
+Collection of reusable Vue components, configuration, and utilities for VitePress projects.
 
 ## Usage: [cynber.dev/projects/vitepress-components](https://cynber.dev/projects/vitepress-components/)
-
-Eventually I intend to rename the project, and I will post a GitHub discussion to gather suggestions for a new name.
