@@ -1,19 +1,21 @@
 <template>
-  <div class="cards-wrapper">
+  <div class="cards-container">
     <slot></slot>
   </div>
 </template>
 
+<script setup lang="ts"></script>
+
 <style scoped>
-.cards-wrapper {
+.cards-container {
   display: flex;
   flex-wrap: wrap;
   gap: 1.5rem;
   padding: 16px;
   margin: 16px auto;
   justify-content: center;
-  background-color: var(--vp-c-bg-soft);
   border-radius: 8px;
+  background-color: var(--vp-c-bg-soft);
   border: 1px solid var(--vp-c-divider);
   box-shadow: inset 0 1px 4px rgba(0, 0, 0, 0.05);
 }

@@ -33,28 +33,30 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { Icon } from "@iconify/vue";
-import { computed } from "vue";
+import { defineProps } from "vue";
 
-defineProps({
-  title: String,
-  excerpt: String,
-  author: String,
-  date: String,
-  image: String,
-  category: String,
-  url: String,
-  hideAuthor: Boolean,
-  hideDate: Boolean,
-  hideImage: Boolean,
-  hideCategory: Boolean,
-  hideDomain: Boolean,
-  disableLinks: Boolean,
-  isExternal: Boolean,
-  titleLines: Number,
-  excerptLines: Number,
-});
+interface CardProps {
+  title: string;
+  excerpt: string;
+  author: string;
+  date: string;
+  image?: string;
+  category?: string;
+  url?: string;
+  hideAuthor?: boolean;
+  hideDate?: boolean;
+  hideImage?: boolean;
+  hideCategory?: boolean;
+  hideDomain?: boolean;
+  disableLinks?: boolean;
+  isExternal?: boolean;
+  titleLines?: number;
+  excerptLines?: number;
+}
+
+const props = defineProps<CardProps>();
 </script>
 
 <style scoped>
@@ -158,7 +160,7 @@ defineProps({
 }
 
 .card-footer {
-  padding: .5rem;
+  padding: 0.5rem;
   display: flex;
   flex-direction: column;
   align-items: center;

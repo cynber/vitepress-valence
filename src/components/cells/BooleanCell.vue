@@ -2,7 +2,7 @@
   <div class="boolean-cell">
     <div v-if="displayAs === 'icon'" class="icon-container">
       <Icon
-        :icon="value ? trueIcon || defaultTrueIcon : falseIcon || defaultFalseIcon"
+        :icon="value ? trueIcon : falseIcon"
         :style="{
           color: value ? trueColor : falseColor,
           width: iconWidth,
@@ -13,7 +13,7 @@
     </div>
     <div v-else-if="displayAs === 'text'" class="text-container">
       <span :style="{ color: value ? trueColor : falseColor }">
-        {{ value ? trueText || defaultTrueText : falseText || defaultFalseText }}
+        {{ value ? trueText : falseText }}
       </span>
     </div>
     <div v-else class="default-container">
@@ -22,58 +22,39 @@
   </div>
 </template>
 
-<script>
+<script setup lang="ts">
+import { defineProps } from "vue";
 import { Icon } from "@iconify/vue";
 
-export default {
-  name: "BooleanCell",
-  components: { Icon },
-  props: {
-    value: {
-      type: Boolean,
-      required: true,
-    },
-    trueColor: {
-      type: String,
-      default: "var(--vp-c-green-3)",
-    },
-    falseColor: {
-      type: String,
-      default: "var(--vp-c-red-3)",
-    },
-    displayAs: {
-      type: String,
-      default: "icon",
-      validator(value) {
-        return ["icon", "text"].includes(value);
-      },
-    },
-    trueIcon: {
-      type: String,
-      default: "ic:twotone-check-box",
-    },
-    falseIcon: {
-      type: String,
-      default: "material-symbols:close-rounded",
-    },
-    trueText: {
-      type: String,
-      default: "True",
-    },
-    falseText: {
-      type: String,
-      default: "False",
-    },
-    iconWidth: {
-      type: String,
-      default: "1.5em",
-    },
-    iconHeight: {
-      type: String,
-      default: "1.5em",
-    },
-  },
-};
+interface BooleanCellProps {
+  value: boolean;
+  trueColor?: string;
+  falseColor?: string;
+  displayAs?: "icon" | "text";
+  trueIcon?: string;
+  falseIcon?: string;
+  trueText?: string;
+  falseText?: string;
+  iconWidth?: string;
+  iconHeight?: string;
+}
+
+const props = defineProps<BooleanCellProps>();
+
+const defaultTrueIcon = "ic:twotone-check-box";
+const defaultFalseIcon = "material-symbols:close-rounded";
+const defaultTrueText = "True";
+const defaultFalseText = "False";
+
+const trueIcon = props.trueIcon || defaultTrueIcon;
+const falseIcon = props.falseIcon || defaultFalseIcon;
+const trueText = props.trueText || defaultTrueText;
+const falseText = props.falseText || defaultFalseText;
+const trueColor = props.trueColor || "var(--vp-c-green-3)";
+const falseColor = props.falseColor || "var(--vp-c-red-3)";
+const iconWidth = props.iconWidth || "1.5em";
+const iconHeight = props.iconHeight || "1.5em";
+const displayAs = props.displayAs || "icon";
 </script>
 
 <style scoped>

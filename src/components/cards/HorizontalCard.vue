@@ -14,7 +14,10 @@
             <span v-if="!hideAuthor" class="card-author">By {{ author }}</span>
             <span v-if="!hideDate" class="card-date">{{ date }}</span>
           </div>
-          <div class="card-excerpt" :style="{ '--line-clamp-excerpt': excerptLines || 5 }">
+          <div
+            class="card-excerpt"
+            :style="{ '--line-clamp-excerpt': excerptLines || 5 }"
+          >
             {{ excerpt }}
           </div>
           <div v-if="!hideCategory" class="card-tags">
@@ -29,35 +32,29 @@
   </div>
 </template>
 
-<script setup>
-import { computed } from "vue";
+<script setup lang="ts">
+import { computed, defineProps } from "vue";
 
-const props = defineProps({
-  title: String,
-  excerpt: String,
-  author: String,
-  date: String,
-  image: String,
-  category: String,
-  url: String,
-  hideAuthor: Boolean,
-  hideDate: Boolean,
-  hideImage: Boolean,
-  hideCategory: Boolean,
-  hideDomain: Boolean,
-  disableLinks: Boolean,
-  isExternal: Boolean,
-  titleLines: Number,
-  excerptLines: Number,
-});
+interface HorizontalCardProps {
+  title: string;
+  excerpt: string;
+  author: string;
+  date: string;
+  image?: string;
+  category?: string;
+  url?: string;
+  hideAuthor?: boolean;
+  hideDate?: boolean;
+  hideImage?: boolean;
+  hideCategory?: boolean;
+  hideDomain?: boolean;
+  disableLinks?: boolean;
+  isExternal?: boolean;
+  titleLines?: number;
+  excerptLines?: number;
+}
 
-const domain = computed(() => {
-  try {
-    return new URL(props.url).hostname.replace("www.", "");
-  } catch {
-    return "";
-  }
-});
+const props = defineProps<HorizontalCardProps>();
 </script>
 
 <style scoped>

@@ -10,57 +10,28 @@
   </div>
 </template>
 
-<script>
+<script setup lang="ts">
+import { defineProps, computed } from "vue";
 import { Icon } from "@iconify/vue";
 
-export default {
-  name: "IconCell",
-  components: { Icon },
-  props: {
-    value: {
-      type: String,
-      required: true,
-    },
-    iconMap: {
-      type: Object,
-      default: () => ({}),
-    },
-    defaultIcon: {
-      type: String,
-      default: null,
-    },
-    iconColorMap: {
-      type: Object,
-      default: () => ({}),
-    },
-    defaultIconColor: {
-      type: String,
-      default: "var(--vp-c-brand)",
-    },
-    width: {
-      type: String,
-      default: "1.5em",
-    },
-    height: {
-      type: String,
-      default: "1.5em",
-    },
-  },
-  computed: {
-    icon() {
-      return this.iconMap[this.value] || this.defaultIcon;
-    },
-    iconColor() {
-      return this.iconColorMap[this.value] || this.defaultIconColor;
-    },
-    computedWidth() {
-      return this.width;
-    },
-    computedHeight() {
-      return this.height;
-    },
-  },
-};
+interface IconCellProps {
+  value: string;
+  iconMap?: Record<string, string>;
+  defaultIcon?: string;
+  iconColorMap?: Record<string, string>;
+  defaultIconColor?: string;
+  width?: string;
+  height?: string;
+}
+
+const props = defineProps<IconCellProps>();
+
+const icon = computed(() => props.iconMap?.[props.value] || props.defaultIcon);
+const iconColor = computed(
+  () => props.iconColorMap?.[props.value] || props.defaultIconColor || "var(--vp-c-brand)"
+);
+const computedWidth = computed(() => props.width || "1.5em");
+const computedHeight = computed(() => props.height || "1.5em");
 </script>
 
 <style scoped>

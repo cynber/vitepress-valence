@@ -35,7 +35,8 @@
   </div>
 </template>
 
-<script>
+<script setup lang="ts">
+import { ref, computed, watch, onMounted, defineProps } from "vue";
 import { Icon } from "@iconify/vue";
 
 // Import cell components
@@ -46,207 +47,199 @@ import TagsCell from "./cells/TagsCell.vue";
 import NumberCell from "./cells/NumberCell.vue";
 import IconCell from "./cells/IconCell.vue";
 
-export default {
-  name: "JsonTable",
-  components: {
-    Icon,
-    TextCell,
-    LinkCell,
-    BooleanCell,
-    TagsCell,
-    NumberCell,
-    IconCell,
-  },
-  props: {
-    jsonPath: String,
-    jsonDataProp: {
-      type: Array,
-      default: () => [],
-    },
-    columns: {
-      type: Array,
-      default: () => [],
-    },
-    filters: {
-      type: Object,
-      default: null,
-    },
-    title: String,
-    defaultSortField: String,
-    defaultSortDirection: {
-      type: String,
-      default: "ascending",
-      validator(value) {
-        return ["ascending", "descending"].includes(value);
-      },
-    },
-  },
-  data() {
-    return {
-      jsonData: [],
-      sortColumn: this.defaultSortField || null,
-      sortAsc: this.defaultSortDirection === "ascending",
-    };
-  },
-  computed: {
-    filteredData() {
-      if (!this.filters) {
-        return this.jsonData;
+interface Column {
+  key: string;
+  title?: string;
+  format?: string;
+  options?: Record<string, any>;
+}
+
+interface FilterCondition {
+  type: "condition";
+  key: string;
+  operator: string;
+  value: any;
+}
+
+interface FilterGroup {
+  type: "and" | "or";
+  conditions: (FilterCondition | FilterGroup)[];
+}
+
+type Filter = FilterCondition | FilterGroup;
+
+interface Props {
+  jsonPath?: string;
+  jsonDataProp?: any[];
+  columns?: Column[];
+  filters?: Filter | null;
+  title?: string;
+  defaultSortField?: string;
+  defaultSortDirection?: "ascending" | "descending";
+}
+
+const props = defineProps<Props>();
+
+const jsonData = ref<any[]>([]);
+const sortColumn = ref<string | null>(props.defaultSortField || null);
+const sortAsc = ref<boolean>(props.defaultSortDirection === "ascending");
+
+const columns = ref<Column[]>(props.columns || []);
+const filters = ref<Filter | null>(props.filters || null);
+
+const title = props.title;
+
+function getNestedValue(obj: any, path: string): any {
+  return path
+    .split(".")
+    .reduce(
+      (acc: any, part: string) => (acc && acc[part] !== undefined ? acc[part] : null),
+      obj
+    );
+}
+
+function getCellComponent(format: string): any {
+  switch (format) {
+    case "link":
+      return LinkCell;
+    case "boolean":
+      return BooleanCell;
+    case "tags":
+      return TagsCell;
+    case "number":
+      return NumberCell;
+    case "icon":
+      return IconCell;
+    default:
+      return TextCell;
+  }
+}
+
+function sortTable(columnKey: string): void {
+  if (sortColumn.value === columnKey) {
+    sortAsc.value = !sortAsc.value;
+  } else {
+    sortColumn.value = columnKey;
+    sortAsc.value = true;
+  }
+}
+
+const displayedData = computed(() => {
+  let data = filteredData.value;
+  if (!sortColumn.value) {
+    return data;
+  }
+  return data.slice().sort((a, b) => {
+    const aValue = getNestedValue(a, sortColumn.value!);
+    const bValue = getNestedValue(b, sortColumn.value!);
+    if (aValue === null || aValue === undefined) return 1;
+    if (bValue === null || bValue === undefined) return -1;
+    if (aValue < bValue) return sortAsc.value ? -1 : 1;
+    if (aValue > bValue) return sortAsc.value ? 1 : -1;
+    return 0;
+  });
+});
+
+const filteredData = computed(() => {
+  if (!filters.value) {
+    return jsonData.value;
+  }
+  return jsonData.value.filter((item) => evaluateFilter(filters.value!, item));
+});
+
+function evaluateFilter(filter: Filter, item: any): boolean {
+  if (filter.type === "and" || filter.type === "or") {
+    const group = filter as FilterGroup;
+    const evaluator = filter.type === "and" ? "every" : "some";
+    return group.conditions[evaluator]((subFilter) => evaluateFilter(subFilter, item));
+  } else if (filter.type === "condition") {
+    const condition = filter as FilterCondition;
+    const itemValue = getNestedValue(item, condition.key);
+    return applyOperator(itemValue, condition.operator, condition.value);
+  } else {
+    console.warn("Unknown filter type:", filter.type);
+    return true;
+  }
+}
+
+function applyOperator(a: any, operator: string, b: any): boolean {
+  switch (operator) {
+    case "equals":
+      return a === b;
+    case "notEquals":
+      return a !== b;
+    case "greaterThan":
+      return a > b;
+    case "greaterThanOrEqual":
+      return a >= b;
+    case "lessThan":
+      return a < b;
+    case "lessThanOrEqual":
+      return a <= b;
+    case "includes":
+      return Array.isArray(a) && a.includes(b);
+    case "notIncludes":
+      return Array.isArray(a) && !a.includes(b);
+    case "contains":
+      return typeof a === "string" && a.includes(b);
+    case "notContains":
+      return typeof a === "string" && !a.includes(b);
+    default:
+      console.warn("Unknown operator:", operator);
+      return false;
+  }
+}
+
+async function fetchJson() {
+  if (props.jsonPath) {
+    try {
+      const response = await fetch(props.jsonPath);
+      jsonData.value = await response.json();
+      if (props.defaultSortField) {
+        sortColumn.value = props.defaultSortField;
+        sortAsc.value = props.defaultSortDirection === "ascending";
       }
-      return this.jsonData.filter((item) => this.evaluateFilter(this.filters, item));
-    },
-    displayedData() {
-      const data = this.filteredData;
-      if (!this.sortColumn) {
-        return data;
-      }
-      return data.slice().sort((a, b) => {
-        const aValue = this.getNestedValue(a, this.sortColumn);
-        const bValue = this.getNestedValue(b, this.sortColumn);
-        if (aValue === null || aValue === undefined) return 1;
-        if (bValue === null || bValue === undefined) return -1;
-        if (aValue < bValue) return this.sortAsc ? -1 : 1;
-        if (aValue > bValue) return this.sortAsc ? 1 : -1;
-        return 0;
-      });
-    },
-  },
-  watch: {
-    jsonData(newData) {
-      if (!this.columns.length && newData.length) {
+    } catch (error) {
+      console.error("Error fetching JSON:", error);
+    }
+  }
+}
+
+watch(
+  () => props.jsonDataProp,
+  (newData) => {
+    if (newData && newData.length) {
+      jsonData.value = newData;
+      if (columns.value.length === 0 && newData.length) {
         const sampleRow = newData[0];
-        this.columns = Object.keys(sampleRow).map((key) => ({
+        columns.value = Object.keys(sampleRow).map((key) => ({
           key: key,
           title: key,
           format: "text",
         }));
       }
-    },
-    jsonDataProp: {
-      immediate: true,
-      handler(newData) {
-        if (newData.length) {
-          this.jsonData = newData;
-          if (this.columns.length === 0 && newData.length) {
-            const sampleRow = newData[0];
-            this.columns = Object.keys(sampleRow).map((key) => ({
-              key: key,
-              title: key,
-              format: "text",
-            }));
-          }
-          if (this.defaultSortField) {
-            this.sortColumn = this.defaultSortField;
-            this.sortAsc = this.defaultSortDirection === "ascending";
-          }
-        } else if (this.jsonPath) {
-          this.fetchJson();
-        }
-      },
-    },
-  },
-  methods: {
-    async fetchJson() {
-      if (this.jsonPath) {
-        try {
-          const response = await fetch(this.jsonPath);
-          this.jsonData = await response.json();
-          if (this.defaultSortField) {
-            this.sortColumn = this.defaultSortField;
-            this.sortAsc = this.defaultSortDirection === "ascending";
-          }
-        } catch (error) {
-          console.error("Error fetching JSON:", error);
-        }
+      if (props.defaultSortField) {
+        sortColumn.value = props.defaultSortField;
+        sortAsc.value = props.defaultSortDirection === "ascending";
       }
-    },
-    getNestedValue(obj, path) {
-      return path
-        .split(".")
-        .reduce((acc, part) => (acc && acc[part] !== undefined ? acc[part] : null), obj);
-    },
-    sortTable(columnKey) {
-      if (this.sortColumn === columnKey) {
-        this.sortAsc = !this.sortAsc;
-      } else {
-        this.sortColumn = columnKey;
-        this.sortAsc = true;
-      }
-    },
-    getCellComponent(format) {
-      switch (format) {
-        case "link":
-          return "LinkCell";
-        case "boolean":
-          return "BooleanCell";
-        case "tags":
-          return "TagsCell";
-        case "number":
-          return "NumberCell";
-        case "icon":
-          return "IconCell";
-        default:
-          return "TextCell";
-      }
-    },
-    evaluateFilter(filter, item) {
-      if (filter.type === "and") {
-        return filter.conditions.every((subFilter) =>
-          this.evaluateFilter(subFilter, item)
-        );
-      } else if (filter.type === "or") {
-        return filter.conditions.some((subFilter) =>
-          this.evaluateFilter(subFilter, item)
-        );
-      } else if (filter.type === "condition") {
-        const { key, operator, value } = filter;
-        const itemValue = this.getNestedValue(item, key);
-        return this.applyOperator(itemValue, operator, value);
-      } else {
-        console.warn("Unknown filter type:", filter.type);
-        return true;
-      }
-    },
-    applyOperator(a, operator, b) {
-      switch (operator) {
-        case "equals":
-          return a === b;
-        case "notEquals":
-          return a !== b;
-        case "greaterThan":
-          return a > b;
-        case "greaterThanOrEqual":
-          return a >= b;
-        case "lessThan":
-          return a < b;
-        case "lessThanOrEqual":
-          return a <= b;
-        case "includes":
-          return Array.isArray(a) && a.includes(b);
-        case "notIncludes":
-          return Array.isArray(a) && !a.includes(b);
-        case "contains":
-          return typeof a === "string" && a.includes(b);
-        case "notContains":
-          return typeof a === "string" && !a.includes(b);
-        default:
-          console.warn("Unknown operator:", operator);
-          return false;
-      }
-    },
-  },
-  mounted() {
-    if (!this.jsonDataProp.length) {
-      this.fetchJson();
-    } else {
-      this.jsonData = this.jsonDataProp;
-      if (this.defaultSortField) {
-        this.sortColumn = this.defaultSortField;
-        this.sortAsc = this.defaultSortDirection === "ascending";
-      }
+    } else if (props.jsonPath) {
+      fetchJson();
     }
   },
-};
+  { immediate: true }
+);
+
+onMounted(() => {
+  if (!props.jsonDataProp || !props.jsonDataProp.length) {
+    fetchJson();
+  } else {
+    jsonData.value = props.jsonDataProp;
+    if (props.defaultSortField) {
+      sortColumn.value = props.defaultSortField;
+      sortAsc.value = props.defaultSortDirection === "ascending";
+    }
+  }
+});
 </script>
 
 <style scoped>

@@ -17,104 +17,62 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { inject, computed } from "vue";
 import HorizontalCard from "./cards/HorizontalCard.vue";
 import VerticalCard from "./cards/VerticalCard.vue";
 import HorizontalContainer from "./containers/HorizontalContainer.vue";
 import VerticalContainer from "./containers/VerticalContainer.vue";
 
-const props = defineProps({
-  posts: {
-    type: Array,
-    required: false,
-  },
-  format: {
-    type: String,
-    default: "vertical",
-    validator: (value) => ["debug", "vertical", "horizontal"].includes(value),
-  },
-  sortOrder: {
-    type: String,
-    default: "descending",
-    validator: (value) => ["ascending", "descending"].includes(value),
-  },
-  startDate: {
-    type: [Date, String],
-    default: null,
-  },
-  endDate: {
-    type: [Date, String],
-    default: null,
-  },
-  renderDrafts: {
-    type: Boolean,
-    default: false,
-  },
-  featuredOnly: {
-    type: Boolean,
-    default: false,
-  },
-  filterAuthors: {
-    type: Array,
-    default: () => [],
-  },
-  excludeAuthors: {
-    type: Array,
-    default: () => [],
-  },
-  filterCategories: {
-    type: Array,
-    default: () => [],
-  },
-  excludeCategories: {
-    type: Array,
-    default: () => [],
-  },
-  excludeURLs: {
-    type: Array,
-    default: () => [],
-  },
-  maxCards: {
-    type: Number,
-    default: null,
-  },
-  hideAuthor: {
-    type: Boolean,
-    default: false,
-  },
-  hideDate: {
-    type: Boolean,
-    default: false,
-  },
-  hideImage: {
-    type: Boolean,
-    default: false,
-  },
-  hideCategory: {
-    type: Boolean,
-    default: false,
-  },
-  hideDomain: {
-    type: Boolean,
-    default: false,
-  },
-  disableLinks: {
-    type: Boolean,
-    default: false,
-  },
-  titleLines: {
-    type: Number,
-    default: null,
-  },
-  excerptLines: {
-    type: Number,
-    default: null,
-  },
-});
+interface Frontmatter {
+  title: string;
+  excerpt: string;
+  date: string;
+  banner?: string;
+  category?: string;
+  author?: string;
+  featured?: boolean;
+  draft?: boolean;
+}
 
-const injectedPostsData = inject("postsData", []);
-const authors = inject("authors", {});
+interface Post {
+  url: string;
+  frontmatter: Frontmatter;
+}
+
+interface Author {
+  name: string;
+  [key: string]: any;
+}
+
+interface BlogPostListProps {
+  posts?: Post[];
+  format?: "debug" | "vertical" | "horizontal";
+  sortOrder?: "ascending" | "descending";
+  startDate?: Date | string | null;
+  endDate?: Date | string | null;
+  renderDrafts?: boolean;
+  featuredOnly?: boolean;
+  filterAuthors?: string[];
+  excludeAuthors?: string[];
+  filterCategories?: string[];
+  excludeCategories?: string[];
+  excludeURLs?: string[];
+  maxCards?: number | null;
+  hideAuthor?: boolean;
+  hideDate?: boolean;
+  hideImage?: boolean;
+  hideCategory?: boolean;
+  hideDomain?: boolean;
+  disableLinks?: boolean;
+  titleLines?: number | null;
+  excerptLines?: number | null;
+}
+
+const props = defineProps<BlogPostListProps>();
+
+const injectedPostsData = inject<Post[]>("postsData", []);
+const authors = inject<Record<string, Author>>("authors", {});
 
 const posts = computed(() => props.posts || injectedPostsData);
 
@@ -124,6 +82,7 @@ const selectedCardComponent = computed(() => {
     case "horizontal":
       return HorizontalCard;
     case "vertical":
+      return VerticalCard;
     default:
       return VerticalCard;
   }
@@ -134,6 +93,7 @@ const containerComponent = computed(() => {
     case "horizontal":
       return HorizontalContainer;
     case "vertical":
+      return VerticalContainer;
     default:
       return VerticalContainer;
   }
@@ -142,8 +102,8 @@ const containerComponent = computed(() => {
 const sortedPosts = computed(() => {
   const sorted = [...posts.value];
   sorted.sort((a, b) => {
-    const dateA = new Date(a.frontmatter.date);
-    const dateB = new Date(b.frontmatter.date);
+    const dateA = new Date(a.frontmatter.date).getTime();
+    const dateB = new Date(b.frontmatter.date).getTime();
     return props.sortOrder === "ascending" ? dateA - dateB : dateB - dateA;
   });
   return sorted;
@@ -156,33 +116,33 @@ const filteredPosts = computed(() => {
     if (props.featuredOnly && !frontmatter.featured) return false;
     if (!props.renderDrafts && frontmatter.draft) return false;
 
-    const postDate = new Date(frontmatter.date);
-    if (props.startDate && postDate < new Date(props.startDate)) return false;
-    if (props.endDate && postDate > new Date(props.endDate)) return false;
+    const postDate = new Date(frontmatter.date).getTime();
+    if (props.startDate && postDate < new Date(props.startDate).getTime()) return false;
+    if (props.endDate && postDate > new Date(props.endDate).getTime()) return false;
 
     if (
-      props.filterAuthors.length > 0 &&
-      !props.filterAuthors.includes(frontmatter.author)
+      props.filterAuthors?.length &&
+      !props.filterAuthors.includes(frontmatter.author || "")
     )
       return false;
     if (
-      props.excludeAuthors.length > 0 &&
-      props.excludeAuthors.includes(frontmatter.author)
-    )
-      return false;
-
-    if (
-      props.filterCategories.length > 0 &&
-      !props.filterCategories.includes(frontmatter.category)
-    )
-      return false;
-    if (
-      props.excludeCategories.length > 0 &&
-      props.excludeCategories.includes(frontmatter.category)
+      props.excludeAuthors?.length &&
+      props.excludeAuthors.includes(frontmatter.author || "")
     )
       return false;
 
-    if (props.excludeURLs.length > 0) {
+    if (
+      props.filterCategories?.length &&
+      !props.filterCategories.includes(frontmatter.category || "")
+    )
+      return false;
+    if (
+      props.excludeCategories?.length &&
+      props.excludeCategories.includes(frontmatter.category || "")
+    )
+      return false;
+
+    if (props.excludeURLs?.length) {
       const postURL = post.url.replace(/\.html$/, "");
       const isExcluded = props.excludeURLs.some((excludeURL) => {
         const normalizedExcludeURL = excludeURL.replace(/\.html$/, "");
@@ -196,14 +156,14 @@ const filteredPosts = computed(() => {
 });
 
 const displayedPosts = computed(() => {
-  if (props.maxCards !== null && props.maxCards >= 0) {
+  if (props.maxCards != null && props.maxCards >= 0) {
     return filteredPosts.value.slice(0, props.maxCards);
   }
   return filteredPosts.value;
 });
 
 // Utility functions
-function formatDate(date) {
+function formatDate(date: string | Date): string {
   return new Date(date).toLocaleDateString(undefined, {
     year: "numeric",
     month: "long",
@@ -211,19 +171,19 @@ function formatDate(date) {
   });
 }
 
-function getAuthorName(authorKey) {
+function getAuthorName(authorKey: string): string {
   const author = authors[authorKey];
   return author ? author.name : authorKey;
 }
 
-function getCardProps(post) {
+function getCardProps(post: Post) {
   return {
     title: post.frontmatter.title,
     excerpt: post.frontmatter.excerpt,
     url: post.url,
     hideDomain: props.hideDomain,
     isExternal: false,
-    author: getAuthorName(post.frontmatter.author),
+    author: getAuthorName(post.frontmatter.author || ""),
     date: formatDate(post.frontmatter.date),
     image: post.frontmatter.banner,
     category: post.frontmatter.category,

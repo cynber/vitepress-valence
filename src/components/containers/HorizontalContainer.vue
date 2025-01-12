@@ -4,6 +4,10 @@
   </div>
 </template>
 
+<script setup lang="ts">
+
+</script>
+
 <style scoped>
 .cards-container {
   display: flex;

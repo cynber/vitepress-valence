@@ -4,37 +4,28 @@
   </div>
 </template>
 
-<script>
-export default {
-  name: "NumberCell",
-  props: {
-    value: {
-      type: Number,
-      required: true,
-    },
-    decimals: {
-      type: Number,
-      default: 2,
-    },
-    formatter: {
-      type: Function,
-      default: null,
-    },
-  },
-  computed: {
-    formattedValue() {
-      if (this.formatter && typeof this.formatter === "function") {
-        return this.formatter(this.value);
-      }
-      const hasFractionalPart = this.value % 1 !== 0;
-      const fractionDigits = hasFractionalPart ? this.decimals : 0;
-      return this.value.toLocaleString(undefined, {
-        minimumFractionDigits: fractionDigits,
-        maximumFractionDigits: fractionDigits,
-      });
-    },
-  },
-};
+<script setup lang="ts">
+import { defineProps, computed } from "vue";
+
+interface NumberCellProps {
+  value: number;
+  decimals?: number;
+  formatter?: (value: number) => string;
+}
+
+const props = defineProps<NumberCellProps>();
+
+const formattedValue = computed(() => {
+  if (props.formatter && typeof props.formatter === "function") {
+    return props.formatter(props.value);
+  }
+  const hasFractionalPart = props.value % 1 !== 0;
+  const fractionDigits = hasFractionalPart ? props.decimals ?? 2 : 0;
+  return props.value.toLocaleString(undefined, {
+    minimumFractionDigits: fractionDigits,
+    maximumFractionDigits: fractionDigits,
+  });
+});
 </script>
 
 <style scoped>

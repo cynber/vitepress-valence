@@ -22,105 +22,51 @@
     >
       {{ linkText }}
     </a>
-    <!-- Display nothing if the link is invalid or null -->
   </div>
 </template>
 
-<script>
+<script setup lang="ts">
+import { defineProps, computed } from "vue";
 import { Icon } from "@iconify/vue";
 
-export default {
-  name: "LinkCell",
-  components: { Icon },
-  props: {
-    value: {
-      type: String,
-      default: null,
-    },
-    internalIcon: {
-      type: String,
-      default: "material-symbols:link-rounded",
-    },
-    externalIcon: {
-      type: String,
-      default: "majesticons:open",
-    },
-    internalText: {
-      type: String,
-      default: "Open Page",
-    },
-    externalText: {
-      type: String,
-      default: "Open Link",
-    },
-    displayInternalAs: {
-      type: String,
-      default: "icon",
-      validator(value) {
-        return ["icon", "text"].includes(value);
-      },
-    },
-    displayExternalAs: {
-      type: String,
-      default: "icon",
-      validator(value) {
-        return ["icon", "text"].includes(value);
-      },
-    },
-    width: {
-      type: String,
-      default: "1.5em",
-    },
-    height: {
-      type: String,
-      default: "1.5em",
-    },
-    iconColorMap: {
-      type: Object,
-      default: () => ({
-        internal: "var(--vp-c-brand)",
-        external: "var(--vp-c-orange)",
-      }),
-    },
-    defaultIconColor: {
-      type: String,
-      default: "var(--vp-c-brand)",
-    },
-  },
-  computed: {
-    isInternal() {
-      return this.value && this.value.startsWith("/");
-    },
-    isValidLink() {
-      if (!this.value) return false;
-      // Optionally, add more sophisticated URL validation here
-      return true;
-    },
-    href() {
-      return this.value;
-    },
-    icon() {
-      return this.isInternal ? this.internalIcon : this.externalIcon;
-    },
-    iconColor() {
-      return this.isInternal
-        ? this.iconColorMap.internal || this.defaultIconColor
-        : this.iconColorMap.external || this.defaultIconColor;
-    },
-    displayAs() {
-      return this.isInternal ? this.displayInternalAs : this.displayExternalAs;
-    },
-    linkText() {
-      return this.isInternal ? this.internalText : this.externalText;
-    },
-    computedWidth() {
-      return this.width;
-    },
-    computedHeight() {
-      return this.height;
-    },
-  },
-};
+interface LinkCellProps {
+  value?: string;
+  internalIcon?: string;
+  externalIcon?: string;
+  internalText?: string;
+  externalText?: string;
+  displayInternalAs?: "icon" | "text";
+  displayExternalAs?: "icon" | "text";
+  width?: string;
+  height?: string;
+  iconColorMap?: Record<string, string>;
+  defaultIconColor?: string;
+}
+
+const props = defineProps<LinkCellProps>();
+
+const isInternal = computed(() => props.value?.startsWith("/") || false);
+const isValidLink = computed(() => !!props.value);
+const href = computed(() => props.value);
+
+const icon = computed(() =>
+  isInternal.value
+    ? props.internalIcon || "material-symbols:link-rounded"
+    : props.externalIcon || "majesticons:open"
+);
+const iconColor = computed(() =>
+  isInternal.value
+    ? props.iconColorMap?.internal || props.defaultIconColor || "var(--vp-c-brand)"
+    : props.iconColorMap?.external || props.defaultIconColor || "var(--vp-c-orange)"
+);
+const displayAs = computed(() =>
+  isInternal.value ? props.displayInternalAs || "icon" : props.displayExternalAs || "icon"
+);
+const linkText = computed(() =>
+  isInternal.value ? props.internalText || "Open Page" : props.externalText || "Open Link"
+);
+const computedWidth = computed(() => props.width || "1.5em");
+const computedHeight = computed(() => props.height || "1.5em");
 </script>
 
 <style scoped>

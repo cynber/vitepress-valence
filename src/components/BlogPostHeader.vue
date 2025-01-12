@@ -10,11 +10,11 @@
       class="banner-image"
     />
     <div class="post-info">
-      <div v-if="!props.hideAuthor && author.name" class="author-section">
-        <img :src="author.avatar" alt="Author's Avatar" class="author-avatar" />
+      <div v-if="!props.hideAuthor && author.value.name" class="author-section">
+        <img :src="author.value.avatar" alt="Author's Avatar" class="author-avatar" />
         <div class="author-details">
-          <a :href="author.url" class="author-name">{{ author.name }}</a>
-          <p class="author-description">{{ author.description }}</p>
+          <a :href="author.value.url" class="author-name">{{ author.value.name }}</a>
+          <p class="author-description">{{ author.value.description }}</p>
         </div>
       </div>
       <div class="meta-data">
@@ -35,49 +35,50 @@
   </header>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { ref, inject } from "vue";
 import { useData } from "vitepress";
 
-const props = defineProps({
-  returnLink: {
-    type: String,
-    default: "/",
-  },
-  returnText: {
-    type: String,
-    default: "Back Home",
-  },
-  hideTitle: {
-    type: Boolean,
-    default: false,
-  },
-  hideDate: {
-    type: Boolean,
-    default: false,
-  },
-  hideAuthor: {
-    type: Boolean,
-    default: false,
-  },
-  hideCategory: {
-    type: Boolean,
-    default: false,
-  },
-  hideBanner: {
-    type: Boolean,
-    default: false,
-  },
-});
+interface Props {
+  returnLink?: string;
+  returnText?: string;
+  hideTitle?: boolean;
+  hideDate?: boolean;
+  hideAuthor?: boolean;
+  hideCategory?: boolean;
+  hideBanner?: boolean;
+}
 
-const authors = inject("authors") || {};
+interface Frontmatter {
+  title: string;
+  banner?: string;
+  date?: string;
+  category?: string;
+  author?: string;
+  returnLinkValue?: string;
+  returnTextValue?: string;
+}
+
+interface Author {
+  name: string;
+  avatar?: string;
+  url?: string;
+  description?: string;
+}
+
+const props = defineProps<Props>();
+
+const authors = inject<Record<string, Author>>("authors") || {};
 
 const { page } = useData();
-const frontmatter = page.value.frontmatter;
-const author = ref(authors[frontmatter.author] || {});
-const returnLinkValue = ref(props.returnLink || frontmatter.returnLinkValue || "/");
-const returnTextValue = ref(
-  "← " + props.returnText || frontmatter.returnTextValue || "← Back Home"
+const frontmatter = page.value.frontmatter as Frontmatter;
+const author = ref<Author>(authors[frontmatter.author || ""] || { name: "" });
+
+const returnLinkValue = ref<string>(
+  props.returnLink || frontmatter.returnLinkValue || "/"
+);
+const returnTextValue = ref<string>(
+  "← " + (props.returnText || frontmatter.returnTextValue || "Back Home")
 );
 </script>
 

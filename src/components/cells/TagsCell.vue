@@ -11,24 +11,19 @@
   </div>
 </template>
 
-<script>
-export default {
-  name: "TagsCell",
-  props: {
-    value: {
-      type: Array,
-      default: () => [],
-    },
-    tagColors: {
-      type: Object,
-      default: () => ({}),
-    },
-    defaultTagColor: {
-      type: String,
-      default: "var(--vp-c-brand-soft)",
-    },
-  },
-};
+<script setup lang="ts">
+import { defineProps } from "vue";
+
+interface TagsCellProps {
+  value: string[];
+  tagColors?: Record<string, string>;
+  defaultTagColor?: string;
+}
+
+const props = defineProps<TagsCellProps>();
+
+const defaultTagColor = props.defaultTagColor || "var(--vp-c-brand-soft)";
+const tagColors = props.tagColors || {};
 </script>
 
 <style scoped>

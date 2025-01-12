@@ -2,11 +2,12 @@
   <span>{{ value }}</span>
 </template>
 
-<script>
-export default {
-  name: "TextCell",
-  props: {
-    value: [String, Number, null],
-  },
-};
+<script setup lang="ts">
+import { defineProps } from "vue";
+
+interface TextCellProps {
+  value: string | number | null;
+}
+
+const props = defineProps<TextCellProps>();
 </script>
