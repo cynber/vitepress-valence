@@ -6,6 +6,7 @@ export { default as VerticalCard } from './cards/VerticalCard.vue'
 export { default as HorizontalContainer } from './containers/HorizontalContainer.vue'
 export { default as VerticalContainer } from './containers/VerticalContainer.vue'
 export { default as ImageGallery } from './ImageGallery.vue'
+export { default as ImageCardSquare } from './cards/ImageCardSquare.vue'
 
 // deprecated
 export { default as BlogPostsVertical } from './BlogPostsVertical.vue'

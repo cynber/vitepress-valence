@@ -1,7 +1,7 @@
 <template>
   <div class="image-gallery-container">
     <div v-if="format === 'debug'">
-      <pre>{{ JSON.stringify(galleryData, null, 2) }}</pre>
+      <pre>{{ galleryData }}</pre>
     </div>
 
     <component :is="containerComponent" class="gallery-container">
@@ -9,7 +9,16 @@
         <span class="gallery-title">{{ title }}</span>
         <span class="gallery-date">{{ formattedDate }}</span>
       </div>
-      <slot></slot>
+      <div v-if="sortedImageUrls.length === 0" class="no-images">
+        No images found for this gallery.
+      </div>
+      <div class="image-grid" v-else>
+        <ImageCardSquare
+          v-for="(img, index) in sortedImageUrls"
+          :key="index"
+          :image="img"
+        />
+      </div>
     </component>
   </div>
 </template>
@@ -17,12 +26,12 @@
 <script setup lang="ts">
 import { defineProps, computed } from "vue";
 import VerticalContainer from "./containers/VerticalContainer.vue";
+import ImageCardSquare from "./cards/ImageCardSquare.vue";
 
 interface ImageGalleryProps {
   title: string;
   date: string;
   inputImages?: string[];
-  inputFolders?: string[];
   forceSort?: string[];
   excludeExtensions?: string[];
   includeExtensions?: string[];
@@ -49,11 +58,45 @@ const containerComponent = computed(() => {
 
 const galleryData = {
   inputImages: props.inputImages || [],
-  inputFolders: props.inputFolders || [],
   forceSort: props.forceSort || [],
   excludeExtensions: props.excludeExtensions || [],
   includeExtensions: props.includeExtensions || [],
 };
+
+const combinedImages = computed(() => {
+  let combined = [...(props.inputImages || [])];
+
+  if (props.excludeExtensions && props.excludeExtensions.length > 0) {
+    combined = combined.filter((img) => {
+      const ext = img.split(".").pop()?.toLowerCase();
+      return ext && !props.excludeExtensions!.includes(ext);
+    });
+  }
+
+  if (props.includeExtensions && props.includeExtensions.length > 0) {
+    combined = combined.filter((img) => {
+      const ext = img.split(".").pop()?.toLowerCase();
+      return ext && props.includeExtensions!.includes(ext);
+    });
+  }
+
+  return combined;
+});
+
+const sortedImageUrls = computed(() => {
+  if (props.forceSort && props.forceSort.length > 0) {
+    const sorted = [...props.forceSort];
+    combinedImages.value.forEach((img) => {
+      if (!sorted.includes(img)) {
+        sorted.push(img);
+      }
+    });
+    return sorted;
+  } else {
+    // Default sort: alphabetical
+    return [...combinedImages.value].sort();
+  }
+});
 </script>
 
 <style scoped>
@@ -84,7 +127,6 @@ const galleryData = {
 }
 
 .gallery-title {
-  font-size: 1rem;
   font-weight: 500;
   flex: 1;
   margin-right: 1rem;
@@ -109,5 +151,18 @@ const galleryData = {
 
 .image-gallery-container:hover .gallery-date {
   color: var(--vp-c-text-2);
+}
+
+.image-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: 1rem;
+}
+
+.no-images {
+  text-align: center;
+  color: var(--vp-c-text-3);
+  padding: 2rem;
+  font-size: 1.2rem;
 }
 </style>
