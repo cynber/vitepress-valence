@@ -2,6 +2,7 @@
 dist-ssr
 *.local
 types
+.vscode
 
 # Template below from https://github.com/github/gitignore/blob/main/Node.gitignore
 # Logs
