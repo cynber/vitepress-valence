@@ -19,6 +19,7 @@
 
 <script setup lang="ts">
 import { inject, computed } from "vue";
+import { formatDate } from '@/utils/MyUtils';
 import HorizontalCard from "./cards/HorizontalCard.vue";
 import VerticalCard from "./cards/VerticalCard.vue";
 import HorizontalContainer from "./containers/HorizontalContainer.vue";
@@ -163,13 +164,13 @@ const displayedPosts = computed(() => {
 });
 
 // Utility functions
-function formatDate(date: string | Date): string {
-  return new Date(date).toLocaleDateString(undefined, {
-    year: "numeric",
-    month: "long",
-    day: "numeric",
-  });
-}
+// function formatDate(date: string | Date): string {
+//   return new Date(date).toLocaleDateString(undefined, {
+//     year: "numeric",
+//     month: "long",
+//     day: "numeric",
+//   });
+// }
 
 function getAuthorName(authorKey: string): string {
   const author = authors[authorKey];
