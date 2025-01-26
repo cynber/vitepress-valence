@@ -15,3 +15,46 @@ Get even more out of VitePress with **VitePress Valence**, a comprehensive suite
 
 ## Guides, Demo, and Documentation:
 ### [cynber.dev/projects/vitepress-valence](https://cynber.dev/projects/vitepress-valence/)
+
+## Development
+
+**In this repository:**
+
+Install dependencies:
+
+```bash
+pnpm install
+```
+
+Link the package locally:
+
+```bash
+pnpm link --global
+```
+
+**In your VitePress project:**
+
+Link the package:
+
+```bash
+pnpm link --global @cynber/vitepress-valence
+```
+
+### Rebuid on changes
+
+**In this repository:**
+
+```bash
+pnpm build
+```
+
+**In your VitePress project:**
+
+You may need to wipe the cache and restart the dev server in your VitePress project to see changes.
+
+For example:
+
+```bash
+rm -rf docs/.vitepress/cache
+pnpm docs:dev
+```
