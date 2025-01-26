@@ -1,13 +1,25 @@
-export { default as JSONTable } from './JSONTable.vue'
-export { default as BlogPostHeader } from './BlogPostHeader.vue'
-export { default as BlogPostList } from './BlogPostList.vue'
+// Card Components
 export { default as HorizontalCard } from './cards/HorizontalCard.vue'
 export { default as VerticalCard } from './cards/VerticalCard.vue'
 export { default as HorizontalContainer } from './containers/HorizontalContainer.vue'
 export { default as VerticalContainer } from './containers/VerticalContainer.vue'
+
+// Blog/Announcement Components
+export { default as BlogPostHeader } from './BlogPostHeader.vue'
+export { default as BlogPostList } from './BlogPostList.vue'
+
+// JSON Table Components
+export { default as JSONTable } from './JSONTable.vue'
+
+// Image Components
 export { default as ImageGallery } from './ImageGallery.vue'
 export { default as ImageCardSquare } from './cards/ImageCardSquare.vue'
 
-// deprecated
+// Social Embed Components
+export { default as EmbedLemmy } from './EmbedLemmy.vue'
+
+/*
+    Components that are deprecated and will be removed in the future
+*/
 export { default as BlogPostsVertical } from './BlogPostsVertical.vue'
 export { default as BlogPostsHorizontal } from './BlogPostsHorizontal.vue'
