@@ -17,6 +17,7 @@ export { default as ImageCardSquare } from './cards/ImageCardSquare.vue'
 
 // Social Embed Components
 export { default as EmbedLemmy } from './EmbedLemmy.vue'
+export { default as EmbedMailchimpSubscribe } from './EmbedMailchimpSubscribe.vue'
 
 /*
     Components that are deprecated and will be removed in the future
