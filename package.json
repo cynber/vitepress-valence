@@ -1,18 +1,14 @@
 {
   "name": "@cynber/vitepress-valence",
-  "version": "0.1.3",
+  "version": "0.1.6",
   "description": "Get even more out of VitePress with VitePress Valence, a comprehensive suite of components that add additional functionality, style, and customization to your VitePress projects.",
   "keywords": [
-    "vitepress",
-    "components",
-    "vue",
-    "vite",
-    "JSON",
-    "table",
-    "blog",
-    "announcements",
-    "news",
-    "cards"
+    "vitepress", "components", "vue", "vite", "typescript",
+    "JSON", "table",
+    "blog", "announcements", "news",
+    "cards", "containers",
+    "gallery", "images", "media",
+    "social media", "embeds", "Lemmy", "Mailchimp"
   ],
   "homepage": "https://cynber.dev/projects/vitepress-valence/",
   "bugs": {
