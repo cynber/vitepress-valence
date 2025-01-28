@@ -47,6 +47,7 @@ interface Props {
   hideAuthor?: boolean;
   hideCategory?: boolean;
   hideBanner?: boolean;
+  authorsDataKey?: string;
 }
 
 interface Frontmatter {
@@ -67,8 +68,8 @@ interface Author {
 }
 
 const props = defineProps<Props>();
-
-const authors = inject<Record<string, Author>>("authors") || {};
+const authorsInjectKey = props.authorsDataKey || "authors";
+const authors = inject<Record<string, Author>>(authorsInjectKey) || {};
 
 const { page } = useData();
 const frontmatter = page.value.frontmatter as Frontmatter;

@@ -109,7 +109,9 @@
     </div>
     <div v-else class="error-message-container">
       <div class="error-message">
-        <a :href="props.url" target="_blank">This post</a> could not be loaded. It may have been deleted or removed.
+        This post could not be loaded. <br />
+        It may have been deleted or removed. <br /><br />
+        You can try viewing it <a :href="props.url" target="_blank">here</a>.
       </div>
     </div>
   </div>

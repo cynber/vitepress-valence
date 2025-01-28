@@ -68,12 +68,14 @@ interface BlogPostListProps {
   disableLinks?: boolean;
   titleLines?: number;
   excerptLines?: number;
+  postsDataKey?: string;
+  authorsDataKey?: string;
 }
 
 const props = defineProps<BlogPostListProps>();
 
-const injectedPostsData = inject<Post[]>("postsData", []);
-const authors = inject<Record<string, Author>>("authors", {});
+const injectedPostsData = inject<Post[]>(props.postsDataKey || 'postsData', []);
+const authors = inject<Record<string, Author>>(props.authorsDataKey || 'authors', {});
 
 const posts = computed(() => props.posts || injectedPostsData);
 
