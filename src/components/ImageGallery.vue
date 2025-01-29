@@ -88,19 +88,28 @@ const containerComponent = computed(() => {
 });
 
 const filteredImages = computed(() => {
-  return galleryData.filter(image => {
-    // Filter by folders if specified
-    if (props.folders?.length && !props.folders.includes(image.folder)) return false;
-    
-    // Filter by specific images if specified
-    if (props.images?.length && !props.images.includes(image.path)) return false;
+  // If neither folders nor images are specified, return all images
+  if (!props.folders?.length && !props.images?.length) {
+    return galleryData.filter(image => {
+      // Only apply extension filters
+      const ext = image.filename.split('.').pop()?.toLowerCase();
+      if (props.excludeExtensions?.length && ext && props.excludeExtensions.includes(ext)) return false;
+      if (props.includeExtensions?.length && ext && !props.includeExtensions.includes(ext)) return false;
+      return true;
+    });
+  }
 
-    // Extension filters
+  return galleryData.filter(image => {
+    // Check extensions first
     const ext = image.filename.split('.').pop()?.toLowerCase();
     if (props.excludeExtensions?.length && ext && props.excludeExtensions.includes(ext)) return false;
     if (props.includeExtensions?.length && ext && !props.includeExtensions.includes(ext)) return false;
 
-    return true;
+    // Include image if it's in specified folders OR it's in specified images
+    const inFolder = props.folders?.includes(image.folder) || false;
+    const inImages = props.images?.includes(image.path) || false;
+    
+    return inFolder || inImages;
   });
 });
 
