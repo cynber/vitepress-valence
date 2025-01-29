@@ -12,7 +12,7 @@
       <div v-if="sortedImageUrls.length === 0" class="no-images">
         No images found for this gallery.
       </div>
-      <div class="image-grid" v-else>
+      <div class="image-grid" :id="galleryId" v-else>
         <ImageCardSquare
           v-for="(img, index) in sortedImageUrls"
           :key="index"
@@ -24,7 +24,9 @@
 </template>
 
 <script setup lang="ts">
-import { inject, computed } from "vue";
+import { inject, computed, onMounted, onUnmounted, ref } from "vue";
+import PhotoSwipeLightbox from 'photoswipe/lightbox';
+import 'photoswipe/style.css';
 import VerticalContainer from "./containers/VerticalContainer.vue";
 import ImageCardSquare from "./cards/ImageCardSquare.vue";
 
@@ -45,6 +47,25 @@ interface ImageGalleryProps {
   galleryDataKey?: string;
   forceSort?: string[];
 }
+
+const galleryId = ref(`gallery-${Math.random().toString(36).substr(2, 9)}`);
+let lightbox: any = null;
+
+onMounted(() => {
+  lightbox = new PhotoSwipeLightbox({
+    gallery: `#${galleryId.value}`,
+    children: 'a',
+    pswpModule: () => import('photoswipe')
+  });
+  lightbox.init();
+});
+
+onUnmounted(() => {
+  if (lightbox) {
+    lightbox.destroy();
+    lightbox = null;
+  }
+});
 
 const props = defineProps<ImageGalleryProps>();
 
