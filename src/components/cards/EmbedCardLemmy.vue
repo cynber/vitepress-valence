@@ -405,62 +405,15 @@ onMounted(() => {
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
-  margin-bottom: 0.25rem;
+  margin-bottom: 0.5rem;
   position: relative;
-}
-
-.lemmy-icon-container {
-  position: absolute;
-  top: 0;
-  right: 0;
-  display: flex;
-  gap: 8px;
-}
-
-.lemmy-header-icon {
-  color: rgba(0, 168, 70, 0.8);
-  /* transition: color 0.2s ease-in-out; */
-}
-
-.lemmy-header-icon:hover {
-  color: rgba(0, 168, 70, 1);
-}
-
-.dark .lemmy-header-icon {
-  color: rgba(173, 181, 189, 0.8);
-}
-
-.dark .lemmy-header-icon:hover {
-  color: #dee2e6;
-}
-
-.lemmy-header-icon-link {
-  padding: 0.5rem;
-  border-radius: 8px;
-  border: 1px solid transparent;
-}
-
-.dark .lemmy-header-icon-link {
-  border: 1px solid transparent;
-}
-
-.lemmy-header-icon-link:hover {
-  background-color: #f8f9fa;
-  border: 1px solid #d2d3d4;
-  color: #d2d3d4;
-}
-
-.dark .lemmy-header-icon-link:hover {
-  background-color: #303030;
-  border: 1px solid #4f4f4f;
-  color: #4f4f4f;
 }
 
 .lemmy-card-user-community {
   display: flex;
   align-items: center;
   flex-wrap: wrap;
-  padding: 0.5rem;
+  padding: 0.5rem 0;
   border-radius: 8px;
   border: 1px solid transparent;
 }
@@ -547,6 +500,53 @@ onMounted(() => {
 .lemmy-user-link:hover .lemmy-username,
 .lemmy-community-link:hover .lemmy-community-name {
   text-decoration: underline;
+}
+
+.lemmy-icon-container {
+  position: absolute;
+  top: 0;
+  right: 0;
+  display: flex;
+  gap: 8px;
+}
+
+.lemmy-header-icon-link {
+  padding: 0.5rem;
+  border-radius: 8px;
+  border: 1px solid transparent;
+}
+
+.dark .lemmy-header-icon-link {
+  border: 1px solid transparent;
+}
+
+.lemmy-header-icon-link:hover {
+  background-color: #f8f9fa;
+  border: 1px solid #d2d3d4;
+  color: #d2d3d4;
+}
+
+.dark .lemmy-header-icon-link:hover {
+  background-color: #303030;
+  border: 1px solid #4f4f4f;
+  color: #4f4f4f;
+}
+
+.lemmy-header-icon {
+  color: rgba(0, 168, 70, 0.8);
+  /* transition: color 0.2s ease-in-out; */
+}
+
+.dark .lemmy-header-icon {
+  color: rgba(173, 181, 189, 0.8);
+}
+
+.lemmy-header-icon-link:hover .lemmy-header-icon {
+  color: rgba(0, 168, 70, 1);
+}
+
+.dark .lemmy-header-icon-link:hover .lemmy-header-icon {
+  color: #dee2e6;
 }
 
 .lemmy-card-content {
