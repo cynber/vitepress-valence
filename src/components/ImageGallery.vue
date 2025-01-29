@@ -24,30 +24,40 @@
 </template>
 
 <script setup lang="ts">
-import { defineProps, computed } from "vue";
+import { inject, computed } from "vue";
 import VerticalContainer from "./containers/VerticalContainer.vue";
 import ImageCardSquare from "./cards/ImageCardSquare.vue";
+
+interface GalleryImage {
+  path: string;
+  folder: string;
+  filename: string;
+}
 
 interface ImageGalleryProps {
   title: string;
   date: string;
-  inputImages?: string[];
-  forceSort?: string[];
+  folders?: string[];
+  images?: string[];
   excludeExtensions?: string[];
   includeExtensions?: string[];
   format?: "debug";
+  galleryDataKey?: string;
+  forceSort?: string[];
 }
 
 const props = defineProps<ImageGalleryProps>();
 
+const galleryData = inject<GalleryImage[]>(props.galleryDataKey || 'galleryData', []);
+
 const formattedDate = computed(() => {
   const options: Intl.DateTimeFormatOptions = {
     year: "numeric",
-    month: "long",
-    day: "numeric",
+    month: "long", 
+    day: "numeric"
   };
   const dateObj = new Date(props.date);
-  return isNaN(dateObj.getTime())
+  return isNaN(dateObj.getTime()) 
     ? props.date
     : dateObj.toLocaleDateString(undefined, options);
 });
@@ -56,46 +66,35 @@ const containerComponent = computed(() => {
   return VerticalContainer;
 });
 
-const galleryData = {
-  inputImages: props.inputImages || [],
-  forceSort: props.forceSort || [],
-  excludeExtensions: props.excludeExtensions || [],
-  includeExtensions: props.includeExtensions || [],
-};
+const filteredImages = computed(() => {
+  return galleryData.filter(image => {
+    // Filter by folders if specified
+    if (props.folders?.length && !props.folders.includes(image.folder)) return false;
+    
+    // Filter by specific images if specified
+    if (props.images?.length && !props.images.includes(image.path)) return false;
 
-const combinedImages = computed(() => {
-  let combined = [...(props.inputImages || [])];
+    // Extension filters
+    const ext = image.filename.split('.').pop()?.toLowerCase();
+    if (props.excludeExtensions?.length && ext && props.excludeExtensions.includes(ext)) return false;
+    if (props.includeExtensions?.length && ext && !props.includeExtensions.includes(ext)) return false;
 
-  if (props.excludeExtensions && props.excludeExtensions.length > 0) {
-    combined = combined.filter((img) => {
-      const ext = img.split(".").pop()?.toLowerCase();
-      return ext && !props.excludeExtensions!.includes(ext);
-    });
-  }
-
-  if (props.includeExtensions && props.includeExtensions.length > 0) {
-    combined = combined.filter((img) => {
-      const ext = img.split(".").pop()?.toLowerCase();
-      return ext && props.includeExtensions!.includes(ext);
-    });
-  }
-
-  return combined;
+    return true;
+  });
 });
 
 const sortedImageUrls = computed(() => {
   if (props.forceSort && props.forceSort.length > 0) {
     const sorted = [...props.forceSort];
-    combinedImages.value.forEach((img) => {
-      if (!sorted.includes(img)) {
-        sorted.push(img);
+    filteredImages.value.forEach(img => {
+      if (!sorted.includes(img.path)) {
+        sorted.push(img.path);
       }
     });
     return sorted;
-  } else {
-    // Default sort: alphabetical
-    return [...combinedImages.value].sort();
   }
+  
+  return filteredImages.value.map(img => img.path).sort();
 });
 </script>
 
