@@ -10,6 +10,7 @@
               v-if="!hideUser"
               @click.stop
               :href="userLink"
+              title="User profile"
               class="lemmy-user-link"
               target="_blank"
             >
@@ -29,6 +30,7 @@
               v-if="!hideCommunity"
               @click.stop
               :href="communityLink"
+              title="Community"
               class="lemmy-community-link"
               target="_blank"
             >
@@ -37,10 +39,10 @@
           </div>
         </div>
         <div class="lemmy-icon-container">
-          <a :href="props.url" target="_blank" title="View post on Lemmy">
+          <a :href="props.url" target="_blank" title="View post on Lemmy" class="lemmy-header-icon-link">
             <Icon icon="bi:link-45deg" class="lemmy-header-icon" width="24" height="24" />
           </a>
-          <a :href="linkedInstanceURL" target="_blank">
+          <a :href="linkedInstanceURL" target="_blank" title="Instance"  class="lemmy-header-icon-link">
             <Icon
               icon="simple-icons:lemmy"
               class="lemmy-header-icon"
@@ -53,7 +55,7 @@
 
       <!-- Title and Description -->
       <div class="lemmy-card-content">
-        <h3 v-if="!hideTitle" class="lemmy-card-title" :style="titleLineClampStyle">
+        <h3 v-if="!hideTitle" class="lemmy-card-title" :style="titleLineClampStyle" @click="navigateToPost" title="View post on Lemmy">
           {{ title }}
         </h3>
         <div
@@ -374,7 +376,7 @@ onMounted(() => {
   max-width: 400px;
   box-sizing: border-box;
   box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
-  transition: box-shadow 0.3s ease-in-out;
+  /* transition: box-shadow 0.3s ease-in-out; */
   font-family: "Lato", sans-serif;
 }
 
@@ -384,19 +386,26 @@ onMounted(() => {
   color: #dee2e6; /* darkly $body-color */
 }
 
-.lemmy-card:hover {
+/* .lemmy-card:hover {
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
 }
 
 .dark .lemmy-card:hover {
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.5);
+} */
+
+.lemmy-card-title:hover,
+.lemmy-card-image:hover,
+.lemmy-score:hover,
+.lemmy-comments:hover {
+  cursor: pointer;
 }
 
 .lemmy-card-header {
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
-  margin-bottom: 0.75rem;
+  margin-bottom: 0.25rem;
   position: relative;
 }
 
@@ -410,7 +419,7 @@ onMounted(() => {
 
 .lemmy-header-icon {
   color: rgba(0, 168, 70, 0.8);
-  transition: color 0.2s ease-in-out;
+  /* transition: color 0.2s ease-in-out; */
 }
 
 .lemmy-header-icon:hover {
@@ -422,20 +431,56 @@ onMounted(() => {
 }
 
 .dark .lemmy-header-icon:hover {
-  color: rgba(173, 181, 189, 1);
+  color: #dee2e6;
+}
+
+.lemmy-header-icon-link {
+  padding: 0.5rem;
+  border-radius: 8px;
+  border: 1px solid transparent;
+}
+
+.dark .lemmy-header-icon-link {
+  border: 1px solid transparent;
+}
+
+.lemmy-header-icon-link:hover {
+  background-color: #f8f9fa;
+  border: 1px solid #d2d3d4;
+  color: #d2d3d4;
+}
+
+.dark .lemmy-header-icon-link:hover {
+  background-color: #303030;
+  border: 1px solid #4f4f4f;
+  color: #4f4f4f;
 }
 
 .lemmy-card-user-community {
   display: flex;
   align-items: center;
   flex-wrap: wrap;
+  padding: 0.5rem;
+  border-radius: 8px;
+  border: 1px solid transparent;
 }
+
+/* .lemmy-card-user-community:hover {
+  background-color: #f8f9fa;
+  border: 1px solid #d2d3d4;
+}
+
+.dark .lemmy-card-user-community:hover {
+  background-color: #303030;
+  border: 1px solid #4f4f4f;
+} */
 
 .lemmy-user-info {
   display: flex;
   align-items: center;
   gap: 0.5rem;
   flex-wrap: wrap;
+  overflow: hidden;
 }
 
 .lemmy-user-icon {
@@ -468,6 +513,7 @@ onMounted(() => {
   overflow: hidden;
   text-overflow: ellipsis;
   font-size: 0.8rem;
+  flex-shrink: 0;
 }
 
 .dark .lemmy-username {
@@ -491,6 +537,7 @@ onMounted(() => {
   overflow: hidden;
   text-overflow: ellipsis;
   font-size: 0.8rem;
+  flex-shrink: 0;
 }
 
 .dark .lemmy-community-name {
@@ -502,21 +549,6 @@ onMounted(() => {
   text-decoration: underline;
 }
 
-.lemmy-card-image {
-  margin-bottom: 0.75rem;
-  max-height: 200px;
-  overflow: hidden;
-  border-radius: 8px;
-  cursor: pointer;
-  position: relative;
-}
-
-.lemmy-card-image img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-
 .lemmy-card-content {
   flex: 1;
   /* margin-bottom: 0.75rem; */
@@ -524,6 +556,7 @@ onMounted(() => {
 
 .lemmy-card-title {
   font-size: 1.25rem;
+  margin: 0 1px;
   margin: 0 0 0.5rem 0;
   display: -webkit-box;
   -webkit-line-clamp: 2;
@@ -533,11 +566,32 @@ onMounted(() => {
   text-overflow: ellipsis;
 }
 
-.lemmy-card-title:hover,
-.lemmy-card-image:hover,
-.lemmy-score:hover,
-.lemmy-comments:hover {
+.lemmy-card-title:hover {
+  text-decoration: underline;
+}
+
+.lemmy-card-image {
+  margin-bottom: 0.75rem;
+  max-height: 200px;
+  overflow: hidden;
+  border-radius: 8px;
+  border: 1px solid transparent;
   cursor: pointer;
+  position: relative;
+}
+
+.lemmy-card-image:hover {
+  border: 1px solid #d2d3d4;
+}
+
+.dark .lemmy-card-image:hover {
+  border: 1px solid #4f4f4f;
+}
+
+.lemmy-card-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
 }
 
 .lemmy-card-description {
@@ -594,7 +648,7 @@ onMounted(() => {
   font-size: 1rem;
   color: #3a3e42;
   background-color: #f8f9fa;
-  /* border: 1px solid #d2d3d4; */
+  border: 1px solid #f8f9fa;
   border-radius: 8px;
   padding: 6px 4px;
   height: 100%;
@@ -604,12 +658,27 @@ onMounted(() => {
 .dark .lemmy-footer-item {
   color: #dee2e6; /* darkly $body-color */
   background-color: #353535; /* darkly $gray-800 */
-  /* border: 1px solid #4f4f4f; */
+  border: 1px solid #353535;
+}
+
+.lemmy-footer-item:hover {
+  border: 1px solid #d2d3d4;
+}
+
+.dark .lemmy-footer-item:hover {
+  border: 1px solid #4f4f4f;
 }
 
 .lemmy-post-date .lemmy-footer-item {
   background-color: transparent;
+  border: 1px solid transparent;
 }
+
+.lemmy-post-date:hover .lemmy-footer-item {
+  border: 1px solid transparent;
+}
+
+
 
 .lemmy-score .lemmy-footer-item,
 .lemmy-comments .lemmy-footer-item,
