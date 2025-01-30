@@ -5,15 +5,7 @@
     </div>
 
     <component :is="containerComponent" class="gallery-container">
-      <div class="top-bar">
-        <div class="title-date-container">
-          <span 
-            class="gallery-title"
-            :style="{ '--max-lines': props.titleLines }"
-          >{{ title }}</span>
-          <span class="gallery-date">{{ formattedDate }}</span>
-        </div>
-      </div>
+      <TitleCard :title="title" :date="date" :title-lines="titleLines" :link="link" />
       <div v-if="sortedImageUrls.length === 0" class="no-images">
         No images found for this gallery.
       </div>
@@ -30,9 +22,10 @@
 
 <script setup lang="ts">
 import { inject, computed, onMounted, onUnmounted, ref, nextTick, watch } from "vue";
-import 'photoswipe/style.css';
+import "photoswipe/style.css";
 import VerticalContainer from "./containers/VerticalContainer.vue";
 import ImageCardSquare from "./cards/ImageCardSquare.vue";
+import TitleCard from "./cards/HeaderCard.vue";
 
 interface GalleryImage {
   path: string;
@@ -44,6 +37,7 @@ interface ImageGalleryProps {
   title: string;
   titleLines?: number;
   date: string;
+  link?: string;
   folders?: string[];
   images?: string[];
   excludeExtensions?: string[];
@@ -65,30 +59,30 @@ const initPhotoSwipe = async () => {
 
   // Wait for next tick to ensure DOM is ready
   await nextTick();
-  
+
   // Dynamically import PhotoSwipe
-  const { default: PhotoSwipeLightbox } = await import('photoswipe/lightbox');
-  
+  const { default: PhotoSwipeLightbox } = await import("photoswipe/lightbox");
+
   // Initialize with a small delay to ensure everything is hydrated
   setTimeout(() => {
     try {
       lightbox = new PhotoSwipeLightbox({
         gallery: `#${galleryId.value}`,
-        children: 'a',
-        pswpModule: () => import('photoswipe')
+        children: "a",
+        pswpModule: () => import("photoswipe"),
       });
       lightbox.init();
     } catch (error) {
-      console.error('PhotoSwipe initialization error:', error);
+      console.error("PhotoSwipe initialization error:", error);
     }
   }, 100);
 };
 
 const props = withDefaults(defineProps<ImageGalleryProps>(), {
-  titleLines: 2
+  titleLines: 2,
 });
 
-const galleryData = inject<GalleryImage[]>(props.galleryDataKey || 'galleryData', []);
+const galleryData = inject<GalleryImage[]>(props.galleryDataKey || "galleryData", []);
 
 onMounted(() => {
   initPhotoSwipe();
@@ -104,11 +98,11 @@ onUnmounted(() => {
 const formattedDate = computed(() => {
   const options: Intl.DateTimeFormatOptions = {
     year: "numeric",
-    month: "long", 
-    day: "numeric"
+    month: "long",
+    day: "numeric",
   };
   const dateObj = new Date(props.date);
-  return isNaN(dateObj.getTime()) 
+  return isNaN(dateObj.getTime())
     ? props.date
     : dateObj.toLocaleDateString(undefined, options);
 });
@@ -120,25 +114,33 @@ const containerComponent = computed(() => {
 const filteredImages = computed(() => {
   // If neither folders nor images are specified, return all images
   if (!props.folders?.length && !props.images?.length) {
-    return galleryData.filter(image => {
+    return galleryData.filter((image) => {
       // Only apply extension filters
-      const ext = image.filename.split('.').pop()?.toLowerCase();
-      if (props.excludeExtensions?.length && ext && props.excludeExtensions.includes(ext)) return false;
-      if (props.includeExtensions?.length && ext && !props.includeExtensions.includes(ext)) return false;
+      const ext = image.filename.split(".").pop()?.toLowerCase();
+      if (props.excludeExtensions?.length && ext && props.excludeExtensions.includes(ext))
+        return false;
+      if (
+        props.includeExtensions?.length &&
+        ext &&
+        !props.includeExtensions.includes(ext)
+      )
+        return false;
       return true;
     });
   }
 
-  return galleryData.filter(image => {
+  return galleryData.filter((image) => {
     // Check extensions first
-    const ext = image.filename.split('.').pop()?.toLowerCase();
-    if (props.excludeExtensions?.length && ext && props.excludeExtensions.includes(ext)) return false;
-    if (props.includeExtensions?.length && ext && !props.includeExtensions.includes(ext)) return false;
+    const ext = image.filename.split(".").pop()?.toLowerCase();
+    if (props.excludeExtensions?.length && ext && props.excludeExtensions.includes(ext))
+      return false;
+    if (props.includeExtensions?.length && ext && !props.includeExtensions.includes(ext))
+      return false;
 
     // Include image if it's in specified folders OR it's in specified images
     const inFolder = props.folders?.includes(image.folder) || false;
     const inImages = props.images?.includes(image.path) || false;
-    
+
     return inFolder || inImages;
   });
 });
@@ -146,15 +148,15 @@ const filteredImages = computed(() => {
 const sortedImageUrls = computed(() => {
   if (props.forceSort && props.forceSort.length > 0) {
     const sorted = [...props.forceSort];
-    filteredImages.value.forEach(img => {
+    filteredImages.value.forEach((img) => {
       if (!sorted.includes(img.path)) {
         sorted.push(img.path);
       }
     });
     return sorted;
   }
-  
-return filteredImages.value.map(img => img.path).sort();
+
+  return filteredImages.value.map((img) => img.path).sort();
 });
 
 // Reinitialize PhotoSwipe when gallery content changes
@@ -174,72 +176,6 @@ watch(sortedImageUrls, () => {
   display: flex;
   flex-direction: column;
   width: 100%;
-}
-
-.top-bar {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  background-color: var(--vp-c-bg);
-  border-radius: 8px;
-  border: 1px solid var(--vp-c-divider);
-  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
-  padding: 8px 16px;
-  margin: -8px -16px 0px -8px;
-  width: calc(100% + 16px);
-  box-sizing: border-box;
-}
-
-.title-date-container {
-  display: flex;
-  flex-direction: column-reverse;
-  width: 100%;
-}
-
-.gallery-title {
-  font-weight: 500;
-  color: var(--vp-c-text-1);
-  transition: color 0.3s ease-in-out;
-  display: -webkit-box;
-  -webkit-line-clamp: var(--max-lines);
-  line-clamp: var(--max-lines);
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-  word-break: break-word;
-}
-
-/* .image-gallery-container:hover .gallery-title {
-  color: var(--vp-c-text-1);
-} */
-
-.gallery-date {
-  font-size: 1rem;
-  font-weight: normal;
-  color: var(--vp-c-text-2);
-  transition: color 0.3s ease-in-out;
-  align-self: flex-end;
-  margin-top: 4px; /* Changed from margin-bottom to margin-top */
-}
-
-/* .image-gallery-container:hover .gallery-date {
-  color: var(--vp-c-text-2);
-} */
-
-@media (min-width: 768px) {
-  .title-date-container {
-    flex-direction: row; /* This stays the same */
-    align-items: center;
-  }
-
-  .gallery-title {
-    flex: 1;
-    margin-right: 1rem;
-  }
-
-  .gallery-date {
-    flex-shrink: 0;
-    margin-top: 0; /* Changed from margin-bottom to margin-top */
-  }
 }
 
 .image-grid {

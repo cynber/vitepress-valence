@@ -369,7 +369,7 @@ onMounted(() => {
   border-radius: 8px;
   border: 1px solid rgba(0, 168, 70, 0.5);
   padding: 1rem;
-  margin: 1rem auto;
+  margin: auto;
   color: #495057; /* litely $body-color */
   display: flex;
   flex-direction: column;
