@@ -6,8 +6,13 @@
 
     <component :is="containerComponent" class="gallery-container">
       <div class="top-bar">
-        <span class="gallery-title">{{ title }}</span>
-        <span class="gallery-date">{{ formattedDate }}</span>
+        <div class="title-date-container">
+          <span 
+            class="gallery-title"
+            :style="{ '--max-lines': props.titleLines }"
+          >{{ title }}</span>
+          <span class="gallery-date">{{ formattedDate }}</span>
+        </div>
       </div>
       <div v-if="sortedImageUrls.length === 0" class="no-images">
         No images found for this gallery.
@@ -37,6 +42,7 @@ interface GalleryImage {
 
 interface ImageGalleryProps {
   title: string;
+  titleLines?: number;
   date: string;
   folders?: string[];
   images?: string[];
@@ -78,7 +84,9 @@ const initPhotoSwipe = async () => {
   }, 100);
 };
 
-const props = defineProps<ImageGalleryProps>();
+const props = withDefaults(defineProps<ImageGalleryProps>(), {
+  titleLines: 2
+});
 
 const galleryData = inject<GalleryImage[]>(props.galleryDataKey || 'galleryData', []);
 
@@ -171,7 +179,7 @@ watch(sortedImageUrls, () => {
 .top-bar {
   display: flex;
   justify-content: space-between;
-  align-items: center;
+  align-items: flex-start;
   background-color: var(--vp-c-bg);
   border-radius: 8px;
   border: 1px solid var(--vp-c-divider);
@@ -182,31 +190,56 @@ watch(sortedImageUrls, () => {
   box-sizing: border-box;
 }
 
-.gallery-title {
-  font-weight: 500;
-  flex: 1;
-  margin-right: 1rem;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  color: var(--vp-c-text-2);
-  transition: color 0.3s ease-in-out;
+.title-date-container {
+  display: flex;
+  flex-direction: column-reverse;
+  width: 100%;
 }
 
-.image-gallery-container:hover .gallery-title {
+.gallery-title {
+  font-weight: 500;
   color: var(--vp-c-text-1);
+  transition: color 0.3s ease-in-out;
+  display: -webkit-box;
+  -webkit-line-clamp: var(--max-lines);
+  line-clamp: var(--max-lines);
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  word-break: break-word;
 }
+
+/* .image-gallery-container:hover .gallery-title {
+  color: var(--vp-c-text-1);
+} */
 
 .gallery-date {
   font-size: 1rem;
   font-weight: normal;
-  flex-shrink: 0;
-  color: var(--vp-c-text-3);
+  color: var(--vp-c-text-2);
   transition: color 0.3s ease-in-out;
+  align-self: flex-end;
+  margin-top: 4px; /* Changed from margin-bottom to margin-top */
 }
 
-.image-gallery-container:hover .gallery-date {
+/* .image-gallery-container:hover .gallery-date {
   color: var(--vp-c-text-2);
+} */
+
+@media (min-width: 768px) {
+  .title-date-container {
+    flex-direction: row; /* This stays the same */
+    align-items: center;
+  }
+
+  .gallery-title {
+    flex: 1;
+    margin-right: 1rem;
+  }
+
+  .gallery-date {
+    flex-shrink: 0;
+    margin-top: 0; /* Changed from margin-bottom to margin-top */
+  }
 }
 
 .image-grid {
