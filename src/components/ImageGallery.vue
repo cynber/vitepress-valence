@@ -24,8 +24,7 @@
 </template>
 
 <script setup lang="ts">
-import { inject, computed, onMounted, onUnmounted, ref } from "vue";
-import PhotoSwipeLightbox from 'photoswipe/lightbox';
+import { inject, computed, onMounted, onUnmounted, ref, nextTick, watch } from "vue";
 import 'photoswipe/style.css';
 import VerticalContainer from "./containers/VerticalContainer.vue";
 import ImageCardSquare from "./cards/ImageCardSquare.vue";
@@ -51,13 +50,40 @@ interface ImageGalleryProps {
 const galleryId = ref(`gallery-${Math.random().toString(36).substr(2, 9)}`);
 let lightbox: any = null;
 
+const initPhotoSwipe = async () => {
+  // Ensure any existing instance is destroyed
+  if (lightbox) {
+    lightbox.destroy();
+    lightbox = null;
+  }
+
+  // Wait for next tick to ensure DOM is ready
+  await nextTick();
+  
+  // Dynamically import PhotoSwipe
+  const { default: PhotoSwipeLightbox } = await import('photoswipe/lightbox');
+  
+  // Initialize with a small delay to ensure everything is hydrated
+  setTimeout(() => {
+    try {
+      lightbox = new PhotoSwipeLightbox({
+        gallery: `#${galleryId.value}`,
+        children: 'a',
+        pswpModule: () => import('photoswipe')
+      });
+      lightbox.init();
+    } catch (error) {
+      console.error('PhotoSwipe initialization error:', error);
+    }
+  }, 100);
+};
+
+const props = defineProps<ImageGalleryProps>();
+
+const galleryData = inject<GalleryImage[]>(props.galleryDataKey || 'galleryData', []);
+
 onMounted(() => {
-  lightbox = new PhotoSwipeLightbox({
-    gallery: `#${galleryId.value}`,
-    children: 'a',
-    pswpModule: () => import('photoswipe')
-  });
-  lightbox.init();
+  initPhotoSwipe();
 });
 
 onUnmounted(() => {
@@ -66,10 +92,6 @@ onUnmounted(() => {
     lightbox = null;
   }
 });
-
-const props = defineProps<ImageGalleryProps>();
-
-const galleryData = inject<GalleryImage[]>(props.galleryDataKey || 'galleryData', []);
 
 const formattedDate = computed(() => {
   const options: Intl.DateTimeFormatOptions = {
@@ -124,7 +146,12 @@ const sortedImageUrls = computed(() => {
     return sorted;
   }
   
-  return filteredImages.value.map(img => img.path).sort();
+return filteredImages.value.map(img => img.path).sort();
+});
+
+// Reinitialize PhotoSwipe when gallery content changes
+watch(sortedImageUrls, () => {
+  initPhotoSwipe();
 });
 </script>
 
