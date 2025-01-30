@@ -4,6 +4,34 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
+<!-- 
+
+Types of changes
+
+    `Added` for new features.
+    `Changed` for changes in existing functionality.
+    `Deprecated` for soon-to-be removed features.
+    `Removed` for now removed features.
+    `Fixed` for any bug fixes.
+    `Security` in case of vulnerabilities.
+
+ -->
+
+## [0.1.9] - 2025-01-30
+
+### Added
+
+- Added HeaderBar component with title, titleLines, Link, and date props, intended for use within other components
+
+### Changed
+
+- Extracted HeaderBar code from ImageGallery component and added it as a standalone component
+- Added support for HeaderBar in Lemmy embed component
+
+### Fixed
+
+- Fixed hydration issue with ImageGallery component which prevented PhotoSwipe from working when page was loaded from a link. It now waits for the page to fully load before initializing PhotoSwipe
+
 ## [0.1.8] - 2025-01-29
 
 ### Added
