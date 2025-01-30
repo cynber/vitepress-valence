@@ -17,6 +17,18 @@ Types of changes
 
  -->
 
+## [0.1.11] - 2025-01-30
+
+### Removed
+
+- Removed attempt to fix BlogPostList component, updating guides to manage this issue through data loader client project side
+
+## [0.1.10] - 2025-01-30
+
+### Fixed
+
+- Testing a fix with BlogPostList component and base path detection when using GitHub Pages
+
 ## [0.1.9] - 2025-01-30
 
 ### Added
