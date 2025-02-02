@@ -3,6 +3,7 @@ export { default as HorizontalCard } from './cards/HorizontalCard.vue'
 export { default as VerticalCard } from './cards/VerticalCard.vue'
 export { default as HorizontalContainer } from './containers/HorizontalContainer.vue'
 export { default as VerticalContainer } from './containers/VerticalContainer.vue'
+export { default as HeaderCard } from './cards/HeaderCard.vue'
 
 // Blog/Announcement Components
 export { default as BlogPostHeader } from './BlogPostHeader.vue'
