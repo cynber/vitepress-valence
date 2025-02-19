@@ -10,6 +10,7 @@
         :date="date"
         :date-format="dateFormat"
         :time="time"
+        :dateTimeDescription="dateTimeDescription"
         :title-lines="titleLines"
         :link="link"
       />
@@ -48,6 +49,7 @@ interface ImageGalleryProps {
   date?: string;
   dateFormat?: 'long' | 'iso';
   time?: string;
+  dateTimeDescription?: string;
   link?: string;
   folders?: string[];
   images?: string[];

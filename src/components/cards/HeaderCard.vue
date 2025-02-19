@@ -8,7 +8,11 @@
       >
         {{ title }}
       </component>
-      <span v-if="formattedDateTime" class="gallery-date">{{ formattedDateTime }}</span>
+      <span
+        v-if="formattedDateTime"
+        class="gallery-date"
+        v-html="formattedDateTime"
+      ></span>
     </div>
   </div>
 </template>
@@ -22,26 +26,27 @@ interface TitleCardProps {
   time?: string;
   titleLines?: number;
   link?: string;
-  dateFormat?: 'long' | 'iso'; // New prop for date format
+  dateFormat?: "long" | "iso";
+  dateTimeDescription?: string;
 }
 
 const props = withDefaults(defineProps<TitleCardProps>(), {
   titleLines: 2,
-  date: '',
-  time: '',
-  dateFormat: 'long',
+  date: "",
+  time: "",
+  dateFormat: "long",
 });
 
 const formattedDateTime = computed(() => {
-  let result = '';
-  
+  let datetime = "";
+
   // Handle date
   if (props.date) {
     const dateObj = new Date(props.date);
     if (!isNaN(dateObj.getTime())) {
-      if (props.dateFormat === 'iso') {
+      if (props.dateFormat === "iso") {
         // ISO format: YYYY-MM-DD
-        result = dateObj.toISOString().split('T')[0];
+        datetime = dateObj.toISOString().split("T")[0];
       } else {
         // Long format: Month DD, YYYY
         const dateOptions: Intl.DateTimeFormatOptions = {
@@ -49,26 +54,30 @@ const formattedDateTime = computed(() => {
           month: "long",
           day: "numeric",
         };
-        result = dateObj.toLocaleDateString(undefined, dateOptions);
+        datetime = dateObj.toLocaleDateString(undefined, dateOptions);
       }
     } else {
-      result = props.date;
+      datetime = props.date;
     }
   }
 
   // Handle time
   if (props.time) {
-    const timeMatch = props.time.match(/^([0-1]?[0-9]|2[0-3]):([0-5][0-9])(?::([0-5][0-9]))?$/);
+    const timeMatch = props.time.match(
+      /^([0-1]?[0-9]|2[0-3]):([0-5][0-9])(?::([0-5][0-9]))?$/
+    );
     if (timeMatch) {
-      const [, hours, minutes, seconds] = timeMatch;
-      const timeStr = seconds 
-        ? `${hours.padStart(2, '0')}:${minutes}:${seconds}`
-        : `${hours.padStart(2, '0')}:${minutes}`;
-      result = result ? `${result}; ${timeStr}` : timeStr;
+      const [, hours, minutes] = timeMatch;
+      const timeStr = `${hours.padStart(2, "0")}:${minutes}`;
+      datetime = datetime ? `${datetime} at ${timeStr}` : timeStr;
     }
   }
 
-  return result;
+  if (props.dateTimeDescription && datetime) {
+    return `${props.dateTimeDescription} ${datetime}`;
+  }
+
+  return datetime;
 });
 </script>
 

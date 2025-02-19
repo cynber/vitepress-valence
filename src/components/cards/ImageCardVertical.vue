@@ -36,7 +36,7 @@ const onImageLoad = (event: Event) => {
   display: flex;
   justify-content: center;
   max-width: 100%;
-  margin: -8px -8px 0px -8px;
+  margin: 0px -16px;
   text-decoration: none;
   border-radius: 8px;
   overflow: hidden;
@@ -45,6 +45,7 @@ const onImageLoad = (event: Event) => {
 
 .vertical-image-card img {
   max-width: 100%;
+  margin: 0px -16px;
   height: auto;
   object-fit: contain;
   display: block;
