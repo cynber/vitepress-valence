@@ -6,13 +6,13 @@
 
     <component :is="containerComponent" class="gallery-container">
       <TitleCard :title="title" :date="date" :title-lines="titleLines" :link="link" />
-      <div v-if="sortedImageUrls.length === 0" class="no-images">
+      <div v-if="displayImages.length === 0" class="no-images">
         No images found for this gallery.
       </div>
       <div :class="galleryLayoutClass" :id="galleryId" v-else>
         <component
           :is="layoutComponent"
-          v-for="(img, index) in sortedImageUrls"
+          v-for="(img, index) in displayImages"
           :key="index"
           :image="img"
         />
@@ -38,7 +38,7 @@ interface GalleryImage {
 interface ImageGalleryProps {
   title: string;
   titleLines?: number;
-  date: string;
+  date?: string;
   link?: string;
   folders?: string[];
   images?: string[];
@@ -48,6 +48,7 @@ interface ImageGalleryProps {
   galleryDataKey?: string;
   forceSort?: string[];
   layout?: 'grid' | 'vertical';
+  directUrls?: string[];
 }
 
 const galleryId = ref(`gallery-${Math.random().toString(36).substr(2, 9)}`);
@@ -84,6 +85,7 @@ const initPhotoSwipe = async () => {
 const props = withDefaults(defineProps<ImageGalleryProps>(), {
   titleLines: 2,
   layout: 'grid',
+  date: '',
 });
 
 const galleryData = inject<GalleryImage[]>(props.galleryDataKey || "galleryData", []);
@@ -116,13 +118,13 @@ const containerComponent = computed(() => {
 });
 
 const layoutComponent = computed(() => {
-  return props.layout === 'grid' ? ImageCardSquare : ImageCardVertical;
+  return props.layout === "grid" ? ImageCardSquare : ImageCardVertical;
 });
 
 const galleryLayoutClass = computed(() => {
   return {
-    'image-grid': props.layout === 'grid',
-    'image-vertical': props.layout === 'vertical'
+    "image-grid": props.layout === "grid",
+    "image-vertical": props.layout === "vertical",
   };
 });
 
@@ -160,7 +162,11 @@ const filteredImages = computed(() => {
   });
 });
 
-const sortedImageUrls = computed(() => {
+const displayImages = computed(() => {
+  if (props.directUrls && props.directUrls.length > 0) {
+    return props.directUrls;
+  }
+
   if (props.forceSort && props.forceSort.length > 0) {
     const sorted = [...props.forceSort];
     filteredImages.value.forEach((img) => {
@@ -174,8 +180,7 @@ const sortedImageUrls = computed(() => {
   return filteredImages.value.map((img) => img.path).sort();
 });
 
-// Reinitialize PhotoSwipe when gallery content changes
-watch(sortedImageUrls, () => {
+watch(displayImages, () => {
   initPhotoSwipe();
 });
 </script>
