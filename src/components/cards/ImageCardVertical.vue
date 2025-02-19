@@ -36,6 +36,7 @@ const onImageLoad = (event: Event) => {
   display: flex;
   justify-content: center;
   max-width: 100%;
+  margin: -8px -8px 0px -8px;
   text-decoration: none;
   border-radius: 8px;
   overflow: hidden;

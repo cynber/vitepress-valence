@@ -5,7 +5,14 @@
     </div>
 
     <component :is="containerComponent" class="gallery-container">
-      <TitleCard :title="title" :date="date" :title-lines="titleLines" :link="link" />
+      <TitleCard
+        :title="title"
+        :date="date"
+        :date-format="dateFormat"
+        :time="time"
+        :title-lines="titleLines"
+        :link="link"
+      />
       <div v-if="displayImages.length === 0" class="no-images">
         No images found for this gallery.
       </div>
@@ -39,6 +46,8 @@ interface ImageGalleryProps {
   title: string;
   titleLines?: number;
   date?: string;
+  dateFormat?: 'long' | 'iso';
+  time?: string;
   link?: string;
   folders?: string[];
   images?: string[];
@@ -47,7 +56,7 @@ interface ImageGalleryProps {
   format?: "debug";
   galleryDataKey?: string;
   forceSort?: string[];
-  layout?: 'grid' | 'vertical';
+  layout?: "grid" | "vertical";
   directUrls?: string[];
 }
 
@@ -84,8 +93,8 @@ const initPhotoSwipe = async () => {
 
 const props = withDefaults(defineProps<ImageGalleryProps>(), {
   titleLines: 2,
-  layout: 'grid',
-  date: '',
+  layout: "grid",
+  date: "",
 });
 
 const galleryData = inject<GalleryImage[]>(props.galleryDataKey || "galleryData", []);

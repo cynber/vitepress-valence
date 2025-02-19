@@ -8,7 +8,7 @@
       >
         {{ title }}
       </component>
-      <span class="gallery-date">{{ formattedDate }}</span>
+      <span v-if="formattedDateTime" class="gallery-date">{{ formattedDateTime }}</span>
     </div>
   </div>
 </template>
@@ -18,25 +18,57 @@ import { computed } from "vue";
 
 interface TitleCardProps {
   title: string;
-  date: string;
+  date?: string;
+  time?: string;
   titleLines?: number;
   link?: string;
+  dateFormat?: 'long' | 'iso'; // New prop for date format
 }
 
 const props = withDefaults(defineProps<TitleCardProps>(), {
   titleLines: 2,
+  date: '',
+  time: '',
+  dateFormat: 'long',
 });
 
-const formattedDate = computed(() => {
-  const options: Intl.DateTimeFormatOptions = {
-    year: "numeric",
-    month: "long",
-    day: "numeric",
-  };
-  const dateObj = new Date(props.date);
-  return isNaN(dateObj.getTime())
-    ? props.date
-    : dateObj.toLocaleDateString(undefined, options);
+const formattedDateTime = computed(() => {
+  let result = '';
+  
+  // Handle date
+  if (props.date) {
+    const dateObj = new Date(props.date);
+    if (!isNaN(dateObj.getTime())) {
+      if (props.dateFormat === 'iso') {
+        // ISO format: YYYY-MM-DD
+        result = dateObj.toISOString().split('T')[0];
+      } else {
+        // Long format: Month DD, YYYY
+        const dateOptions: Intl.DateTimeFormatOptions = {
+          year: "numeric",
+          month: "long",
+          day: "numeric",
+        };
+        result = dateObj.toLocaleDateString(undefined, dateOptions);
+      }
+    } else {
+      result = props.date;
+    }
+  }
+
+  // Handle time
+  if (props.time) {
+    const timeMatch = props.time.match(/^([0-1]?[0-9]|2[0-3]):([0-5][0-9])(?::([0-5][0-9]))?$/);
+    if (timeMatch) {
+      const [, hours, minutes, seconds] = timeMatch;
+      const timeStr = seconds 
+        ? `${hours.padStart(2, '0')}:${minutes}:${seconds}`
+        : `${hours.padStart(2, '0')}:${minutes}`;
+      result = result ? `${result}; ${timeStr}` : timeStr;
+    }
+  }
+
+  return result;
 });
 </script>
 
