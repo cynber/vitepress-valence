@@ -9,8 +9,9 @@
       <div v-if="sortedImageUrls.length === 0" class="no-images">
         No images found for this gallery.
       </div>
-      <div class="image-grid" :id="galleryId" v-else>
-        <ImageCardSquare
+      <div :class="galleryLayoutClass" :id="galleryId" v-else>
+        <component
+          :is="layoutComponent"
           v-for="(img, index) in sortedImageUrls"
           :key="index"
           :image="img"
@@ -25,6 +26,7 @@ import { inject, computed, onMounted, onUnmounted, ref, nextTick, watch } from "
 import "photoswipe/style.css";
 import VerticalContainer from "./containers/VerticalContainer.vue";
 import ImageCardSquare from "./cards/ImageCardSquare.vue";
+import ImageCardVertical from "./cards/ImageCardVertical.vue";
 import TitleCard from "./cards/HeaderCard.vue";
 
 interface GalleryImage {
@@ -45,6 +47,7 @@ interface ImageGalleryProps {
   format?: "debug";
   galleryDataKey?: string;
   forceSort?: string[];
+  layout?: 'grid' | 'vertical';
 }
 
 const galleryId = ref(`gallery-${Math.random().toString(36).substr(2, 9)}`);
@@ -80,6 +83,7 @@ const initPhotoSwipe = async () => {
 
 const props = withDefaults(defineProps<ImageGalleryProps>(), {
   titleLines: 2,
+  layout: 'grid',
 });
 
 const galleryData = inject<GalleryImage[]>(props.galleryDataKey || "galleryData", []);
@@ -109,6 +113,17 @@ const formattedDate = computed(() => {
 
 const containerComponent = computed(() => {
   return VerticalContainer;
+});
+
+const layoutComponent = computed(() => {
+  return props.layout === 'grid' ? ImageCardSquare : ImageCardVertical;
+});
+
+const galleryLayoutClass = computed(() => {
+  return {
+    'image-grid': props.layout === 'grid',
+    'image-vertical': props.layout === 'vertical'
+  };
 });
 
 const filteredImages = computed(() => {
@@ -181,6 +196,13 @@ watch(sortedImageUrls, () => {
 .image-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: 1rem;
+}
+
+.image-vertical {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
   gap: 1rem;
 }
 
