@@ -17,6 +17,24 @@ Types of changes
 
  -->
 
+## [0.1.13] - 2025-02-19
+
+### Added
+
+- ImageCardVertical component, for use with the gallery component
+
+### Changed
+
+- ImageGallery now has options for vertical layout in addition to the default grid
+- ImageGallery now supports direct image URLs
+- ImageGallery now supports a time value, and a description of the date and time display (ex. 'Last Updated:')
+
+## [0.1.12] - 2025-02-02
+
+### Added
+
+- Export of HeaderCard component\
+
 ## [0.1.11] - 2025-01-30
 
 ### Removed
