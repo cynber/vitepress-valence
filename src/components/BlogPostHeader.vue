@@ -1,6 +1,5 @@
 <template>
   <a class="return-text" :href="returnLinkValue">{{ returnTextValue }}</a>
-
   <header class="post-header">
     <h1 v-if="!props.hideTitle" class="post-title">{{ frontmatter.title }}</h1>
     <img
@@ -11,9 +10,26 @@
     />
     <div class="post-info">
       <div v-if="!props.hideAuthor && author.name" class="author-section">
-        <img :src="author.avatar" alt="Author's Avatar" class="author-avatar" />
+        <img 
+          v-if="author.avatar" 
+          :src="author.avatar" 
+          alt="Author's Avatar" 
+          class="author-avatar" 
+        />
         <div class="author-details">
-          <a :href="author.url" class="author-name">{{ author.name }}</a>
+          <a 
+            v-if="author.url" 
+            :href="author.url" 
+            class="author-name"
+          >
+            {{ author.name }}
+          </a>
+          <span 
+            v-else 
+            class="author-name author-name--no-link"
+          >
+            {{ author.name }}
+          </span>
           <p class="author-description">{{ author.description }}</p>
         </div>
       </div>
@@ -70,11 +86,9 @@ interface Author {
 const props = defineProps<Props>();
 const authorsInjectKey = props.authorsDataKey || "authors";
 const authors = inject<Record<string, Author>>(authorsInjectKey) || {};
-
 const { page } = useData();
 const frontmatter = page.value.frontmatter as Frontmatter;
 const author = ref<Author>(authors[frontmatter.author || ""] || { name: "" });
-
 const returnLinkValue = ref<string>(
   props.returnLink || frontmatter.returnLinkValue || "/"
 );
@@ -137,6 +151,18 @@ const returnTextValue = ref<string>(
   font-size: 1.2em;
   color: var(--vp-c-text-1);
   text-decoration: none;
+}
+
+.author-name:hover {
+  color: var(--vp-c-brand-1);
+}
+
+.author-name--no-link {
+  cursor: default;
+}
+
+.author-name--no-link:hover {
+  color: var(--vp-c-text-1);
 }
 
 .author-description {
