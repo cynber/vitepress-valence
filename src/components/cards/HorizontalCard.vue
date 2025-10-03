@@ -57,22 +57,17 @@ interface HorizontalCardProps {
 const props = defineProps<HorizontalCardProps>();
 </script>
 
-<style scoped>
-.horizontal-card {
-  background-color: var(--vp-c-bg);
-  border-radius: 16px;
-  overflow: hidden;
-  border: 1px solid var(--vp-c-divider);
-  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
-  transition: box-shadow 0.3s ease-in-out, border-color 0.3s ease-in-out,
-    transform 0.2s ease-in-out;
-  margin-bottom: 1rem;
-}
+<style lang="scss" scoped>
+@use '../../assets/main.scss' as main;
 
-.horizontal-card:hover {
-  border-color: var(--vp-c-border);
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-  transform: translateY(-2px);
+.horizontal-card {
+  @include main.card-base;
+  
+  &:hover {
+    @include main.card-base-hover;
+  }
+
+  margin: 10px;
 }
 
 .card-link {

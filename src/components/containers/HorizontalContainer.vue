@@ -12,11 +12,10 @@
 .cards-container {
   display: flex;
   flex-direction: column;
-  gap: 2rem;
-  padding: 16px;
+  gap: 0.2rem;
   margin: 16px auto;
-  border-radius: 8px;
-  border: 1px solid var(--vp-c-divider);
+  border-radius: 18px;
+  border: 2px solid var(--vp-c-divider);
   background-color: var(--vp-c-bg-soft);
   box-shadow: inset 0 1px 4px rgba(0, 0, 0, 0.05);
 }

@@ -1,9 +1,31 @@
-/* Medium Zoom styling */
-
 .medium-zoom-overlay {
     z-index: 30;
 }
 
 .medium-zoom-image--opened {
     z-index: 31;
+}
+
+/* Card Base Styles */
+@mixin card-base {
+  background-color: var(--vp-c-bg);
+  overflow: hidden;
+  border-radius: 16px;
+  border: 2px solid var(--vp-c-divider);
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
+  transition: box-shadow 0.3s ease-in-out, border-color 0.3s ease-in-out, transform 0.2s ease-in-out;
+}
+
+@mixin card-base-hover {
+  border-color: var(--vp-c-border);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+//   transform: translateY(-2px);
+}
+
+.card-base {
+  @include card-base;
+}
+
+.card-base:hover {
+  @include card-base-hover;
 }
