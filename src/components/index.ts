@@ -6,6 +6,7 @@ export { default as VerticalContainer } from './containers/VerticalContainer.vue
 export { default as HeaderCard } from './cards/HeaderCard.vue'
 
 // Blog/Announcement Components
+export { default as ArticleHeader } from './ArticleHeader.vue'
 export { default as BlogPostHeader } from './BlogPostHeader.vue'
 export { default as BlogPostList } from './BlogPostList.vue'
 
