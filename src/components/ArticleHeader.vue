@@ -2,34 +2,40 @@
   <a class="return-text" :href="returnLinkValue">{{ returnTextValue }}</a>
   <header class="post-header">
     <h1 v-if="!props.hideTitle" class="post-title">{{ frontmatter.title }}</h1>
-    <img
-      v-if="!props.hideBanner && frontmatter.banner"
-      :src="frontmatter.banner"
-      alt="Banner Image"
-      class="banner-image"
-    />
+    <div
+      v-if="!props.hideFeatImage && (frontmatter.featured_image?.image || frontmatter.featured_image?.image_dark)"
+      class="feat-image-container"
+    >
+      <img
+        v-if="frontmatter.featured_image?.image"
+        :src="frontmatter.featured_image.image"
+        :alt="frontmatter.featured_image?.alt || 'Featured Image'"
+        class="feat-image vpv-light-only"
+      />
+      <img
+        v-if="frontmatter.featured_image?.image_dark"
+        :src="frontmatter.featured_image.image_dark"
+        :alt="frontmatter.featured_image?.alt || 'Featured Image'"
+        class="feat-image vpv-dark-only"
+      />
+      <img
+        v-else-if="frontmatter.featured_image?.image"
+        :src="frontmatter.featured_image.image"
+        :alt="frontmatter.featured_image?.alt || 'Featured Image'"
+        class="feat-image vpv-dark-only"
+      />
+      <p
+        v-if="!props.hideFeatImageDescription && frontmatter.featured_image?.description"
+        class="feat-image-description"
+      >
+        {{ frontmatter.featured_image.description }}
+      </p>
+    </div>
     <div class="post-info">
       <div v-if="!props.hideAuthor && author.name" class="author-section">
-        <img 
-          v-if="author.avatar" 
-          :src="author.avatar" 
-          alt="Author's Avatar" 
-          class="author-avatar" 
-        />
+        <img :src="author.avatar" alt="Author's Avatar" class="author-avatar" />
         <div class="author-details">
-          <a 
-            v-if="author.url" 
-            :href="author.url" 
-            class="author-name"
-          >
-            {{ author.name }}
-          </a>
-          <span 
-            v-else 
-            class="author-name author-name--no-link"
-          >
-            {{ author.name }}
-          </span>
+          <a :href="author.url" class="author-name">{{ author.name }}</a>
           <p class="author-description">{{ author.description }}</p>
         </div>
       </div>
@@ -62,13 +68,21 @@ interface Props {
   hideDate?: boolean;
   hideAuthor?: boolean;
   hideCategory?: boolean;
-  hideBanner?: boolean;
+  hideFeatImage?: boolean;
+  hideFeatImageDescription?: boolean;
   authorsDataKey?: string;
+}
+
+interface FeaturedImageConfig {
+  image?: string;
+  image_dark?: string;
+  alt?: string;
+  description?: string;
 }
 
 interface Frontmatter {
   title: string;
-  banner?: string;
+  featured_image?: FeaturedImageConfig;
   date?: string;
   category?: string;
   author?: string;
@@ -89,6 +103,7 @@ const authors = inject<Record<string, Author>>(authorsInjectKey) || {};
 const { page } = useData();
 const frontmatter = page.value.frontmatter as Frontmatter;
 const author = ref<Author>(authors[frontmatter.author || ""] || { name: "" });
+
 const returnLinkValue = ref<string>(
   props.returnLink || frontmatter.returnLinkValue || "/"
 );
@@ -105,13 +120,27 @@ const returnTextValue = ref<string>(
   text-decoration: none;
 }
 
-.banner-image {
+.feat-image-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 2rem;
+}
+
+.feat-image {
   width: 100%;
   max-width: 800px;
   height: auto;
   border-radius: 8px;
-  margin: 0 auto 2rem;
+  margin: 0 auto;
   display: block;
+}
+
+.feat-image-description {
+  font-size: 0.9rem;
+  color: var(--vp-c-text-3);
+  margin: 0.5rem 0 0 0;
+  max-width: 800px;
 }
 
 .post-title {
@@ -151,18 +180,6 @@ const returnTextValue = ref<string>(
   font-size: 1.2em;
   color: var(--vp-c-text-1);
   text-decoration: none;
-}
-
-.author-name:hover {
-  color: var(--vp-c-brand-1);
-}
-
-.author-name--no-link {
-  cursor: default;
-}
-
-.author-name--no-link:hover {
-  color: var(--vp-c-text-1);
 }
 
 .author-description {
