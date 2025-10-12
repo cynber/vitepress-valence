@@ -3,25 +3,31 @@
     <!-- Light mode image -->
     <img
       v-if="imageConfig?.image"
+      ref="lightImageRef"
       :src="imageConfig.image"
       :alt="lightAlt"
       class="image-wide vpv-light-only"
+      :class="{ 'zoomable': enableZoom }"
     />
     
     <!-- Dark mode image (if provided) -->
     <img
       v-if="imageConfig?.image_dark"
+      ref="darkImageRef"
       :src="imageConfig.image_dark"
       :alt="darkAlt"
       class="image-wide vpv-dark-only"
+      :class="{ 'zoomable': enableZoom }"
     />
     
     <!-- Fallback: use light mode image in dark mode -->
     <img
       v-else-if="imageConfig?.image"
+      ref="fallbackImageRef"
       :src="imageConfig.image"
       :alt="lightAlt"
       class="image-wide vpv-dark-only"
+      :class="{ 'zoomable': enableZoom }"
     />
     
     <!-- Description -->
@@ -35,7 +41,9 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue';
+import { computed, onMounted, onUnmounted, ref, nextTick } from 'vue';
+import mediumZoom from 'medium-zoom';
+import type { Zoom } from 'medium-zoom';
 
 interface ImageConfig {
   image?: string;
@@ -51,13 +59,27 @@ interface Props {
   hideDescription?: boolean;
   defaultAlt?: string;
   defaultDescription?: string;
+  enableZoom?: boolean;
+  zoomMargin?: number;
+  zoomBackground?: string;
 }
 
 const props = withDefaults(defineProps<Props>(), {
   defaultAlt: 'Image',
   defaultDescription: '',
-  hideDescription: false
+  hideDescription: false,
+  enableZoom: false,
+  zoomMargin: 24,
+  zoomBackground: 'rgba(0, 0, 0, 0.8)'
 });
+
+// Template refs
+const lightImageRef = ref<HTMLImageElement>();
+const darkImageRef = ref<HTMLImageElement>();
+const fallbackImageRef = ref<HTMLImageElement>();
+
+// Zoom instance
+let zoomInstance: Zoom | null = null;
 
 const shouldShowImage = computed(() => {
   return props.imageConfig?.image || props.imageConfig?.image_dark;
@@ -74,6 +96,40 @@ const darkAlt = computed(() => {
 const descriptionText = computed(() => {
   return props.imageConfig?.description || props.defaultDescription;
 });
+
+const initializeZoom = async () => {
+  if (!props.enableZoom) return;
+  
+  await nextTick();
+  
+  const images: HTMLImageElement[] = [];
+  
+  if (lightImageRef.value) images.push(lightImageRef.value);
+  if (darkImageRef.value) images.push(darkImageRef.value);
+  if (fallbackImageRef.value) images.push(fallbackImageRef.value);
+  
+  if (images.length > 0) {
+    zoomInstance = mediumZoom(images, {
+      margin: props.zoomMargin,
+      background: props.zoomBackground,
+    });
+  }
+};
+
+const destroyZoom = () => {
+  if (zoomInstance) {
+    zoomInstance.detach();
+    zoomInstance = null;
+  }
+};
+
+onMounted(() => {
+  initializeZoom();
+});
+
+onUnmounted(() => {
+  destroyZoom();
+});
 </script>
 
 <style scoped>
@@ -89,8 +145,18 @@ const descriptionText = computed(() => {
   max-width: 800px;
   height: auto;
   border-radius: 8px;
+  border: 2px solid var(--vp-c-brand-soft);
   margin: 0 auto;
   display: block;
+}
+
+.image-wide.zoomable {
+  cursor: zoom-in;
+  transition: border 0.3s ease-in-out;
+}
+
+.image-wide.zoomable:hover {
+  border-color: var(--vp-c-brand-3);
 }
 
 .image-wide-description {
