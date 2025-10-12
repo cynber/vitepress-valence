@@ -2,35 +2,14 @@
   <a class="return-text" :href="returnLinkValue">{{ returnTextValue }}</a>
   <header class="post-header">
     <h1 v-if="!props.hideTitle" class="post-title">{{ frontmatter.title }}</h1>
-    <div
-      v-if="!props.hideFeatImage && (frontmatter.featured_image?.image || frontmatter.featured_image?.image_dark)"
-      class="feat-image-container"
-    >
-      <img
-        v-if="frontmatter.featured_image?.image"
-        :src="frontmatter.featured_image.image"
-        :alt="frontmatter.featured_image?.alt || 'Featured Image'"
-        class="feat-image vpv-light-only"
-      />
-      <img
-        v-if="frontmatter.featured_image?.image_dark"
-        :src="frontmatter.featured_image.image_dark"
-        :alt="frontmatter.featured_image?.alt || 'Featured Image'"
-        class="feat-image vpv-dark-only"
-      />
-      <img
-        v-else-if="frontmatter.featured_image?.image"
-        :src="frontmatter.featured_image.image"
-        :alt="frontmatter.featured_image?.alt || 'Featured Image'"
-        class="feat-image vpv-dark-only"
-      />
-      <p
-        v-if="!props.hideFeatImageDescription && frontmatter.featured_image?.description"
-        class="feat-image-description"
-      >
-        {{ frontmatter.featured_image.description }}
-      </p>
-    </div>
+    
+    <ImageWide 
+      v-if="!props.hideFeatImage"
+      :imageConfig="frontmatter.featured_image"
+      :hideDescription="props.hideFeatImageDescription"
+      defaultAlt="Featured Image"
+    />
+    
     <div class="post-info">
       <div v-if="!props.hideAuthor && author.name" class="author-section">
         <img :src="author.avatar" alt="Author's Avatar" class="author-avatar" />
@@ -60,6 +39,7 @@
 <script setup lang="ts">
 import { ref, inject } from "vue";
 import { useData } from "vitepress";
+import ImageWide from "./cards/ImageWide.vue";
 
 interface Props {
   returnLink?: string;
@@ -118,29 +98,6 @@ const returnTextValue = ref<string>(
   margin-bottom: 2rem;
   color: var(--vp-c-text-3);
   text-decoration: none;
-}
-
-.feat-image-container {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  margin-bottom: 2rem;
-}
-
-.feat-image {
-  width: 100%;
-  max-width: 800px;
-  height: auto;
-  border-radius: 8px;
-  margin: 0 auto;
-  display: block;
-}
-
-.feat-image-description {
-  font-size: 0.9rem;
-  color: var(--vp-c-text-3);
-  margin: 0.5rem 0 0 0;
-  max-width: 800px;
 }
 
 .post-title {
