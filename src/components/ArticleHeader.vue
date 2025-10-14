@@ -39,6 +39,7 @@
         <div class="meta-data-card">
           <div class="meta-data">
             <p v-if="!props.hideDate && frontmatter.date">
+              <strong>Date:</strong>
               {{
                 new Date(frontmatter.date).toLocaleDateString(undefined, {
                   year: "numeric",
@@ -46,6 +47,9 @@
                   day: "numeric",
                 })
               }}
+            </p>
+            <p v-if="!props.hideReadingTime && readingTime">
+              <strong>Reading Time:</strong> {{ readingTime }}
             </p>
           </div>
         </div>
@@ -60,6 +64,7 @@
           {{ frontmatter.category }}
         </span>
         <span
+          v-if="!props.hideTags"
           v-for="tag in visibleTags"
           :key="tag"
           class="pill"
@@ -82,8 +87,10 @@ interface Props {
   hideTitle?: boolean;
   hideSubtitle?: boolean;
   hideDate?: boolean;
+  hideReadingTime?: boolean;
   hideAuthor?: boolean;
   hideCategory?: boolean;
+  hideTags?: boolean;
   hideFeatImage?: boolean;
   hideFeatImageDescription?: boolean;
   authorsDataKey?: string;
@@ -101,6 +108,7 @@ interface Frontmatter {
   subtitle?: string;
   featured_image?: FeaturedImageConfig;
   date?: string;
+  reading_time?: number;
   category?: string;
   tags?: string[];
   author?: string;
@@ -129,11 +137,17 @@ const returnTextValue = ref<string>(
   "← " + (props.returnText || frontmatter.returnTextValue || "Back Home")
 );
 
-// Simple implementation - you can make this more sophisticated later
+const readingTime = computed((): string | null => {
+  if (frontmatter.reading_time) {
+    const minutes = frontmatter.reading_time;
+    return minutes === 1 ? "1 minute" : `${minutes} minutes`;
+  }
+
+  return null;
+});
+
 const visibleTags = computed(() => {
   const tags = frontmatter.tags || [];
-  // For now, just show first 5 tags to prevent overflow
-  // You can implement proper overflow detection later
   return tags.slice(0, 5);
 });
 </script>
@@ -188,12 +202,13 @@ const visibleTags = computed(() => {
   padding: 10px;
   background-color: var(--vp-c-bg);
   border-radius: 16px;
-  transition: box-shadow 0.1s ease-in-out;
+  border: 2px solid var(--vp-c-soft);
+  transition: border-color 0.1s ease-in-out;
   height: 100%;
 }
 
 .author-section:hover {
-  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
+  border-color: var(--vp-c-brand);
 }
 
 .meta-data-card {
