@@ -1,43 +1,78 @@
 <template>
   <a class="return-text" :href="returnLinkValue">{{ returnTextValue }}</a>
-  <header class="post-header">
-    <h1 v-if="!props.hideTitle" class="post-title">{{ frontmatter.title }}</h1>
-    
-    <ImageWide 
+  <header>
+    <h1 v-if="!props.hideTitle" class="article-title">
+      {{ frontmatter.title }}
+    </h1>
+    <p v-if="!props.hideSubtitle" class="article-subtitle">
+      {{ frontmatter.subtitle }}
+    </p>
+
+    <ImageWide
       v-if="!props.hideFeatImage"
       :imageConfig="frontmatter.featured_image"
       :hideDescription="props.hideFeatImageDescription"
       defaultAlt="Featured Image"
     />
-    
-    <div class="post-info">
-      <div v-if="!props.hideAuthor && author.name" class="author-section">
-        <img :src="author.avatar" alt="Author's Avatar" class="author-avatar" />
-        <div class="author-details">
-          <a :href="author.url" class="author-name">{{ author.name }}</a>
-          <p class="author-description">{{ author.description }}</p>
+
+    <div class="article-info">
+      <!-- First Row: Two Cards -->
+      <div class="info-cards">
+        <a
+          v-if="!props.hideAuthor && author.name"
+          class="author-section-link"
+          :href="author.url"
+        >
+          <div class="author-section">
+            <img
+              :src="author.avatar"
+              alt="Author's Avatar"
+              class="author-avatar"
+            />
+            <div class="author-details">
+              <span class="author-name">{{ author.name }}</span>
+              <p class="author-description">{{ author.description }}</p>
+            </div>
+          </div>
+        </a>
+
+        <div class="meta-data-card">
+          <div class="meta-data">
+            <p v-if="!props.hideDate && frontmatter.date">
+              {{
+                new Date(frontmatter.date).toLocaleDateString(undefined, {
+                  year: "numeric",
+                  month: "long",
+                  day: "numeric",
+                })
+              }}
+            </p>
+          </div>
         </div>
       </div>
-      <div class="meta-data">
-        <p v-if="!props.hideDate && frontmatter.date">
-          {{
-            new Date(frontmatter.date).toLocaleDateString(undefined, {
-              year: "numeric",
-              month: "long",
-              day: "numeric",
-            })
-          }}
-        </p>
-        <p v-if="!props.hideCategory && frontmatter.category">
-          Category: {{ frontmatter.category }}
-        </p>
+
+      <!-- Second Row: Pills -->
+      <div class="pills-row">
+        <span
+          v-if="!props.hideCategory && frontmatter.category"
+          class="pill category-pill"
+        >
+          {{ frontmatter.category }}
+        </span>
+        <span
+          v-for="tag in visibleTags"
+          :key="tag"
+          class="pill"
+        >
+          {{ tag }}
+        </span>
       </div>
     </div>
   </header>
 </template>
 
 <script setup lang="ts">
-import { ref, inject } from "vue";
+import { ref, inject, computed } from "vue";
 import { useData } from "vitepress";
 import ImageWide from "./cards/ImageWide.vue";
 
@@ -45,6 +80,7 @@ interface Props {
   returnLink?: string;
   returnText?: string;
   hideTitle?: boolean;
+  hideSubtitle?: boolean;
   hideDate?: boolean;
   hideAuthor?: boolean;
   hideCategory?: boolean;
@@ -62,9 +98,11 @@ interface FeaturedImageConfig {
 
 interface Frontmatter {
   title: string;
+  subtitle?: string;
   featured_image?: FeaturedImageConfig;
   date?: string;
   category?: string;
+  tags?: string[];
   author?: string;
   returnLinkValue?: string;
   returnTextValue?: string;
@@ -90,6 +128,14 @@ const returnLinkValue = ref<string>(
 const returnTextValue = ref<string>(
   "← " + (props.returnText || frontmatter.returnTextValue || "Back Home")
 );
+
+// Simple implementation - you can make this more sophisticated later
+const visibleTags = computed(() => {
+  const tags = frontmatter.tags || [];
+  // For now, just show first 5 tags to prevent overflow
+  // You can implement proper overflow detection later
+  return tags.slice(0, 5);
+});
 </script>
 
 <style scoped>
@@ -100,22 +146,61 @@ const returnTextValue = ref<string>(
   text-decoration: none;
 }
 
-.post-title {
+.article-title {
   font-size: 2em;
-  margin-bottom: 2rem;
+  margin-bottom: 1rem;
   text-align: center;
 }
 
-.post-info {
+.article-subtitle {
+  font-size: 1.2em;
+  margin-bottom: 1rem;
+  text-align: center;
+}
+
+.article-info {
   display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin: 0 auto 2rem;
+  flex-direction: column;
+  margin: 1rem auto 2rem;
   max-width: 800px;
-  flex-wrap: wrap;
+  gap: 1rem;
+  border-radius: 18px;
+  background-color: var(--vp-c-bg-soft);
+  box-shadow: inset 0 1px 4px rgba(0, 0, 0, 0.05);
+  padding: 10px;
+}
+
+.info-cards {
+  display: flex;
+  gap: 1rem;
+}
+
+.author-section-link {
+  text-decoration: none;
+  color: inherit;
+  display: block;
+  flex: 1;
 }
 
 .author-section {
+  display: flex;
+  align-items: center;
+  padding: 10px;
+  background-color: var(--vp-c-bg);
+  border-radius: 16px;
+  transition: box-shadow 0.1s ease-in-out;
+  height: 100%;
+}
+
+.author-section:hover {
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
+}
+
+.meta-data-card {
+  flex: 1;
+  padding: 10px;
+  background-color: var(--vp-c-bg);
+  border-radius: 16px;
   display: flex;
   align-items: center;
 }
@@ -146,15 +231,32 @@ const returnTextValue = ref<string>(
 }
 
 .meta-data {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
   color: var(--vp-c-text-2);
   font-size: 0.9em;
-  margin-left: 1rem;
 }
 
 .meta-data p {
   margin: 0;
+}
+
+.pills-row {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.pill {
+  padding: 0.25rem 0.75rem;
+  background-color: var(--vp-c-bg);
+  border: 1px solid var(--vp-c-divider);
+  border-radius: 1rem;
+  font-size: 0.85em;
+  color: var(--vp-c-text-2);
+}
+
+.category-pill {
+  border-color: var(--vp-c-brand);
+  color: var(--vp-c-text-1);
+  font-weight: 500;
 }
 </style>
