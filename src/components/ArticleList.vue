@@ -1,17 +1,16 @@
 <template>
-  <div class="blog-post-list-container">
+  <div class="article-list-container">
     <!-- Debug Format -->
     <div v-if="format === 'debug'">
-      <pre>{{ JSON.stringify(displayedPosts, null, 2) }}</pre>
+      <pre>{{ JSON.stringify(displayedArticles, null, 2) }}</pre>
     </div>
-
     <!-- Dynamic Card Rendering -->
     <component :is="containerComponent">
       <component
-        v-for="post in displayedPosts"
-        :key="post.url"
+        v-for="article in displayedArticles"
+        :key="article.url"
         :is="selectedCardComponent"
-        v-bind="getCardProps(post)"
+        v-bind="getCardProps(article)"
       />
     </component>
   </div>
@@ -25,59 +24,66 @@ import VerticalCard from "./cards/VerticalCard.vue";
 import HorizontalContainer from "./containers/HorizontalContainer.vue";
 import VerticalContainer from "./containers/VerticalContainer.vue";
 
-interface Frontmatter {
-  title: string;
-  excerpt: string;
-  date: string;
-  banner?: string;
-  category?: string;
-  author?: string;
-  featured?: boolean;
-  draft?: boolean;
-}
-
-interface Post {
+interface Article {
   url: string;
-  frontmatter: Frontmatter;
+  frontmatter: {
+    // New format fields
+    title: string;
+    subtitle?: string;
+    summary?: string;
+    date: string;
+    author?: string;
+    category?: string;
+    tags?: string[];
+    featured_image?: {
+      image: string;
+      image_dark?: string;
+      alt?: string;
+      description?: string;
+    };
+    status?: string;
+    featured?: boolean;
+    
+    // Old format fields for backward compatibility
+    excerpt?: string;
+    banner?: string;
+  };
 }
 
 interface Author {
   name: string;
+  url?: string;
+  avatar?: string;
+  description?: string;
   [key: string]: any;
 }
 
-interface BlogPostListProps {
-  posts?: Post[];
-  format?: "debug" | "vertical" | "horizontal";
-  sortOrder?: "ascending" | "descending";
-  startDate?: Date | string | null;
-  endDate?: Date | string | null;
-  renderDrafts?: boolean;
-  featuredOnly?: boolean;
-  filterAuthors?: string[];
-  excludeAuthors?: string[];
-  filterCategories?: string[];
-  excludeCategories?: string[];
-  excludeURLs?: string[];
-  maxCards?: number | null;
+interface ArticleListProps {
+  articles?: Article[];
+  articlesDataKey?: string;
+  authorsDataKey?: string;
+  format?: "horizontal" | "vertical" | "debug";
   hideAuthor?: boolean;
   hideDate?: boolean;
   hideImage?: boolean;
   hideCategory?: boolean;
+  hideTags?: boolean;
   hideDomain?: boolean;
   disableLinks?: boolean;
   titleLines?: number;
   excerptLines?: number;
-  postsDataKey?: string;
-  authorsDataKey?: string;
+  maxCards?: number;
+  sortOrder?: "ascending" | "descending";
+  filterAuthors?: string;
+  excludeURLs?: string[];
 }
 
-const props = defineProps<BlogPostListProps>();
+const props = defineProps<ArticleListProps>();
 
-const injectedPostsData = inject<Post[]>(props.postsDataKey || 'postsData', []);
+const injectedArticlesData = inject<Article[]>(props.articlesDataKey || 'postsData', []);
 const authors = inject<Record<string, Author>>(props.authorsDataKey || 'authors', {});
 
-const posts = computed(() => props.posts || injectedPostsData);
+const articles = computed(() => props.articles || injectedArticlesData);
 
 // Card & Container selection
 const selectedCardComponent = computed(() => {
@@ -102,98 +108,74 @@ const containerComponent = computed(() => {
   }
 });
 
-const sortedPosts = computed(() => {
-  const sorted = [...posts.value];
-  sorted.sort((a, b) => {
-    const dateA = new Date(a.frontmatter.date).getTime();
-    const dateB = new Date(b.frontmatter.date).getTime();
-    return props.sortOrder === "ascending" ? dateA - dateB : dateB - dateA;
-  });
-  return sorted;
-});
-
-const filteredPosts = computed(() => {
-  return sortedPosts.value.filter((post) => {
-    const { frontmatter } = post;
-
-    if (props.featuredOnly && !frontmatter.featured) return false;
-    if (!props.renderDrafts && frontmatter.draft) return false;
-
-    const postDate = new Date(frontmatter.date).getTime();
-    if (props.startDate && postDate < new Date(props.startDate).getTime()) return false;
-    if (props.endDate && postDate > new Date(props.endDate).getTime()) return false;
-
-    if (
-      props.filterAuthors?.length &&
-      !props.filterAuthors.includes(frontmatter.author || "")
-    )
-      return false;
-    if (
-      props.excludeAuthors?.length &&
-      props.excludeAuthors.includes(frontmatter.author || "")
-    )
-      return false;
-
-    if (
-      props.filterCategories?.length &&
-      !props.filterCategories.includes(frontmatter.category || "")
-    )
-      return false;
-    if (
-      props.excludeCategories?.length &&
-      props.excludeCategories.includes(frontmatter.category || "")
-    )
-      return false;
-
-    if (props.excludeURLs?.length) {
-      const postURL = post.url.replace(/\.html$/, "");
-      const isExcluded = props.excludeURLs.some((excludeURL) => {
-        const normalizedExcludeURL = excludeURL.replace(/\.html$/, "");
-        return normalizedExcludeURL === postURL;
-      });
-      if (isExcluded) return false;
-    }
-
+// Article filtering and sorting logic
+const displayedArticles = computed(() => {
+  let filteredArticles = articles.value.filter(article => {
+    // Filter out excluded URLs
+    if (props.excludeURLs?.includes(article.url)) return false;
+    
+    // Filter by author if specified
+    if (props.filterAuthors && article.frontmatter.author !== props.filterAuthors) return false;
+    
+    // Filter out drafts (default to 'published' if status not specified)
+    if (article.frontmatter.status === 'draft') return false;
+    
     return true;
   });
-});
 
-const displayedPosts = computed(() => {
-  if (props.maxCards != null && props.maxCards >= 0) {
-    return filteredPosts.value.slice(0, props.maxCards);
+  // Sort articles
+  if (props.sortOrder === 'ascending') {
+    filteredArticles.sort((a, b) => new Date(a.frontmatter.date).getTime() - new Date(b.frontmatter.date).getTime());
+  } else {
+    filteredArticles.sort((a, b) => new Date(b.frontmatter.date).getTime() - new Date(a.frontmatter.date).getTime());
   }
-  return filteredPosts.value;
-});
 
-// Utility functions
-// function formatDate(date: string | Date): string {
-//   return new Date(date).toLocaleDateString(undefined, {
-//     year: "numeric",
-//     month: "long",
-//     day: "numeric",
-//   });
-// }
+  // Limit results
+  if (props.maxCards) {
+    filteredArticles = filteredArticles.slice(0, props.maxCards);
+  }
+
+  return filteredArticles;
+});
 
 function getAuthorName(authorKey: string): string {
-  const author = authors[authorKey];
-  return author ? author.name : authorKey;
+  if (!authorKey) return "";
+  return authors[authorKey]?.name || authorKey;
 }
 
-function getCardProps(post: Post) {
+function getExcerpt(article: Article): string {
+  return article.frontmatter.summary || article.frontmatter.excerpt || "";
+}
+
+function getImage(article: Article): string | undefined {
+  if (article.frontmatter.featured_image?.image) {
+    return article.frontmatter.featured_image.image;
+  }
+  return article.frontmatter.banner;
+}
+
+function getImageDark(article: Article): string | undefined {
+  return article.frontmatter.featured_image?.image_dark;
+}
+
+function getCardProps(article: Article) {
   return {
-    title: post.frontmatter.title,
-    excerpt: post.frontmatter.excerpt,
-    url: post.url,
+    title: article.frontmatter.title,
+    excerpt: getExcerpt(article),
+    url: article.url,
     hideDomain: props.hideDomain,
     isExternal: false,
-    author: getAuthorName(post.frontmatter.author || ""),
-    date: formatDate(post.frontmatter.date),
-    image: post.frontmatter.banner,
-    category: post.frontmatter.category,
+    author: getAuthorName(article.frontmatter.author || ""),
+    date: formatDate(article.frontmatter.date),
+    image: getImage(article),
+    image_dark: getImageDark(article),
+    category: article.frontmatter.category,
+    tags: article.frontmatter.tags || [],
     hideAuthor: props.hideAuthor,
     hideDate: props.hideDate,
     hideImage: props.hideImage,
     hideCategory: props.hideCategory,
+    hideTags: props.hideTags,
     disableLinks: props.disableLinks,
     titleLines: props.titleLines,
     excerptLines: props.excerptLines,
@@ -202,7 +184,7 @@ function getCardProps(post: Post) {
 </script>
 
 <style scoped>
-.blog-post-list-container {
+.article-list-container {
   padding: 1rem 0;
 }
 </style>
