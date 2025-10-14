@@ -1,31 +1,49 @@
 <template>
   <div class="horizontal-card">
-    <component
-      :is="disableLinks ? 'div' : 'a'"
-      :href="!disableLinks ? url : null"
+    <component 
+      :is="disableLinks ? 'div' : 'a'" 
+      :href="disableLinks ? undefined : url" 
       class="card-link"
+      :target="isExternal ? '_blank' : undefined"
+      :rel="isExternal ? 'noopener noreferrer' : undefined"
     >
-      <div class="card-content">
+      <div class="card-content">        
         <div class="card-info">
           <div class="card-title" :style="{ '--line-clamp-title': titleLines || 2 }">
             {{ title }}
           </div>
+          
           <div class="card-meta">
-            <span v-if="!hideAuthor" class="card-author">By {{ author }}</span>
-            <span v-if="!hideDate" class="card-date">{{ date }}</span>
+            <span v-if="!hideAuthor && author">{{ author }}</span>
+            <span v-if="!hideDate && date">{{ date }}</span>
           </div>
-          <div
-            class="card-excerpt"
-            :style="{ '--line-clamp-excerpt': excerptLines || 5 }"
+          
+          <p 
+            class="card-excerpt" 
+            :style="{ '--line-clamp-excerpt': excerptLines }"
           >
             {{ excerpt }}
-          </div>
-          <div v-if="!hideCategory" class="card-tags">
-            <span class="tag">{{ category }}</span>
+          </p>
+          
+          <div v-if="(!hideCategory && category) || (!hideTags && tags && tags.length > 0)" class="card-tags">
+            <span v-if="!hideCategory && category" class="tag category-tag">
+              {{ category }}
+            </span>
+            <span
+              v-if="!hideTags"
+              v-for="tag in visibleTags"
+              :key="tag"
+              class="tag"
+            >
+              {{ tag }}
+            </span>
           </div>
         </div>
-        <div v-if="image && !hideImage" class="card-image">
-          <img :src="image" alt="Banner" />
+        <div v-if="!hideImage && (image || image_dark)" class="card-image">
+          <picture>
+            <source v-if="image_dark" :srcset="image_dark" media="(prefers-color-scheme: dark)">
+            <img :src="image" :alt="title" loading="lazy">
+          </picture>
         </div>
       </div>
     </component>
@@ -41,12 +59,15 @@ interface HorizontalCardProps {
   author: string;
   date: string;
   image?: string;
+  image_dark?: string;
   category?: string;
+  tags?: string[];
   url?: string;
   hideAuthor?: boolean;
   hideDate?: boolean;
   hideImage?: boolean;
   hideCategory?: boolean;
+  hideTags?: boolean;
   hideDomain?: boolean;
   disableLinks?: boolean;
   isExternal?: boolean;
@@ -55,6 +76,12 @@ interface HorizontalCardProps {
 }
 
 const props = defineProps<HorizontalCardProps>();
+
+const visibleTags = computed(() => {
+  if (!props.tags || props.hideTags) return [];
+  // Limit to 4 tags to prevent overflow
+  return props.tags.slice(0, 4);
+});
 </script>
 
 <style lang="scss" scoped>
@@ -143,28 +170,34 @@ const props = defineProps<HorizontalCardProps>();
   display: flex;
   flex-wrap: wrap;
   gap: 0.5rem;
+  align-items: center;
 }
 
 .tag {
   display: inline-block;
   background-color: var(--vp-c-bg-soft);
+  color: var(--vp-c-text-2);
+  padding: 0.25rem 0.75rem;
+  border-radius: 1rem;
+  border: 2px solid var(--vp-c-divider);
+  font-size: 0.85rem;
+  transition: all 0.2s ease-in-out;
+  
+  &:hover {
+    border-color: var(--vp-c-border);
+  }
+}
+
+.category-tag {
+  border: 2px solid var(--vp-c-brand-soft);
   color: var(--vp-c-text-1);
-  padding: 0.3rem 0.6rem;
-  border-radius: 9999px;
-  border: 1px solid var(--vp-c-divider);
-  font-size: 0.8rem;
-  transition: background-color 0.3s ease-in-out, border 0.3s ease-in-out;
+  font-weight: 600;
+  background-color: var(--vp-c-bg-soft);
+  
+  &:hover {
+    border: 2px solid var(--vp-c-brand);
+  }
 }
-
-.horizontal-card:hover .tag {
-  background-color: var(--vp-c-brand-soft);
-  border: 1px solid var(--vp-c-border);
-}
-
-/* .horizontal-card:hover  .card-image {
-  border: 1px solid var(--vp-c-brand);
-  border-radius: 8px;
-} */
 
 @media screen and (max-width: 768px) {
   .card-content {
@@ -175,15 +208,6 @@ const props = defineProps<HorizontalCardProps>();
     flex: 0 0 auto;
     width: calc(100% - 20px);
     margin: 10px;
-  }
-
-  .card-meta {
-    justify-content: flex-start;
-    align-items: flex-start;
-  }
-
-  .card-meta .card-date {
-    margin-left: auto;
   }
 }
 </style>

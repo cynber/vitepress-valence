@@ -2,31 +2,63 @@
   <div class="card">
     <component
       :is="disableLinks ? 'div' : 'a'"
-      :href="!disableLinks ? url : null"
+      :href="disableLinks ? undefined : url"
       class="card-link"
+      :target="isExternal ? '_blank' : undefined"
+      :rel="isExternal ? 'noopener noreferrer' : undefined"
     >
-      <div v-if="image && !hideImage" class="card-image">
-        <img :src="image" alt="Banner Image" />
+      <div v-if="!hideImage && (image || image_dark)" class="card-image">
+        <picture>
+          <source
+            v-if="image_dark"
+            :srcset="image_dark"
+            media="(prefers-color-scheme: dark)"
+          />
+          <img :src="image" :alt="title" loading="lazy" />
+        </picture>
       </div>
+
       <div class="card-info">
-        <h3 class="card-title" :style="{ '--line-clamp-title': titleLines || 2 }">
+        <h3 class="card-title" :style="{ '--line-clamp-title': titleLines }">
           {{ title }}
         </h3>
+
         <div class="card-meta">
-          <span v-if="!hideAuthor && author" class="card-author">by {{ author }}</span>
-          <span v-if="!hideDate" class="post-date">{{ date }}</span>
+          <span v-if="!hideAuthor && author">{{ author }}</span>
+          <span v-if="!hideDate && date">{{ date }}</span>
         </div>
-        <p class="card-body" :style="{ '--line-clamp-excerpt': excerptLines || 3 }">
+
+        
+
+        <p class="card-body" :style="{ '--line-clamp-excerpt': excerptLines }">
           {{ excerpt }}
         </p>
-        <div v-if="!hideCategory && category" class="card-tags">
-          <span class="tag">{{ category }}</span>
+
+        <div
+          v-if="
+            (!hideCategory && category) ||
+            (!hideTags && tags && tags.length > 0)
+          "
+          class="card-tags"
+        >
+          <span v-if="!hideCategory && category" class="tag category-tag">
+            {{ category }}
+          </span>
+          <span
+            v-if="!hideTags"
+            v-for="tag in visibleTags"
+            :key="tag"
+            class="tag"
+          >
+            {{ tag }}
+          </span>
         </div>
       </div>
-      <div v-if="isExternal && !hideDomain" class="card-footer">
-        <!-- <hr class="card-footer-hr" /> -->
+
+      <div v-if="!hideDomain && isExternal" class="card-footer">
         <div class="footer-content">
-          <Icon :icon="'gridicons:external'" class="external-icon" />
+          <Icon icon="mdi:external-link" class="external-icon" />
+          <span>External Link</span>
         </div>
       </div>
     </component>
@@ -35,7 +67,7 @@
 
 <script setup lang="ts">
 import { Icon } from "@iconify/vue";
-import { defineProps } from "vue";
+import { computed, defineProps } from "vue";
 
 interface CardProps {
   title: string;
@@ -43,12 +75,15 @@ interface CardProps {
   author: string;
   date: string;
   image?: string;
+  image_dark?: string;
   category?: string;
+  tags?: string[];
   url?: string;
   hideAuthor?: boolean;
   hideDate?: boolean;
   hideImage?: boolean;
   hideCategory?: boolean;
+  hideTags?: boolean;
   hideDomain?: boolean;
   disableLinks?: boolean;
   isExternal?: boolean;
@@ -57,14 +92,20 @@ interface CardProps {
 }
 
 const props = defineProps<CardProps>();
+
+const visibleTags = computed(() => {
+  if (!props.tags || props.hideTags) return [];
+  // Limit to 3 tags for vertical cards to prevent overflow
+  return props.tags.slice(0, 3);
+});
 </script>
 
 <style lang="scss" scoped>
-@use '../../assets/main.scss' as main;
+@use "../../assets/main.scss" as main;
 
 .card {
   @include main.vpv-card-base;
-  
+
   &:hover {
     @include main.vpv-card-base-hover;
   }
@@ -118,28 +159,41 @@ const props = defineProps<CardProps>();
   align-items: center;
   gap: 0.5rem;
   font-size: 0.9rem;
-  color: var(--vp-c-text-2);
+  color: var(--vp-c-text-3);
+  margin-bottom: 0.75rem;
 }
 
 .card-tags {
-  margin-bottom: 0.75rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  align-items: center;
 }
 
 .tag {
   display: inline-block;
   background-color: var(--vp-c-bg-soft);
-  color: var(--vp-c-text-1);
-  padding: 0.3rem 0.6rem;
-  border-radius: 9999px;
-  border: 1px solid var(--vp-c-divider);
-  font-size: 0.8rem;
-  margin-right: 0.5rem;
-  transition: background-color 0.3s ease-in-out, border 0.3s ease-in-out;
+  color: var(--vp-c-text-2);
+  padding: 0.25rem 0.75rem;
+  border-radius: 1rem;
+  border: 2px solid var(--vp-c-divider);
+  font-size: 0.85rem;
+  transition: all 0.2s ease-in-out;
+  
+  &:hover {
+    border-color: var(--vp-c-border);
+  }
 }
 
-.card:hover .tag {
-  background-color: var(--vp-c-brand-soft);
-  border: 1px solid var(--vp-c-border);
+.category-tag {
+  border: 2px solid var(--vp-c-brand-soft);
+  color: var(--vp-c-text-1);
+  font-weight: 600;
+  background-color: var(--vp-c-bg-soft);
+  
+  &:hover {
+    border: 2px solid var(--vp-c-brand);
+  }
 }
 
 .card-body {
@@ -150,6 +204,7 @@ const props = defineProps<CardProps>();
   -webkit-box-orient: vertical;
   overflow: hidden;
   flex: 1;
+  margin: 0 auto 1rem;
 }
 
 .card-footer {
@@ -184,10 +239,6 @@ const props = defineProps<CardProps>();
     flex: 1 1 100%;
     max-width: 100%;
     min-width: unset;
-  }
-
-  .cards-wrapper {
-    gap: 1rem;
   }
 }
 </style>
