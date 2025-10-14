@@ -70,7 +70,7 @@ const props = withDefaults(defineProps<Props>(), {
   hideDescription: false,
   enableZoom: false,
   zoomMargin: 24,
-  zoomBackground: 'rgba(0, 0, 0, 0.8)'
+  zoomBackground: 'rgba(0, 0, 0, 0.9)'
 });
 
 // Template refs
@@ -113,6 +113,40 @@ const initializeZoom = async () => {
       margin: props.zoomMargin,
       background: props.zoomBackground,
     });
+
+    // Add caption when zoom opens
+    zoomInstance.on('open', () => {
+      setTimeout(() => {
+        const overlay = document.querySelector('.medium-zoom-overlay');
+        if (overlay && !overlay.querySelector('.zoom-caption')) {
+          const caption = document.createElement('div');
+          caption.className = 'zoom-caption';
+          caption.textContent = descriptionText.value || '';
+          caption.style.cssText = `
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            color: white;
+            font-size: 16px;
+            text-align: center;
+            padding: 8px 16px;
+            border-radius: 4px;
+            max-width: 80%;
+            word-wrap: break-word;
+          `;
+          overlay.appendChild(caption);
+        }
+      }, 50);
+    });
+
+    // Clean up caption when zoom closes
+    zoomInstance.on('close', () => {
+      const caption = document.querySelector('.zoom-caption');
+      if (caption) {
+        caption.remove();
+      }
+    });
   }
 };
 
@@ -145,18 +179,18 @@ onUnmounted(() => {
   max-width: 800px;
   height: auto;
   border-radius: 8px;
-  border: 2px solid var(--vp-c-brand-soft);
+  border: 1px solid var(--vp-c-brand-soft);
   margin: 0 auto;
   display: block;
 }
 
 .image-wide.zoomable {
   cursor: zoom-in;
-  transition: border 0.3s ease-in-out;
+  transition: box-shadow 0.1s ease-in-out, scale 0.1s ease-in-out;
 }
 
 .image-wide.zoomable:hover {
-  border-color: var(--vp-c-brand-3);
+  transform: scale(1.01);
 }
 
 .image-wide-description {
