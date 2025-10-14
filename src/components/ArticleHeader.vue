@@ -274,4 +274,10 @@ const visibleTags = computed(() => {
   color: var(--vp-c-text-1);
   font-weight: 500;
 }
+
+@media (max-width: 500px) {
+  .info-cards {
+    flex-direction: column;
+  }
+}
 </style>
