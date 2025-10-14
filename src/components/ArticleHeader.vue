@@ -152,7 +152,9 @@ const visibleTags = computed(() => {
 });
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
+@use '../assets/main.scss' as main;
+
 .return-text {
   display: block;
   margin-bottom: 2rem;
@@ -261,18 +263,11 @@ const visibleTags = computed(() => {
 }
 
 .pill {
-  padding: 0.25rem 0.75rem;
-  background-color: var(--vp-c-bg);
-  border: 1px solid var(--vp-c-divider);
-  border-radius: 1rem;
-  font-size: 0.85em;
-  color: var(--vp-c-text-2);
+  @include main.vpv-pill-header
 }
 
 .category-pill {
-  border-color: var(--vp-c-brand);
-  color: var(--vp-c-text-1);
-  font-weight: 500;
+  @include main.vpv-pill-header-branded
 }
 
 @media (max-width: 500px) {

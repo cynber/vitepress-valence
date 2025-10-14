@@ -171,29 +171,11 @@ const visibleTags = computed(() => {
 }
 
 .tag {
-  display: inline-block;
-  background-color: var(--vp-c-bg-soft);
-  color: var(--vp-c-text-2);
-  padding: 0.25rem 0.75rem;
-  border-radius: 1rem;
-  border: 2px solid var(--vp-c-divider);
-  font-size: 0.85rem;
-  transition: all 0.2s ease-in-out;
-  
-  &:hover {
-    border-color: var(--vp-c-border);
-  }
+  @include main.vpv-tag-card
 }
 
 .category-tag {
-  border: 2px solid var(--vp-c-brand-soft);
-  color: var(--vp-c-text-1);
-  font-weight: 600;
-  background-color: var(--vp-c-bg-soft);
-  
-  &:hover {
-    border: 2px solid var(--vp-c-brand);
-  }
+  @include main.vpv-tag-card-branded
 }
 
 .card-body {
