@@ -63,10 +63,10 @@ const props = defineProps<CardProps>();
 @use '../../assets/main.scss' as main;
 
 .card {
-  @include main.card-base;
+  @include main.vpv-card-base;
   
   &:hover {
-    @include main.card-base-hover;
+    @include main.vpv-card-base-hover;
   }
   flex: 1 1 300px;
   max-width: 400px;

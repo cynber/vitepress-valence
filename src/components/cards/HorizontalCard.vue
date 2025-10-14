@@ -61,13 +61,11 @@ const props = defineProps<HorizontalCardProps>();
 @use '../../assets/main.scss' as main;
 
 .horizontal-card {
-  @include main.card-base;
+  @include main.vpv-card-base;
   
   &:hover {
-    @include main.card-base-hover;
+    @include main.vpv-card-base-hover;
   }
-
-  margin: 10px;
 }
 
 .card-link {

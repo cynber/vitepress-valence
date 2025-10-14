@@ -6,7 +6,7 @@
     </div>
 
     <!-- Dynamic Card Rendering -->
-    <component :is="containerComponent" class="cards-container">
+    <component :is="containerComponent">
       <component
         v-for="post in displayedPosts"
         :key="post.url"

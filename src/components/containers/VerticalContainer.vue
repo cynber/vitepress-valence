@@ -1,25 +1,18 @@
 <template>
-  <div class="cards-container">
+  <div class="vpv-cards-container vertical-container">
     <slot></slot>
   </div>
 </template>
 
-
 <style scoped>
-.cards-container {
-  display: flex;
+.vertical-container {
   flex-wrap: wrap;
   gap: 1.5rem;
-  padding: 10px;
-  margin: 16px auto;
   justify-content: center;
-  border-radius: 18px;
-  background-color: var(--vp-c-bg-soft);
-  border: 2px solid var(--vp-c-divider);
-  box-shadow: inset 0 1px 4px rgba(0, 0, 0, 0.05);
 }
+
 @media screen and (max-width: 1024px) {
-  .cards-wrapper {
+  .vertical-container {
     gap: 1rem;
   }
 }

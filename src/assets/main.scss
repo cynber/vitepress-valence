@@ -16,7 +16,7 @@
 }
 
 /* Card Base Styles */
-@mixin card-base {
+@mixin vpv-card-base {
   background-color: var(--vp-c-bg);
   overflow: hidden;
   border-radius: 16px;
@@ -24,14 +24,36 @@
   box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
   transition: box-shadow 0.3s ease-in-out, border-color 0.3s ease-in-out, transform 0.2s ease-in-out;
 }
-@mixin card-base-hover {
+@mixin vpv-card-base-hover {
   border-color: var(--vp-c-border);
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
 //   transform: translateY(-2px);
 }
-.card-base {
-  @include card-base;
+.vpv-card-base {
+  @include vpv-card-base;
 }
-.card-base:hover {
-  @include card-base-hover;
+.vpv-card-base:hover {
+  @include vpv-card-base-hover;
 }
+
+/* Card Container Styles */
+.vpv-cards-container {
+  display: flex;
+  margin: 16px auto;
+  padding: 10px;
+  border-radius: 18px;
+  border: 2px solid var(--vp-c-divider);
+  background-color: var(--vp-c-bg-soft);
+  box-shadow: inset 0 1px 4px rgba(0, 0, 0, 0.05);
+}
+
+// .cards-container {  # Horizontal Container
+//   flex-direction: column;
+//   gap: 0.2rem;
+// }
+
+// .cards-container { # Vertical Container
+//   flex-wrap: wrap;
+//   gap: 1.5rem;
+//   justify-content: center;
+// }
