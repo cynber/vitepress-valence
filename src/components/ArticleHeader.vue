@@ -55,22 +55,29 @@
         </div>
       </div>
 
-      <!-- Second Row: Pills -->
-      <div class="pills-row">
-        <span
-          v-if="!props.hideCategory && frontmatter.category"
-          class="pill category-pill"
-        >
-          {{ frontmatter.category }}
-        </span>
-        <span
-          v-if="!props.hideTags"
-          v-for="tag in visibleTags"
-          :key="tag"
-          class="pill"
-        >
-          {{ tag }}
-        </span>
+      <div
+        v-if="
+          (!props.hideCategory && frontmatter.category) ||
+          (!props.hideTags && frontmatter.tags && frontmatter.tags.length > 0)
+        "
+        class="pills-container"
+      >
+        <div class="pills-content">
+          <span
+            v-if="!props.hideCategory && frontmatter.category"
+            class="pill category-pill"
+          >
+            {{ frontmatter.category }}
+          </span>
+          <span
+            v-if="!props.hideTags"
+            v-for="tag in frontmatter.tags"
+            :key="tag"
+            class="pill"
+          >
+            {{ tag }}
+          </span>
+        </div>
       </div>
     </div>
   </header>
@@ -124,10 +131,12 @@ interface Author {
 }
 
 const props = defineProps<Props>();
+
 const authorsInjectKey = props.authorsDataKey || "authors";
 const authors = inject<Record<string, Author>>(authorsInjectKey) || {};
 const { page } = useData();
 const frontmatter = page.value.frontmatter as Frontmatter;
+
 const author = ref<Author>(authors[frontmatter.author || ""] || { name: "" });
 
 const returnLinkValue = ref<string>(
@@ -142,18 +151,12 @@ const readingTime = computed((): string | null => {
     const minutes = frontmatter.reading_time;
     return minutes === 1 ? "1 minute" : `${minutes} minutes`;
   }
-
   return null;
-});
-
-const visibleTags = computed(() => {
-  const tags = frontmatter.tags || [];
-  return tags.slice(0, 5);
 });
 </script>
 
 <style lang="scss" scoped>
-@use '../assets/main.scss' as main;
+@use "../assets/main.scss" as main;
 
 .return-text {
   display: block;
@@ -256,18 +259,35 @@ const visibleTags = computed(() => {
   margin: 0;
 }
 
-.pills-row {
+.pills-container {
+  position: relative;
+  overflow: hidden;
+
+  &::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 2rem;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, var(--vp-c-bg-soft));
+    pointer-events: none;
+  }
+}
+
+.pills-content {
   display: flex;
   gap: 0.5rem;
-  flex-wrap: wrap;
+  white-space: nowrap;
+  overflow: hidden;
 }
 
 .pill {
-  @include main.vpv-pill-header
+  @include main.vpv-pill-header;
 }
 
 .category-pill {
-  @include main.vpv-pill-header-branded
+  @include main.vpv-pill-header-branded;
 }
 
 @media (max-width: 500px) {

@@ -25,18 +25,23 @@
             {{ excerpt }}
           </p>
           
-          <div v-if="(!hideCategory && category) || (!hideTags && tags && tags.length > 0)" class="card-tags">
-            <span v-if="!hideCategory && category" class="tag category-tag">
-              {{ category }}
-            </span>
-            <span
-              v-if="!hideTags"
-              v-for="tag in visibleTags"
-              :key="tag"
-              class="tag"
-            >
-              {{ tag }}
-            </span>
+          <div
+            v-if="(!hideCategory && category) || (!hideTags && tags && tags.length > 0)"
+            class="tags-container"
+          >
+            <div class="tags-content">
+              <span v-if="!hideCategory && category" class="tag category-tag">
+                {{ category }}
+              </span>
+              <span
+                v-if="!hideTags"
+                v-for="tag in tags"
+                :key="tag"
+                class="tag"
+              >
+                {{ tag }}
+              </span>
+            </div>
           </div>
         </div>
         <div v-if="!hideImage && (image || image_dark)" class="card-image">
@@ -51,8 +56,6 @@
 </template>
 
 <script setup lang="ts">
-import { computed, defineProps } from "vue";
-
 interface HorizontalCardProps {
   title: string;
   excerpt: string;
@@ -76,12 +79,6 @@ interface HorizontalCardProps {
 }
 
 const props = defineProps<HorizontalCardProps>();
-
-const visibleTags = computed(() => {
-  if (!props.tags || props.hideTags) return [];
-  // Limit to 4 tags to prevent overflow
-  return props.tags.slice(0, 4);
-});
 </script>
 
 <style lang="scss" scoped>
@@ -165,27 +162,43 @@ const visibleTags = computed(() => {
   margin-bottom: 0.5rem;
 }
 
-.card-tags {
+.tags-container {
+  position: relative;
+  overflow: hidden;
   margin-top: 0.5rem;
+  
+  &::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 2rem;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, var(--vp-c-bg));
+    pointer-events: none;
+  }
+}
+
+.tags-content {
   display: flex;
-  flex-wrap: wrap;
   gap: 0.5rem;
   align-items: center;
+  white-space: nowrap;
+  overflow: hidden;
 }
 
 .tag {
-  @include main.vpv-tag-card
+  @include main.vpv-tag-card;
 }
 
 .category-tag {
-  @include main.vpv-tag-card-branded
+  @include main.vpv-tag-card-branded;
 }
 
 @media screen and (max-width: 768px) {
   .card-content {
     flex-direction: column;
   }
-
   .card-image {
     flex: 0 0 auto;
     width: calc(100% - 20px);
