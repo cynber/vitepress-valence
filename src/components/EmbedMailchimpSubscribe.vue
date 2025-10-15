@@ -221,7 +221,7 @@ export default {
   clear: both;
   background-color: var(--vp-button-brand-bg);
   border: 0 none;
-  border-radius: 4px;
+  border-radius: 1rem;
   transition: all 0.23s ease-in-out 0s;
   color: var(--vp-button-brand-text);
   cursor: pointer;
