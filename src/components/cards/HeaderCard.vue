@@ -87,7 +87,7 @@ const formattedDateTime = computed(() => {
   justify-content: space-between;
   align-items: flex-start;
   background-color: var(--vp-c-bg);
-  border-radius: 8px;
+  border-radius: 14px;
   border: 1px solid var(--vp-c-divider);
   box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
   padding: 8px 16px;
