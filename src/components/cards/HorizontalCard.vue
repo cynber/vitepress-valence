@@ -124,7 +124,7 @@ const props = defineProps<HorizontalCardProps>();
   height: 100%;
   object-fit: cover;
   border-radius: 8px;
-  border: 1px solid var(--vp-c-border);
+  border: 2px solid var(--vp-c-divider);
 }
 
 .card-title {

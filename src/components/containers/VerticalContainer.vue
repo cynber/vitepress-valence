@@ -6,9 +6,10 @@
 
 <style scoped>
 .vertical-container {
-  flex-wrap: wrap;
-  gap: 1.5rem;
-  justify-content: center;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 1rem;
+  justify-content: stretch;
 }
 
 @media screen and (max-width: 1024px) {

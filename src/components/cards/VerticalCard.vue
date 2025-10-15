@@ -17,21 +17,17 @@
           <img :src="image" :alt="title" loading="lazy" />
         </picture>
       </div>
-
       <div class="card-info">
         <h3 class="card-title" :style="{ '--line-clamp-title': titleLines }">
           {{ title }}
         </h3>
-
         <div class="card-meta">
           <span v-if="!hideAuthor && author">{{ author }}</span>
           <span v-if="!hideDate && date">{{ date }}</span>
         </div>
-
         <p class="card-body" :style="{ '--line-clamp-excerpt': excerptLines }">
           {{ excerpt }}
         </p>
-
         <div
           v-if="
             (!hideCategory && category) ||
@@ -49,7 +45,6 @@
           </div>
         </div>
       </div>
-
       <div v-if="!hideDomain && isExternal" class="card-footer">
         <div class="footer-content">
           <Icon icon="mdi:external-link" class="external-icon" />
@@ -62,7 +57,6 @@
 
 <script setup lang="ts">
 import { Icon } from "@iconify/vue";
-
 interface CardProps {
   title: string;
   excerpt: string;
@@ -84,22 +78,18 @@ interface CardProps {
   titleLines?: number;
   excerptLines?: number;
 }
-
 const props = defineProps<CardProps>();
 </script>
 
 <style lang="scss" scoped>
 @use "../../assets/main.scss" as main;
-
 .card {
   @include main.vpv-card-base;
   &:hover {
     @include main.vpv-card-base-hover;
   }
-  flex: 1 1 300px;
-  max-width: 400px;
+  width: 100%;
 }
-
 .card-link {
   text-decoration: none;
   color: inherit;
@@ -107,27 +97,26 @@ const props = defineProps<CardProps>();
   flex-direction: column;
   height: 100%;
 }
-
 .card-image {
   width: 100%;
   aspect-ratio: 16 / 9;
   overflow: hidden;
-  border-bottom: 1px solid var(--vp-c-border);
+  padding: 0.7rem;
+  padding-bottom: 0;
 }
-
 .card-image img {
   width: 100%;
   height: 100%;
   object-fit: cover;
+  border-radius: 10px;
+  border: 2px solid var(--vp-c-divider);
 }
-
 .card-info {
   padding: 1rem;
   display: flex;
   flex-direction: column;
   flex: 1;
 }
-
 .card-title {
   font-size: 1.25rem;
   margin: 0 0 0.5rem 0;
@@ -139,7 +128,6 @@ const props = defineProps<CardProps>();
   text-overflow: ellipsis;
   line-height: 1.2;
 }
-
 .card-meta {
   display: flex;
   justify-content: space-between;
@@ -149,11 +137,9 @@ const props = defineProps<CardProps>();
   color: var(--vp-c-text-3);
   margin-bottom: 0.75rem;
 }
-
 .tags-container {
   position: relative;
   overflow: hidden;
-
   &::after {
     content: "";
     position: absolute;
@@ -165,7 +151,6 @@ const props = defineProps<CardProps>();
     pointer-events: none;
   }
 }
-
 .tags-content {
   display: flex;
   gap: 0.5rem;
@@ -173,15 +158,12 @@ const props = defineProps<CardProps>();
   white-space: nowrap;
   overflow: hidden;
 }
-
 .tag {
   @include main.vpv-tag-card;
 }
-
 .category-tag {
   @include main.vpv-tag-card-branded;
 }
-
 .card-body {
   color: var(--vp-c-text-2);
   display: -webkit-box;
@@ -192,7 +174,6 @@ const props = defineProps<CardProps>();
   flex: 1;
   margin: 0 auto 1rem;
 }
-
 .card-footer {
   padding: 0.5rem;
   display: flex;
@@ -202,24 +183,15 @@ const props = defineProps<CardProps>();
   color: var(--vp-c-text-2);
   border-top: 1px solid var(--vp-c-divider);
 }
-
 .footer-content {
   display: flex;
   align-items: center;
   gap: 0.5rem;
 }
-
 .external-icon {
   width: 1.2em;
   height: 1.2em;
 }
-
-@media screen and (max-width: 1024px) {
-  .card {
-    max-width: calc(50% - 1rem);
-  }
-}
-
 @media screen and (max-width: 650px) {
   .card {
     flex: 1 1 100%;
