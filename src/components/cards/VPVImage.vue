@@ -1,13 +1,19 @@
 <template>
-  <div v-if="shouldShowImage" class="image-wide-container">
+  <div 
+    v-if="shouldShowImage" 
+    class="vpv-image-container"
+    :class="containerClasses"
+    :style="containerStyles"
+  >
     <!-- Light mode image -->
     <img
       v-if="imageConfig?.image"
       ref="lightImageRef"
       :src="imageConfig.image"
       :alt="lightAlt"
-      class="image-wide vpv-light-only"
-      :class="{ 'zoomable': enableZoom }"
+      class="vpv-image vpv-light-only"
+      :class="imageClasses"
+      :style="imageStyles"
     />
     
     <!-- Dark mode image (if provided) -->
@@ -16,8 +22,9 @@
       ref="darkImageRef"
       :src="imageConfig.image_dark"
       :alt="darkAlt"
-      class="image-wide vpv-dark-only"
-      :class="{ 'zoomable': enableZoom }"
+      class="vpv-image vpv-dark-only"
+      :class="imageClasses"
+      :style="imageStyles"
     />
     
     <!-- Fallback: use light mode image in dark mode -->
@@ -26,14 +33,15 @@
       ref="fallbackImageRef"
       :src="imageConfig.image"
       :alt="lightAlt"
-      class="image-wide vpv-dark-only"
-      :class="{ 'zoomable': enableZoom }"
+      class="vpv-image vpv-dark-only"
+      :class="imageClasses"
+      :style="imageStyles"
     />
     
     <!-- Description -->
     <p
       v-if="!hideDescription && descriptionText"
-      class="image-wide-description"
+      class="vpv-image-description"
     >
       {{ descriptionText }}
     </p>
@@ -62,6 +70,13 @@ interface Props {
   enableZoom?: boolean;
   zoomMargin?: number;
   zoomBackground?: string;
+  width?: string;
+  height?: string;
+  aspectRatio?: string;
+  enableRadius?: boolean;
+  enableBorder?: boolean;
+  float?: 'none' | 'left' | 'right';
+  maxWidth?: string;
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -70,7 +85,14 @@ const props = withDefaults(defineProps<Props>(), {
   hideDescription: false,
   enableZoom: false,
   zoomMargin: 24,
-  zoomBackground: 'rgba(0, 0, 0, 0.9)'
+  zoomBackground: 'rgba(0, 0, 0, 0.9)',
+  width: '100%',
+  height: 'auto',
+  aspectRatio: 'auto',
+  enableRadius: true,
+  enableBorder: false, // Changed default to false to avoid conflicts
+  float: 'none',
+  maxWidth: '100%'
 });
 
 // Template refs
@@ -97,6 +119,28 @@ const descriptionText = computed(() => {
   return props.imageConfig?.description || props.defaultDescription;
 });
 
+const containerClasses = computed(() => ({
+  'vpv-float-left': props.float === 'left',
+  'vpv-float-right': props.float === 'right',
+}));
+
+const imageClasses = computed(() => ({
+  'zoomable': props.enableZoom,
+  'vpv-image-bordered': props.enableBorder,
+  'vpv-image-rounded': props.enableRadius
+}));
+
+const containerStyles = computed(() => ({
+  width: props.width,
+  maxWidth: props.maxWidth,
+}));
+
+const imageStyles = computed(() => ({
+  width: '100%',
+  height: props.height,
+  aspectRatio: props.aspectRatio !== 'auto' ? props.aspectRatio : undefined
+}));
+
 const initializeZoom = async () => {
   if (!props.enableZoom) return;
   
@@ -113,15 +157,15 @@ const initializeZoom = async () => {
       margin: props.zoomMargin,
       background: props.zoomBackground,
     });
-
+    
     // Add caption when zoom opens
     zoomInstance.on('open', () => {
       setTimeout(() => {
         const overlay = document.querySelector('.medium-zoom-overlay');
-        if (overlay && !overlay.querySelector('.zoom-caption')) {
+        if (overlay && !overlay.querySelector('.zoom-caption') && descriptionText.value) {
           const caption = document.createElement('div');
           caption.className = 'zoom-caption';
-          caption.textContent = descriptionText.value || '';
+          caption.textContent = descriptionText.value;
           caption.style.cssText = `
             position: absolute;
             bottom: 20px;
@@ -139,7 +183,7 @@ const initializeZoom = async () => {
         }
       }, 50);
     });
-
+    
     // Clean up caption when zoom closes
     zoomInstance.on('close', () => {
       const caption = document.querySelector('.zoom-caption');
@@ -167,32 +211,47 @@ onUnmounted(() => {
 </script>
 
 <style scoped>
-.image-wide-container {
+.vpv-image-container {
   display: flex;
   flex-direction: column;
   align-items: center;
+  
+  &.vpv-float-left {
+    float: left;
+    margin: 0 1rem 1rem 0;
+  }
+  
+  &.vpv-float-right {
+    float: right;
+    margin: 0 0 1rem 1rem;
+  }
 }
 
-.image-wide {
+.vpv-image {
   width: 100%;
   max-width: 800px;
   height: auto;
-  border-radius: 8px;
-  border: 1px solid var(--vp-c-brand-soft);
-  margin: 0 auto;
   display: block;
+  
+  &.vpv-image-bordered {
+    border: 2px solid var(--vp-c-divider);
+  }
+  
+  &.vpv-image-rounded {
+    border-radius: 8px;
+  }
 }
 
-.image-wide.zoomable {
+.vpv-image.zoomable {
   cursor: zoom-in;
-  transition: box-shadow 0.1s ease-in-out, scale 0.1s ease-in-out;
+  transition: transform 0.1s ease-in-out;
 }
 
-.image-wide.zoomable:hover {
+.vpv-image.zoomable:hover {
   transform: scale(1.01);
 }
 
-.image-wide-description {
+.vpv-image-description {
   font-size: 0.9rem;
   color: var(--vp-c-text-3);
   margin: 0.5rem 0 0 0;

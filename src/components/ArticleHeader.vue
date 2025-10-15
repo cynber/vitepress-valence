@@ -13,6 +13,8 @@
       :imageConfig="frontmatter.featured_image"
       :hideDescription="props.hideFeatImageDescription"
       defaultAlt="Featured Image"
+      :enableBorder="true"
+      :float="'none'"
     />
 
     <div class="article-info">
