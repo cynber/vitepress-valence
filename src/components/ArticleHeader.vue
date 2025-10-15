@@ -8,11 +8,13 @@
       {{ frontmatter.subtitle }}
     </p>
 
-    <ImageWide
+    <VPVImage
       v-if="!props.hideFeatImage"
       :imageConfig="frontmatter.featured_image"
       :hideDescription="props.hideFeatImageDescription"
       defaultAlt="Featured Image"
+      :enableBorder="true"
+      :float="'none'"
     />
 
     <div class="article-info">
@@ -25,18 +27,21 @@
         >
           <div class="author-section">
             <img
+              v-if="author.avatar"
               :src="author.avatar"
               alt="Author's Avatar"
               class="author-avatar"
             />
-            <div class="author-details">
+            <div
+              class="author-details"
+              :class="{ 'no-avatar': !author.avatar }"
+            >
               <span class="author-name">{{ author.name }}</span>
               <p class="author-description">{{ author.description }}</p>
             </div>
           </div>
         </a>
-
-        <div class="meta-data-card">
+        <div v-if="hasMetaData" class="meta-data-card">
           <div class="meta-data">
             <p v-if="!props.hideDate && frontmatter.date">
               <strong>Date:</strong>
@@ -55,22 +60,29 @@
         </div>
       </div>
 
-      <!-- Second Row: Pills -->
-      <div class="pills-row">
-        <span
-          v-if="!props.hideCategory && frontmatter.category"
-          class="pill category-pill"
-        >
-          {{ frontmatter.category }}
-        </span>
-        <span
-          v-if="!props.hideTags"
-          v-for="tag in visibleTags"
-          :key="tag"
-          class="pill"
-        >
-          {{ tag }}
-        </span>
+      <div
+        v-if="
+          (!props.hideCategory && frontmatter.category) ||
+          (!props.hideTags && frontmatter.tags && frontmatter.tags.length > 0)
+        "
+        class="pills-container"
+      >
+        <div class="pills-content">
+          <span
+            v-if="!props.hideCategory && frontmatter.category"
+            class="pill category-pill"
+          >
+            {{ frontmatter.category }}
+          </span>
+          <span
+            v-if="!props.hideTags"
+            v-for="tag in frontmatter.tags"
+            :key="tag"
+            class="pill"
+          >
+            {{ tag }}
+          </span>
+        </div>
       </div>
     </div>
   </header>
@@ -79,7 +91,7 @@
 <script setup lang="ts">
 import { ref, inject, computed } from "vue";
 import { useData } from "vitepress";
-import ImageWide from "./cards/ImageWide.vue";
+import VPVImage from "./cards/VPVImage.vue";
 
 interface Props {
   returnLink?: string;
@@ -123,16 +135,18 @@ interface Author {
   description?: string;
 }
 
+const { page } = useData();
 const props = defineProps<Props>();
+const frontmatter = page.value.frontmatter as Frontmatter;
+
 const authorsInjectKey = props.authorsDataKey || "authors";
 const authors = inject<Record<string, Author>>(authorsInjectKey) || {};
-const { page } = useData();
-const frontmatter = page.value.frontmatter as Frontmatter;
 const author = ref<Author>(authors[frontmatter.author || ""] || { name: "" });
 
 const returnLinkValue = ref<string>(
   props.returnLink || frontmatter.returnLinkValue || "/"
 );
+
 const returnTextValue = ref<string>(
   "← " + (props.returnText || frontmatter.returnTextValue || "Back Home")
 );
@@ -142,17 +156,20 @@ const readingTime = computed((): string | null => {
     const minutes = frontmatter.reading_time;
     return minutes === 1 ? "1 minute" : `${minutes} minutes`;
   }
-
   return null;
 });
 
-const visibleTags = computed(() => {
-  const tags = frontmatter.tags || [];
-  return tags.slice(0, 5);
+const hasMetaData = computed((): boolean => {
+  const hasDate = !props.hideDate && frontmatter.date;
+  const hasReadingTime = !props.hideReadingTime && readingTime.value;
+
+  return !!(hasDate || hasReadingTime);
 });
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
+@use "../assets/main.scss" as main;
+
 .return-text {
   display: block;
   margin-bottom: 2rem;
@@ -230,6 +247,10 @@ const visibleTags = computed(() => {
 
 .author-details {
   text-align: left;
+
+  &.no-avatar {
+    margin-left: 0;
+  }
 }
 
 .author-name {
@@ -254,25 +275,35 @@ const visibleTags = computed(() => {
   margin: 0;
 }
 
-.pills-row {
+.pills-container {
+  position: relative;
+  overflow: hidden;
+
+  &::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 2rem;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, var(--vp-c-bg-soft));
+    pointer-events: none;
+  }
+}
+
+.pills-content {
   display: flex;
   gap: 0.5rem;
-  flex-wrap: wrap;
+  white-space: nowrap;
+  overflow: hidden;
 }
 
 .pill {
-  padding: 0.25rem 0.75rem;
-  background-color: var(--vp-c-bg);
-  border: 1px solid var(--vp-c-divider);
-  border-radius: 1rem;
-  font-size: 0.85em;
-  color: var(--vp-c-text-2);
+  @include main.vpv-pill-header;
 }
 
 .category-pill {
-  border-color: var(--vp-c-brand);
-  color: var(--vp-c-text-1);
-  font-weight: 500;
+  @include main.vpv-pill-header-branded;
 }
 
 @media (max-width: 500px) {

@@ -27,7 +27,6 @@
 @mixin vpv-card-base-hover {
   border-color: var(--vp-c-border);
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-//   transform: translateY(-2px);
 }
 .vpv-card-base {
   @include vpv-card-base;
@@ -47,13 +46,74 @@
   box-shadow: inset 0 1px 4px rgba(0, 0, 0, 0.05);
 }
 
-// .cards-container {  # Horizontal Container
-//   flex-direction: column;
-//   gap: 0.2rem;
-// }
+/* Pill/Tag Base Styles */
+@mixin vpv-pill-base {
+  display: inline-block;
+  padding: 0.25rem 0.75rem;
+  border-radius: 1rem;
+  font-size: 0.85rem;
+  transition: all 0.2s ease-in-out;
+  text-decoration: none;
+}
 
-// .cards-container { # Vertical Container
-//   flex-wrap: wrap;
-//   gap: 1.5rem;
-//   justify-content: center;
-// }
+/* Card Tags - More prominent styling */
+@mixin vpv-tag-card {
+  @include vpv-pill-base;
+  background-color: var(--vp-c-bg-soft);
+  color: var(--vp-c-text-2);
+  border: 2px solid var(--vp-c-divider);
+  
+  &:hover {
+    border-color: var(--vp-c-border);
+  }
+}
+
+@mixin vpv-tag-card-branded {
+  @include vpv-tag-card;
+  border: 2px solid var(--vp-c-brand-soft);
+  color: var(--vp-c-text-1);
+  font-weight: 600;
+  
+  &:hover {
+    border: 2px solid var(--vp-c-brand);
+  }
+}
+
+/* Header Pills - Subtler styling */
+@mixin vpv-pill-header {
+  @include vpv-pill-base;
+  background-color: var(--vp-c-bg);
+  border: 1px solid var(--vp-c-divider);
+  color: var(--vp-c-text-2);
+}
+
+@mixin vpv-pill-header-branded {
+  @include vpv-pill-header;
+  border-color: var(--vp-c-brand);
+  color: var(--vp-c-text-1);
+  font-weight: 500;
+}
+
+/* Utility Classes */
+.vpv-tag-card {
+  @include vpv-tag-card;
+}
+
+.vpv-tag-card-branded {
+  @include vpv-tag-card-branded;
+}
+
+.vpv-pill-header {
+  @include vpv-pill-header;
+}
+
+.vpv-pill-header-branded {
+  @include vpv-pill-header-branded;
+}
+
+.vpv-pills-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  align-items: center;
+}
