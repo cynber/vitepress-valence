@@ -41,8 +41,7 @@
             </div>
           </div>
         </a>
-
-        <div class="meta-data-card">
+        <div v-if="hasMetaData" class="meta-data-card">
           <div class="meta-data">
             <p v-if="!props.hideDate && frontmatter.date">
               <strong>Date:</strong>
@@ -139,6 +138,7 @@ interface Author {
 const { page } = useData();
 const props = defineProps<Props>();
 const frontmatter = page.value.frontmatter as Frontmatter;
+
 const authorsInjectKey = props.authorsDataKey || "authors";
 const authors = inject<Record<string, Author>>(authorsInjectKey) || {};
 const author = ref<Author>(authors[frontmatter.author || ""] || { name: "" });
@@ -146,6 +146,7 @@ const author = ref<Author>(authors[frontmatter.author || ""] || { name: "" });
 const returnLinkValue = ref<string>(
   props.returnLink || frontmatter.returnLinkValue || "/"
 );
+
 const returnTextValue = ref<string>(
   "← " + (props.returnText || frontmatter.returnTextValue || "Back Home")
 );
@@ -156,6 +157,13 @@ const readingTime = computed((): string | null => {
     return minutes === 1 ? "1 minute" : `${minutes} minutes`;
   }
   return null;
+});
+
+const hasMetaData = computed((): boolean => {
+  const hasDate = !props.hideDate && frontmatter.date;
+  const hasReadingTime = !props.hideReadingTime && readingTime.value;
+
+  return !!(hasDate || hasReadingTime);
 });
 </script>
 
