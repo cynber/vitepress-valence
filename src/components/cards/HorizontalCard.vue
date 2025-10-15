@@ -1,54 +1,77 @@
 <template>
   <div class="horizontal-card">
-    <component 
-      :is="disableLinks ? 'div' : 'a'" 
-      :href="disableLinks ? undefined : url" 
+    <component
+      :is="disableLinks ? 'div' : 'a'"
+      :href="disableLinks ? undefined : url"
       class="card-link"
       :target="isExternal ? '_blank' : undefined"
       :rel="isExternal ? 'noopener noreferrer' : undefined"
     >
-      <div class="card-content">        
+      <div class="card-content">
         <div class="card-info">
-          <div class="card-title" :style="{ '--line-clamp-title': titleLines || 2 }">
+          <div
+            class="card-title"
+            :style="{ '--line-clamp-title': titleLines || 2 }"
+          >
             {{ title }}
           </div>
-          
+
           <div class="card-meta">
             <span v-if="!hideAuthor && author">{{ author }}</span>
             <span v-if="!hideDate && date">{{ date }}</span>
           </div>
-          
-          <p 
-            class="card-excerpt" 
+
+          <p
+            class="card-excerpt"
             :style="{ '--line-clamp-excerpt': excerptLines }"
           >
             {{ excerpt }}
           </p>
-          
+
           <div
-            v-if="(!hideCategory && category) || (!hideTags && tags && tags.length > 0)"
+            v-if="
+              (!hideCategory && category) ||
+              (!hideTags && tags && tags.length > 0)
+            "
             class="tags-container"
           >
             <div class="tags-content">
               <span v-if="!hideCategory && category" class="tag category-tag">
                 {{ category }}
               </span>
-              <span
-                v-if="!hideTags"
-                v-for="tag in tags"
-                :key="tag"
-                class="tag"
-              >
+              <span v-if="!hideTags" v-for="tag in tags" :key="tag" class="tag">
                 {{ tag }}
               </span>
             </div>
           </div>
         </div>
         <div v-if="!hideImage && (image || image_dark)" class="card-image">
-          <picture>
-            <source v-if="image_dark" :srcset="image_dark" media="(prefers-color-scheme: dark)">
-            <img :src="image" :alt="title" loading="lazy">
-          </picture>
+          <!-- Light mode image -->
+          <img
+            v-if="image"
+            :src="image"
+            :alt="title"
+            loading="lazy"
+            class="vpv-light-only"
+          />
+
+          <!-- Dark mode image (if provided) -->
+          <img
+            v-if="image_dark"
+            :src="image_dark"
+            :alt="title"
+            loading="lazy"
+            class="vpv-dark-only"
+          />
+
+          <!-- Fallback: use light mode image in dark mode if no dark image -->
+          <img
+            v-else-if="image"
+            :src="image"
+            :alt="title"
+            loading="lazy"
+            class="vpv-dark-only"
+          />
         </div>
       </div>
     </component>
@@ -82,11 +105,11 @@ const props = defineProps<HorizontalCardProps>();
 </script>
 
 <style lang="scss" scoped>
-@use '../../assets/main.scss' as main;
+@use "../../assets/main.scss" as main;
 
 .horizontal-card {
   @include main.vpv-card-base;
-  
+
   &:hover {
     @include main.vpv-card-base-hover;
   }
@@ -166,7 +189,7 @@ const props = defineProps<HorizontalCardProps>();
   position: relative;
   overflow: hidden;
   margin-top: 0.5rem;
-  
+
   &::after {
     content: "";
     position: absolute;

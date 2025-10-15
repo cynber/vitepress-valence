@@ -8,14 +8,32 @@
       :rel="isExternal ? 'noopener noreferrer' : undefined"
     >
       <div v-if="!hideImage && (image || image_dark)" class="card-image">
-        <picture>
-          <source
-            v-if="image_dark"
-            :srcset="image_dark"
-            media="(prefers-color-scheme: dark)"
-          />
-          <img :src="image" :alt="title" loading="lazy" />
-        </picture>
+        <!-- Light mode image -->
+        <img
+          v-if="image"
+          :src="image"
+          :alt="title"
+          loading="lazy"
+          class="vpv-light-only"
+        />
+
+        <!-- Dark mode image (if provided) -->
+        <img
+          v-if="image_dark"
+          :src="image_dark"
+          :alt="title"
+          loading="lazy"
+          class="vpv-dark-only"
+        />
+
+        <!-- Fallback: use light mode image in dark mode if no dark image -->
+        <img
+          v-else-if="image"
+          :src="image"
+          :alt="title"
+          loading="lazy"
+          class="vpv-dark-only"
+        />
       </div>
       <div class="card-info">
         <h3 class="card-title" :style="{ '--line-clamp-title': titleLines }">
