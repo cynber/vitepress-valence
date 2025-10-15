@@ -27,11 +27,15 @@
         >
           <div class="author-section">
             <img
+              v-if="author.avatar"
               :src="author.avatar"
               alt="Author's Avatar"
               class="author-avatar"
             />
-            <div class="author-details">
+            <div
+              class="author-details"
+              :class="{ 'no-avatar': !author.avatar }"
+            >
               <span class="author-name">{{ author.name }}</span>
               <p class="author-description">{{ author.description }}</p>
             </div>
@@ -132,13 +136,11 @@ interface Author {
   description?: string;
 }
 
+const { page } = useData();
 const props = defineProps<Props>();
-
+const frontmatter = page.value.frontmatter as Frontmatter;
 const authorsInjectKey = props.authorsDataKey || "authors";
 const authors = inject<Record<string, Author>>(authorsInjectKey) || {};
-const { page } = useData();
-const frontmatter = page.value.frontmatter as Frontmatter;
-
 const author = ref<Author>(authors[frontmatter.author || ""] || { name: "" });
 
 const returnLinkValue = ref<string>(
@@ -237,6 +239,10 @@ const readingTime = computed((): string | null => {
 
 .author-details {
   text-align: left;
+
+  &.no-avatar {
+    margin-left: 0;
+  }
 }
 
 .author-name {
