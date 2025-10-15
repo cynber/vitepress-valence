@@ -1,12 +1,11 @@
 <template>
-  <VerticalContainer>
-    <TitleCard 
-      v-if="showTitleCard"
-      :title="headerTitle"
-      :date="headerDate"
-      :title-lines="headerTitleLines"
-      :link="headerLink"
-    />
+  <VerticalContainer
+    :title="headerTitle"
+    :date="headerDate"
+    :header-link="headerLink"
+    :title-lines="headerTitleLines"
+    :hide-header="!showTitleCard"
+  >
     <EmbedCardLemmy
       v-for="(link, index) in links"
       :key="index"
@@ -29,7 +28,6 @@
 import { defineProps, computed } from "vue";
 import VerticalContainer from "./containers/VerticalContainer.vue";
 import EmbedCardLemmy from "./cards/EmbedCardLemmy.vue";
-import TitleCard from "./cards/HeaderCard.vue";
 
 interface EmbedLemmyProps {
   headerTitle?: string;

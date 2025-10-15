@@ -367,22 +367,28 @@ onMounted(() => {
 .lemmy-card {
   background-color: #fff; /* litely $body-bg */
   border-radius: 8px;
-  border: 1px solid rgba(0, 168, 70, 0.5);
+  border: 1px solid var(--vp-c-divider);
   padding: 1rem;
-  margin: auto;
   color: #495057; /* litely $body-color */
   display: flex;
   flex-direction: column;
   max-width: 400px;
+  min-height: 300px; /* Add minimum height */
   box-sizing: border-box;
   box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
-  /* transition: box-shadow 0.3s ease-in-out; */
   font-family: "Lato", sans-serif;
+}
+
+.lemmy-card > div {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  min-height: 100%;
 }
 
 .dark .lemmy-card {
   background-color: #222; /* darkly $body-bg */
-  border: 1px solid rgba(173, 181, 189, 0.5);
+  border: 1px solid var(--vp-c-border);
   color: #dee2e6; /* darkly $body-color */
 }
 
@@ -551,7 +557,9 @@ onMounted(() => {
 
 .lemmy-card-content {
   flex: 1;
-  /* margin-bottom: 0.75rem; */
+  display: flex;
+  flex-direction: column;
+  /* margin-bottom: 0.75rem; - Remove this */
 }
 
 .lemmy-card-title {
@@ -617,6 +625,7 @@ onMounted(() => {
   display: flex;
   flex-wrap: nowrap;
   justify-content: space-between;
+  margin-top: auto;
 }
 
 .lemmy-score,
