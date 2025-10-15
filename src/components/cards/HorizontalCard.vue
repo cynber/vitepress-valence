@@ -18,7 +18,9 @@
 
           <div class="card-meta">
             <span v-if="!hideAuthor && author">{{ author }}</span>
-            <span v-if="!hideDate && date">{{ date }}</span>
+            <span v-if="!hideDate && date && date !== 'Invalid Date'">{{
+              date
+            }}</span>
           </div>
 
           <p

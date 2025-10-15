@@ -36,12 +36,17 @@
         />
       </div>
       <div class="card-info">
-        <h3 class="card-title" :style="{ '--line-clamp-title': titleLines }">
+        <div
+          class="card-title"
+          :style="{ '--line-clamp-title': titleLines || 2 }"
+        >
           {{ title }}
-        </h3>
+        </div>
         <div class="card-meta">
           <span v-if="!hideAuthor && author">{{ author }}</span>
-          <span v-if="!hideDate && date">{{ date }}</span>
+          <span v-if="!hideDate && date && date !== 'Invalid Date'">{{
+            date
+          }}</span>
         </div>
         <p class="card-body" :style="{ '--line-clamp-excerpt': excerptLines }">
           {{ excerpt }}
@@ -136,7 +141,8 @@ const props = defineProps<CardProps>();
   flex: 1;
 }
 .card-title {
-  font-size: 1.25rem;
+  font-size: 1.5rem;
+  font-weight: 500;
   margin: 0 0 0.5rem 0;
   display: -webkit-box;
   -webkit-line-clamp: var(--line-clamp-title, 2);
