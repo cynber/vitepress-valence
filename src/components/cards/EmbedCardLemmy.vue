@@ -103,7 +103,6 @@
             <span>{{ commentCount }}</span>
           </div>
         </div>
-        <div class="lemmy-gap"></div>
         <div class="lemmy-post-date" v-if="!hideDate">
           <div class="lemmy-footer-item">{{ formattedDate }}</div>
         </div>
@@ -612,13 +611,13 @@ onMounted(() => {
   text-overflow: ellipsis;
   padding: 0.5rem;
   background-color: #f8f9fa; /* litely $gray-100 */
-  border: 1px solid #d2d3d4;
+  border: 1px solid var(--vp-c-divider);
   border-radius: 8px;
 }
 
 .dark .lemmy-card-description {
   background-color: #303030; /* darkly $gray-800 */
-  border: 1px solid #4f4f4f;
+  border: 1px solid var(--vp-c-border);
 }
 
 .lemmy-card-footer {
@@ -626,14 +625,19 @@ onMounted(() => {
   flex-wrap: nowrap;
   justify-content: space-between;
   margin-top: auto;
+  gap: 8px;
 }
 
 .lemmy-score,
-.lemmy-comments,
-.lemmy-post-date,
-.lemmy-gap {
-  flex: 1 1 25%;
-  margin: 0 4px;
+.lemmy-comments {
+  flex: 1;
+  cursor: pointer;
+}
+
+.lemmy-post-date {
+  flex-shrink: 0;
+  min-width: fit-content;
+  color: rgba(0, 168, 70, 0.8);
 }
 
 .lemmy-score,
@@ -732,14 +736,6 @@ onMounted(() => {
 
   .lemmy-card-footer {
     flex-wrap: wrap;
-  }
-
-  .lemmy-score,
-  .lemmy-comments,
-  .lemmy-post-date,
-  .lemmy-gap {
-    flex: 1 1 50%;
-    margin-top: 4px;
   }
 
   .lemmy-score:nth-child(n + 3),
