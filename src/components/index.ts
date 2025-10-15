@@ -4,7 +4,7 @@ export { default as VerticalCard } from './cards/VerticalCard.vue'
 export { default as HorizontalContainer } from './containers/HorizontalContainer.vue'
 export { default as VerticalContainer } from './containers/VerticalContainer.vue'
 export { default as HeaderCard } from './cards/HeaderCard.vue'
-export { default as ImageWide } from './cards/ImageWide.vue'
+export { default as VPVImage } from './cards/VPVImage.vue'
 
 // Blog/Announcement Components
 export { default as ArticleHeader } from './ArticleHeader.vue'

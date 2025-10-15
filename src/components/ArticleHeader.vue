@@ -8,7 +8,7 @@
       {{ frontmatter.subtitle }}
     </p>
 
-    <ImageWide
+    <VPVImage
       v-if="!props.hideFeatImage"
       :imageConfig="frontmatter.featured_image"
       :hideDescription="props.hideFeatImageDescription"
@@ -86,7 +86,7 @@
 <script setup lang="ts">
 import { ref, inject, computed } from "vue";
 import { useData } from "vitepress";
-import ImageWide from "./cards/ImageWide.vue";
+import VPVImage from "./cards/VPVImage.vue";
 
 interface Props {
   returnLink?: string;
