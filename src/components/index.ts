@@ -16,7 +16,7 @@ export { default as JSONTable } from './JSONTable.vue'
 
 // Image Components
 export { default as ImageGallery } from './ImageGallery.vue'
-export { default as ImageCardSquare } from './cards/ImageCardSquare.vue'
+// export { default as ImageCardSquare } from './cards/ImageCardSquare.vue'
 
 // Social Embed Components
 export { default as EmbedLemmy } from './EmbedLemmy.vue'
