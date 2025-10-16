@@ -3,17 +3,15 @@
     <div v-if="format === 'debug'">
       <pre>{{ galleryData }}</pre>
     </div>
-
-    <component :is="containerComponent" class="gallery-container">
-      <TitleCard
-        :title="title"
-        :date="date"
-        :date-format="dateFormat"
-        :time="time"
-        :dateTimeDescription="dateTimeDescription"
-        :title-lines="titleLines"
-        :link="link"
-      />
+    <VerticalContainer 
+      :title="title"
+      :date="date"
+      :date-format="dateFormat"
+      :title-lines="titleLines"
+      :header-link="link"
+      :description="dateTimeDescription"
+      class="gallery-container"
+    >
       <div v-if="displayImages.length === 0" class="no-images">
         No images found for this gallery.
       </div>
@@ -25,7 +23,7 @@
           :image="img"
         />
       </div>
-    </component>
+    </VerticalContainer>
   </div>
 </template>
 
@@ -33,9 +31,9 @@
 import { inject, computed, onMounted, onUnmounted, ref, nextTick, watch } from "vue";
 import "photoswipe/style.css";
 import VerticalContainer from "./containers/VerticalContainer.vue";
+import ImageCardFull from "./cards/ImageCardFull.vue";
+import ImageCardMasonry from "./cards/ImageCardMasonry.vue";
 import ImageCardSquare from "./cards/ImageCardSquare.vue";
-import ImageCardVertical from "./cards/ImageCardVertical.vue";
-import TitleCard from "./cards/HeaderCard.vue";
 
 interface GalleryImage {
   path: string;
@@ -58,7 +56,7 @@ interface ImageGalleryProps {
   format?: "debug";
   galleryDataKey?: string;
   forceSort?: string[];
-  layout?: "grid" | "vertical";
+  layout?: "full" | "grid" | "masonry";
   directUrls?: string[];
 }
 
@@ -129,13 +127,18 @@ const containerComponent = computed(() => {
 });
 
 const layoutComponent = computed(() => {
-  return props.layout === "grid" ? ImageCardSquare : ImageCardVertical;
+  switch (props.layout) {
+    case "grid": return ImageCardSquare;
+    case "full": return ImageCardFull;
+    case "masonry": return ImageCardMasonry;
+    default: return ImageCardSquare;
+  }
 });
-
 const galleryLayoutClass = computed(() => {
   return {
     "image-grid": props.layout === "grid",
-    "image-vertical": props.layout === "vertical",
+    "image-full": props.layout === "full",
+    "image-masonry": props.layout === "masonry",
   };
 });
 
@@ -210,16 +213,59 @@ watch(displayImages, () => {
 }
 
 .image-grid {
+  display: grid !important;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)) !important;
+  gap: 1rem;
+}
+
+/* Or alternatively, reset the container's grid when it contains your gallery */
+.gallery-container :deep(.container-content) {
+  display: block;
+}
+
+.gallery-container :deep(.container-content) .image-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
   gap: 1rem;
 }
 
-.image-vertical {
-  display: flex;
+.image-full {
+  display: flex !important;
   flex-direction: column;
   align-items: center;
   gap: 1rem;
+  grid-template-columns: none !important;
+}
+
+.image-full .full-image-card img {
+  max-height: 70vh;
+  width: auto;
+  max-width: 100%;
+}
+
+.image-masonry {
+  columns: 3;
+  column-gap: 1rem;
+  break-inside: avoid;
+}
+
+.image-masonry > * {
+  break-inside: avoid;
+  margin-bottom: 1rem;
+  display: inline-block;
+  width: 100%;
+}
+
+@media (max-width: 768px) {
+  .image-masonry {
+    columns: 2;
+  }
+}
+
+@media (max-width: 480px) {
+  .image-masonry {
+    columns: 1;
+  }
 }
 
 .no-images {
