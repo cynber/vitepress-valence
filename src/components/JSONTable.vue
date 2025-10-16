@@ -40,6 +40,7 @@ import { ref, computed, watch, onMounted } from "vue";
 import { Icon } from "@iconify/vue";
 
 import BooleanCell from "./cells/BooleanCell.vue";
+import CodeCell from "./cells/CodeCell.vue";
 import IconCell from "./cells/IconCell.vue";
 import ImageCell from "./cells/ImageCell.vue";
 import LinkCell from "./cells/LinkCell.vue";
@@ -104,6 +105,8 @@ function getCellComponent(format: string): any {
   switch (format) {
     case "boolean":
       return BooleanCell;
+    case "code":
+      return CodeCell;
     case "icon":
       return IconCell;
     case "image":
