@@ -39,13 +39,13 @@
 import { ref, computed, watch, onMounted } from "vue";
 import { Icon } from "@iconify/vue";
 
-// Import cell components
-import TextCell from "./cells/TextCell.vue";
-import LinkCell from "./cells/LinkCell.vue";
 import BooleanCell from "./cells/BooleanCell.vue";
-import TagsCell from "./cells/TagsCell.vue";
-import NumberCell from "./cells/NumberCell.vue";
 import IconCell from "./cells/IconCell.vue";
+import ImageCell from "./cells/ImageCell.vue";
+import LinkCell from "./cells/LinkCell.vue";
+import NumberCell from "./cells/NumberCell.vue";
+import TagsCell from "./cells/TagsCell.vue";
+import TextCell from "./cells/TextCell.vue";
 
 interface Column {
   key: string;
@@ -102,16 +102,20 @@ function getNestedValue(obj: any, path: string): any {
 
 function getCellComponent(format: string): any {
   switch (format) {
-    case "link":
-      return LinkCell;
     case "boolean":
       return BooleanCell;
-    case "tags":
-      return TagsCell;
-    case "number":
-      return NumberCell;
     case "icon":
       return IconCell;
+    case "image":
+      return ImageCell;
+    case "link":
+      return LinkCell;
+    case "number":
+      return NumberCell;
+    case "tags":
+      return TagsCell;
+    case "text":
+      return TextCell;
     default:
       return TextCell;
   }
