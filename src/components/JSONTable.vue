@@ -36,7 +36,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, watch, onMounted, defineProps } from "vue";
+import { ref, computed, watch, onMounted } from "vue";
 import { Icon } from "@iconify/vue";
 
 // Import cell components
@@ -78,7 +78,9 @@ interface Props {
   defaultSortDirection?: "ascending" | "descending";
 }
 
-const props = defineProps<Props>();
+const props = withDefaults(defineProps<Props>(), {
+  defaultSortDirection: "ascending"
+});
 
 const jsonData = ref<any[]>([]);
 const sortColumn = ref<string | null>(props.defaultSortField || null);
