@@ -6,6 +6,7 @@
       target="_blank"
       rel="noopener noreferrer"
       class="icon-link"
+      :title="hoverText"
     >
       <Icon
         :icon="icon"
@@ -19,6 +20,8 @@
       target="_blank"
       rel="noopener noreferrer"
       class="text-link"
+      :style="{ color: iconColor }"
+      :title="hoverText"
     >
       {{ linkText }}
     </a>
@@ -26,7 +29,7 @@
 </template>
 
 <script setup lang="ts">
-import { defineProps, computed } from "vue";
+import { computed } from "vue";
 import { Icon } from "@iconify/vue";
 
 interface LinkCellProps {
@@ -41,6 +44,8 @@ interface LinkCellProps {
   height?: string;
   iconColorMap?: Record<string, string>;
   defaultIconColor?: string;
+  internalHoverText?: string;
+  externalHoverText?: string;
 }
 
 const props = defineProps<LinkCellProps>();
@@ -65,6 +70,9 @@ const displayAs = computed(() =>
 const linkText = computed(() =>
   isInternal.value ? props.internalText || "Open Page" : props.externalText || "Open Link"
 );
+const hoverText = computed(() =>
+  isInternal.value ? props.internalHoverText : props.externalHoverText
+);
 const computedWidth = computed(() => props.width || "1.5em");
 const computedHeight = computed(() => props.height || "1.5em");
 </script>
@@ -78,7 +86,6 @@ const computedHeight = computed(() => props.height || "1.5em");
 
 .icon-link,
 .text-link {
-  color: var(--vp-c-brand);
   text-decoration: none;
   display: flex;
   align-items: center;
@@ -87,5 +94,6 @@ const computedHeight = computed(() => props.height || "1.5em");
 .icon-link:hover,
 .text-link:hover {
   text-decoration: underline;
+  opacity: 0.8;
 }
 </style>
