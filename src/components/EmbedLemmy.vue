@@ -25,7 +25,7 @@
 </template>
 
 <script setup lang="ts">
-import { defineProps, computed } from "vue";
+import { computed } from "vue";
 import VerticalContainer from "./containers/VerticalContainer.vue";
 import EmbedCardLemmy from "./cards/EmbedCardLemmy.vue";
 

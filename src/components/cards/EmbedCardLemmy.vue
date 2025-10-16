@@ -1,10 +1,9 @@
 <template>
   <div class="lemmy-card">
-    <!-- Top Row: User, Community, Lemmy Icon -->
     <div v-if="isPostLoaded">
-      <!-- Top Row: User, Community, Lemmy Icon -->
-      <div class="lemmy-card-header" v-if="!hideUser || !hideCommunity">
-        <div class="lemmy-card-user-community" v-if="!hideUser || !hideCommunity">
+      <!-- Header -->
+      <div class="lemmy-card-header" v-if="shouldShowHeader">
+        <div class="lemmy-card-user-community">
           <div class="lemmy-user-info">
             <a
               v-if="!hideUser"
@@ -16,7 +15,7 @@
             >
               <div class="lemmy-user-icon">
                 <img
-                  :src="creator.avatar || 'https://placehold.co/24'"
+                  :src="creator.avatar || PLACEHOLDER_IMAGE"
                   alt="User Avatar"
                   @error="handleUserImageError"
                 />
@@ -25,7 +24,7 @@
                 creator.display_name || creator.name
               }}</span>
             </a>
-            <span v-if="!hideUser && !hideCommunity" class="lemmy-separator">in</span>
+            <span v-if="shouldShowSeparator" class="lemmy-separator">in</span>
             <a
               v-if="!hideCommunity"
               @click.stop
@@ -40,29 +39,36 @@
         </div>
         <div class="lemmy-icon-container">
           <a :href="props.url" target="_blank" title="View post on Lemmy" class="lemmy-header-icon-link">
-            <Icon icon="bi:link-45deg" class="lemmy-header-icon" width="24" height="24" />
+            <Icon icon="bi:link-45deg" class="lemmy-header-icon" :width="ICON_SIZE" :height="ICON_SIZE" />
           </a>
-          <a :href="linkedInstanceURL" target="_blank" title="Instance"  class="lemmy-header-icon-link">
+          <a :href="linkedInstanceURL" target="_blank" title="Instance" class="lemmy-header-icon-link">
             <Icon
               icon="simple-icons:lemmy"
               class="lemmy-header-icon"
-              width="24"
-              height="24"
+              :width="ICON_SIZE"
+              :height="ICON_SIZE"
             />
           </a>
         </div>
       </div>
 
-      <!-- Title and Description -->
+      <!-- Content -->
       <div class="lemmy-card-content">
-        <h3 v-if="!hideTitle" class="lemmy-card-title" :style="titleLineClampStyle" @click="navigateToPost" title="View post on Lemmy">
+        <h3 
+          v-if="!hideTitle" 
+          class="lemmy-card-title clickable" 
+          :style="titleLineClampStyle" 
+          @click="navigateToPost" 
+          title="View post on Lemmy"
+        >
           {{ title }}
         </h3>
         <div
           v-if="imageURL && !hideBanner"
-          class="lemmy-card-image"
+          class="lemmy-card-image clickable"
           @click="navigateToPost"
-          title="View post on Lemmy">
+          title="View post on Lemmy"
+        >
           <img :src="imageURL" alt="Post Image" @error="handlePostImageError" />
         </div>
         <p
@@ -74,36 +80,31 @@
         </p>
       </div>
 
-      <!-- Bottom Row: Score, Comments, Date -->
-      <div class="lemmy-card-footer" v-if="!hideScore || !hideComments || !hideDate">
+      <!-- Footer -->
+      <div class="lemmy-card-footer" v-if="shouldShowFooter">
         <div
-          class="lemmy-score"
           v-if="!hideScore"
+          class="lemmy-footer-section clickable"
           @click="navigateToPost"
           title="View post on Lemmy"
         >
           <div class="lemmy-footer-item">
-            <Icon
-              icon="mingcute:arrow-up-fill"
-              class="lemmy-icon"
-              width="24"
-              height="24"
-            />
+            <Icon icon="mingcute:arrow-up-fill" class="lemmy-icon" :width="ICON_SIZE" :height="ICON_SIZE" />
             <span>{{ score }}</span>
           </div>
         </div>
         <div
-          class="lemmy-comments"
           v-if="!hideComments"
+          class="lemmy-footer-section clickable"
           @click="navigateToPost"
           title="View post on Lemmy"
         >
           <div class="lemmy-footer-item">
-            <Icon icon="mdi:comment-outline" class="lemmy-icon" width="24" height="24" />
+            <Icon icon="mdi:comment-outline" class="lemmy-icon" :width="ICON_SIZE" :height="ICON_SIZE" />
             <span>{{ commentCount }}</span>
           </div>
         </div>
-        <div class="lemmy-post-date" v-if="!hideDate">
+        <div v-if="!hideDate" class="lemmy-footer-section lemmy-post-date">
           <div class="lemmy-footer-item">{{ formattedDate }}</div>
         </div>
       </div>
@@ -121,6 +122,10 @@
 <script setup lang="ts">
 import { ref, onMounted, computed } from "vue";
 import { Icon } from "@iconify/vue";
+
+// Constants
+const PLACEHOLDER_IMAGE = 'https://placehold.co/24';
+const ICON_SIZE = 24;
 
 interface PostData {
   post_view: {
@@ -199,6 +204,11 @@ const score = ref(0);
 const commentCount = ref(0);
 var externalLinkImage = false;
 
+// Computed properties for conditional rendering
+const shouldShowHeader = computed(() => !props.hideUser || !props.hideCommunity);
+const shouldShowSeparator = computed(() => !props.hideUser && !props.hideCommunity);
+const shouldShowFooter = computed(() => !props.hideScore || !props.hideComments || !props.hideDate);
+
 const formattedDate = computed(() => {
   if (!published.value) return "";
   const date = new Date(published.value);
@@ -243,22 +253,15 @@ const navigateToPost = () => {
 function parseURL(urlString: string) {
   try {
     const url = new URL(urlString);
-
     const instanceURL = `${url.protocol}//${url.host}`;
     const pathParts = url.pathname.split("/").filter(Boolean);
 
     let postID = "";
 
     if (pathParts[0] === "post") {
-      if (pathParts[1] === "id") {
-        postID = pathParts[2];
-      } else {
-        postID = pathParts[1];
-      }
-    } else if (pathParts[0] === "comment") {
-      if (pathParts[1] === "id") {
-        postID = pathParts[2];
-      }
+      postID = pathParts[1] === "id" ? pathParts[2] : pathParts[1];
+    } else if (pathParts[0] === "comment" && pathParts[1] === "id") {
+      postID = pathParts[2];
     }
 
     return { instanceURL, postID };
@@ -272,13 +275,9 @@ async function fetchOGImage(url: string): Promise<string | null> {
   try {
     const response = await fetch(url);
     const htmlText = await response.text();
-
     const parser = new DOMParser();
     const doc = parser.parseFromString(htmlText, "text/html");
-
-    const ogImage = doc
-      .querySelector("meta[property='og:image']")
-      ?.getAttribute("content");
+    const ogImage = doc.querySelector("meta[property='og:image']")?.getAttribute("content");
     return ogImage || null;
   } catch (error) {
     console.error("Failed to fetch OG Image:", error);
@@ -296,17 +295,16 @@ async function fetchPostData(instanceURL: string, postID: string) {
     }
     const data: PostData = await response.json();
 
-    if (data && data.post_view) {
-      const postView = data.post_view;
-      const post = postView.post;
+    if (data?.post_view) {
+      const { post, creator: postCreator, community: postCommunity, counts } = data.post_view;
       title.value = post.name;
       description.value = post.body || "";
-      creator.value = postView.creator;
-      community.value = postView.community;
+      creator.value = postCreator;
+      community.value = postCommunity;
       published.value = post.published;
       imageURL.value = post.thumbnail_url || null;
-      score.value = postView.counts.score;
-      commentCount.value = postView.counts.comments;
+      score.value = counts.score;
+      commentCount.value = counts.comments;
 
       if (!imageURL.value && post.url && !post.body) {
         imageURL.value = await fetchOGImage(post.url);
@@ -323,34 +321,25 @@ async function fetchPostData(instanceURL: string, postID: string) {
 }
 
 function handleUserImageError(event: Event) {
-  (event.target as HTMLImageElement).src = "https://placehold.co/24";
+  (event.target as HTMLImageElement).src = PLACEHOLDER_IMAGE;
 }
 
 function handlePostImageError(event: Event) {
   imageURL.value = null;
 }
 
-const titleLineClampStyle = computed(() => {
-  const styles: Record<string, string | number> = {
+function createLineClampStyle(lines: number): Record<string, string | number> {
+  return {
     display: "-webkit-box",
-    "-webkit-line-clamp": props.titleLines || 2,
+    "-webkit-line-clamp": lines.toString(),
     "-webkit-box-orient": "vertical",
     overflow: "hidden",
     "text-overflow": "ellipsis",
   };
-  return styles;
-});
+};
 
-const excerptLineClampStyle = computed(() => {
-  const styles: Record<string, string | number> = {
-    display: "-webkit-box",
-    "-webkit-line-clamp": props.excerptLines || 4,
-    "-webkit-box-orient": "vertical",
-    overflow: "hidden",
-    "text-overflow": "ellipsis",
-  };
-  return styles;
-});
+const titleLineClampStyle = computed(() => createLineClampStyle(props.titleLines || 2));
+const excerptLineClampStyle = computed(() => createLineClampStyle(props.excerptLines || 4));
 
 onMounted(() => {
   const { instanceURL, postID } = parseURL(props.url);
@@ -362,47 +351,82 @@ onMounted(() => {
 });
 </script>
 
-<style scoped>
+<style scoped lang="scss">
+// Color variables
+$light-bg: #fff;
+$light-text: #495057;
+$light-gray-100: #f8f9fa;
+$light-gray-600: #6c757d;
+$light-border: #d2d3d4;
+
+$dark-bg: #222;
+$dark-text: #dee2e6;
+$dark-gray-800: #303030;
+$dark-gray-600: #888;
+$dark-border: #4f4f4f;
+
+$primary-green: rgba(0, 168, 70, 0.8);
+$primary-green-solid: #00bc8c;
+$accent-orange: #f1641e;
+$accent-cyan: #02bdc2;
+$accent-blue: #3498db;
+
+// Mixins
+@mixin hover-border($color) {
+  border: 1px solid transparent;
+  &:hover {
+    border: 1px solid $color;
+  }
+}
+
+@mixin interactive-background($light-bg, $light-border, $dark-bg, $dark-border) {
+  background-color: transparent;
+  border: 1px solid transparent;
+  border-radius: 8px;
+  padding: 0.5rem;
+  
+  &:hover {
+    background-color: $light-bg;
+    border: 1px solid $light-border;
+  }
+  
+  .dark & {
+    &:hover {
+      background-color: $dark-bg;
+      border: 1px solid $dark-border;
+    }
+  }
+}
+
 .lemmy-card {
-  background-color: #fff; /* litely $body-bg */
+  background-color: $light-bg;
   border-radius: 8px;
   border: 1px solid var(--vp-c-divider);
   padding: 1rem;
-  color: #495057; /* litely $body-color */
+  color: $light-text;
   display: flex;
   flex-direction: column;
   max-width: 400px;
-  min-height: 300px; /* Add minimum height */
+  min-height: 300px;
   box-sizing: border-box;
   box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
   font-family: "Lato", sans-serif;
+
+  .dark & {
+    background-color: $dark-bg;
+    border: 1px solid var(--vp-c-border);
+    color: $dark-text;
+  }
+
+  > div {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    min-height: 100%;
+  }
 }
 
-.lemmy-card > div {
-  display: flex;
-  flex-direction: column;
-  height: 100%;
-  min-height: 100%;
-}
-
-.dark .lemmy-card {
-  background-color: #222; /* darkly $body-bg */
-  border: 1px solid var(--vp-c-border);
-  color: #dee2e6; /* darkly $body-color */
-}
-
-/* .lemmy-card:hover {
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
-}
-
-.dark .lemmy-card:hover {
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.5);
-} */
-
-.lemmy-card-title:hover,
-.lemmy-card-image:hover,
-.lemmy-score:hover,
-.lemmy-comments:hover {
+.clickable {
   cursor: pointer;
 }
 
@@ -423,16 +447,6 @@ onMounted(() => {
   border: 1px solid transparent;
 }
 
-/* .lemmy-card-user-community:hover {
-  background-color: #f8f9fa;
-  border: 1px solid #d2d3d4;
-}
-
-.dark .lemmy-card-user-community:hover {
-  background-color: #303030;
-  border: 1px solid #4f4f4f;
-} */
-
 .lemmy-user-info {
   display: flex;
   align-items: center;
@@ -448,12 +462,12 @@ onMounted(() => {
   overflow: hidden;
   flex-shrink: 0;
   margin-right: 0.4rem;
-}
 
-.lemmy-user-icon img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
 }
 
 .lemmy-user-link,
@@ -464,8 +478,8 @@ onMounted(() => {
   align-items: center;
 }
 
-.lemmy-username {
-  color: #02bdc2;
+.lemmy-username,
+.lemmy-community-name {
   max-width: 120px;
   white-space: nowrap;
   overflow: hidden;
@@ -474,37 +488,28 @@ onMounted(() => {
   flex-shrink: 0;
 }
 
-.dark .lemmy-username {
-  color: #3498db; /* darkly $cyan */
-}
-
-.lemmy-separator {
-  /* margin: 0 2px; */
-  color: #6c757d; /* litely $gray-600 */
-}
-
-.dark .lemmy-separator {
-  color: #888; /* darkly $gray-600 */
+.lemmy-username {
+  color: $accent-cyan;
+  
+  .dark & {
+    color: $accent-blue;
+  }
 }
 
 .lemmy-community-name {
-  color: #f1641e;
-  font-weight: normal;
-  max-width: 120px;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  font-size: 0.8rem;
-  flex-shrink: 0;
+  color: $accent-orange;
+  
+  .dark & {
+    color: $primary-green-solid;
+  }
 }
 
-.dark .lemmy-community-name {
-  color: #00bc8c; /* darkly $green */
-}
-
-.lemmy-user-link:hover .lemmy-username,
-.lemmy-community-link:hover .lemmy-community-name {
-  text-decoration: underline;
+.lemmy-separator {
+  color: $light-gray-600;
+  
+  .dark & {
+    color: $dark-gray-600;
+  }
 }
 
 .lemmy-icon-container {
@@ -516,54 +521,33 @@ onMounted(() => {
 }
 
 .lemmy-header-icon-link {
-  padding: 0.5rem;
-  border-radius: 8px;
-  border: 1px solid transparent;
-}
-
-.dark .lemmy-header-icon-link {
-  border: 1px solid transparent;
-}
-
-.lemmy-header-icon-link:hover {
-  background-color: #f8f9fa;
-  border: 1px solid #d2d3d4;
-  color: #d2d3d4;
-}
-
-.dark .lemmy-header-icon-link:hover {
-  background-color: #303030;
-  border: 1px solid #4f4f4f;
-  color: #4f4f4f;
+  @include interactive-background($light-gray-100, $light-border, $dark-gray-800, $dark-border);
 }
 
 .lemmy-header-icon {
-  color: rgba(0, 168, 70, 0.8);
-  /* transition: color 0.2s ease-in-out; */
-}
-
-.dark .lemmy-header-icon {
-  color: rgba(173, 181, 189, 0.8);
-}
-
-.lemmy-header-icon-link:hover .lemmy-header-icon {
-  color: rgba(0, 168, 70, 1);
-}
-
-.dark .lemmy-header-icon-link:hover .lemmy-header-icon {
-  color: #dee2e6;
+  color: $primary-green;
+  
+  .dark & {
+    color: rgba(173, 181, 189, 0.8);
+  }
+  
+  .lemmy-header-icon-link:hover & {
+    color: rgba(0, 168, 70, 1);
+    
+    .dark & {
+      color: $dark-text;
+    }
+  }
 }
 
 .lemmy-card-content {
   flex: 1;
   display: flex;
   flex-direction: column;
-  /* margin-bottom: 0.75rem; - Remove this */
 }
 
 .lemmy-card-title {
   font-size: 1.25rem;
-  margin: 0 1px;
   margin: 0 0 0.5rem 0;
   display: -webkit-box;
   -webkit-line-clamp: 2;
@@ -573,32 +557,23 @@ onMounted(() => {
   text-overflow: ellipsis;
 }
 
-.lemmy-card-title:hover {
-  text-decoration: underline;
-}
-
 .lemmy-card-image {
   margin-bottom: 0.75rem;
   max-height: 200px;
   overflow: hidden;
   border-radius: 8px;
-  border: 1px solid transparent;
-  cursor: pointer;
+  @include hover-border($light-border);
   position: relative;
-}
 
-.lemmy-card-image:hover {
-  border: 1px solid #d2d3d4;
-}
+  .dark & {
+    @include hover-border($dark-border);
+  }
 
-.dark .lemmy-card-image:hover {
-  border: 1px solid #4f4f4f;
-}
-
-.lemmy-card-image img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
 }
 
 .lemmy-card-description {
@@ -610,14 +585,14 @@ onMounted(() => {
   overflow: hidden;
   text-overflow: ellipsis;
   padding: 0.5rem;
-  background-color: #f8f9fa; /* litely $gray-100 */
+  background-color: $light-gray-100;
   border: 1px solid var(--vp-c-divider);
   border-radius: 8px;
-}
 
-.dark .lemmy-card-description {
-  background-color: #303030; /* darkly $gray-800 */
-  border: 1px solid var(--vp-c-border);
+  .dark & {
+    background-color: $dark-gray-800;
+    border: 1px solid var(--vp-c-border);
+  }
 }
 
 .lemmy-card-footer {
@@ -628,29 +603,27 @@ onMounted(() => {
   gap: 8px;
 }
 
-.lemmy-score,
-.lemmy-comments {
+.lemmy-footer-section {
   flex: 1;
-  cursor: pointer;
-}
-
-.lemmy-post-date {
-  flex-shrink: 0;
-  min-width: fit-content;
-  color: rgba(0, 168, 70, 0.8);
-}
-
-.lemmy-score,
-.lemmy-comments {
-  cursor: pointer;
-}
-
-.lemmy-post-date {
-  color: rgba(0, 168, 70, 0.8);
-}
-
-.dark .lemmy-post-date {
-  color: rgba(173, 181, 189, 0.8);
+  
+  &.lemmy-post-date {
+    flex-shrink: 0;
+    min-width: fit-content;
+    color: $primary-green;
+    
+    .dark & {
+      color: rgba(173, 181, 189, 0.8);
+    }
+    
+    .lemmy-footer-item {
+      background-color: transparent;
+      border: 1px solid transparent;
+      
+      &:hover {
+        border: 1px solid transparent;
+      }
+    }
+  }
 }
 
 .lemmy-footer-item {
@@ -660,52 +633,36 @@ onMounted(() => {
   gap: 0.25rem;
   font-size: 1rem;
   color: #3a3e42;
-  background-color: #f8f9fa;
-  border: 1px solid #f8f9fa;
+  background-color: $light-gray-100;
+  border: 1px solid $light-gray-100;
   border-radius: 8px;
   padding: 6px 4px;
   height: 100%;
   box-sizing: border-box;
-}
-
-.dark .lemmy-footer-item {
-  color: #dee2e6; /* darkly $body-color */
-  background-color: #353535; /* darkly $gray-800 */
-  border: 1px solid #353535;
-}
-
-.lemmy-footer-item:hover {
-  border: 1px solid #d2d3d4;
-}
-
-.dark .lemmy-footer-item:hover {
-  border: 1px solid #4f4f4f;
-}
-
-.lemmy-post-date .lemmy-footer-item {
-  background-color: transparent;
-  border: 1px solid transparent;
-}
-
-.lemmy-post-date:hover .lemmy-footer-item {
-  border: 1px solid transparent;
-}
-
-
-
-.lemmy-score .lemmy-footer-item,
-.lemmy-comments .lemmy-footer-item,
-.lemmy-post-date .lemmy-footer-item {
   max-width: 100%;
+
+  .dark & {
+    color: $dark-text;
+    background-color: #353535;
+    border: 1px solid #353535;
+  }
+
+  &:hover {
+    border: 1px solid $light-border;
+    
+    .dark & {
+      border: 1px solid $dark-border;
+    }
+  }
 }
 
 .lemmy-icon {
-  color: #00bc8c;
+  color: $primary-green-solid;
   margin-left: 4px;
-}
 
-.dark .lemmy-icon {
-  color: #f1641e;
+  .dark & {
+    color: $accent-orange;
+  }
 }
 
 .error-message-container {
@@ -716,16 +673,16 @@ onMounted(() => {
 }
 
 .error-message {
-  background-color: #f8f9fa;
+  background-color: $light-gray-100;
   padding: 16px;
   border-radius: 8px;
-  color: #6c757d;
+  color: $light-gray-600;
   text-align: center;
-}
 
-.dark .error-message {
-  background-color: #303030;
-  color: #888;
+  .dark & {
+    background-color: $dark-gray-800;
+    color: $dark-gray-600;
+  }
 }
 
 @media screen and (max-width: 500px) {
@@ -738,9 +695,7 @@ onMounted(() => {
     flex-wrap: wrap;
   }
 
-  .lemmy-score:nth-child(n + 3),
-  .lemmy-comments:nth-child(n + 3),
-  .lemmy-post-date:nth-child(n + 3) {
+  .lemmy-footer-section:nth-child(n + 3) {
     display: none;
   }
 }
