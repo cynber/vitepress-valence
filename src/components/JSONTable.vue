@@ -8,11 +8,18 @@
             <th
               v-for="column in columns"
               :key="column.key"
-              @click="sortTable(column.key)"
-              :class="{ sortable: true, active: sortColumn === column.key }"
+              @click="
+                props.sortable !== false ? sortTable(column.key) : undefined
+              "
+              :class="{
+                sortable: props.sortable !== false,
+                active: props.sortable !== false && sortColumn === column.key,
+              }"
             >
               {{ column.title || column.key }}
-              <span v-if="sortColumn === column.key">
+              <span
+                v-if="props.sortable !== false && sortColumn === column.key"
+              >
                 {{ sortAsc ? "↑" : "↓" }}
               </span>
             </th>
@@ -75,12 +82,14 @@ interface Props {
   columns?: Column[];
   filters?: Filter | null;
   title?: string;
+  sortable?: boolean;
   defaultSortField?: string;
   defaultSortDirection?: "ascending" | "descending";
 }
 
 const props = withDefaults(defineProps<Props>(), {
-  defaultSortDirection: "ascending"
+  sortable: true,
+  defaultSortDirection: "ascending",
 });
 
 const jsonData = ref<any[]>([]);
@@ -96,7 +105,8 @@ function getNestedValue(obj: any, path: string): any {
   return path
     .split(".")
     .reduce(
-      (acc: any, part: string) => (acc && acc[part] !== undefined ? acc[part] : null),
+      (acc: any, part: string) =>
+        acc && acc[part] !== undefined ? acc[part] : null,
       obj
     );
 }
@@ -160,7 +170,9 @@ function evaluateFilter(filter: Filter, item: any): boolean {
   if (filter.type === "and" || filter.type === "or") {
     const group = filter as FilterGroup;
     const evaluator = filter.type === "and" ? "every" : "some";
-    return group.conditions[evaluator]((subFilter) => evaluateFilter(subFilter, item));
+    return group.conditions[evaluator]((subFilter) =>
+      evaluateFilter(subFilter, item)
+    );
   } else if (filter.type === "condition") {
     const condition = filter as FilterCondition;
     const itemValue = getNestedValue(item, condition.key);
@@ -283,13 +295,20 @@ th {
   background-color: var(--vp-c-bg-soft);
   font-weight: 600;
   text-align: center;
-  cursor: pointer;
   user-select: none;
+}
+
+th.sortable {
+  cursor: pointer;
 }
 
 th.sortable:hover,
 th.active {
   background-color: var(--vp-c-brand-soft);
+}
+
+th:not(.sortable) {
+  cursor: default;
 }
 
 .badge-container {
