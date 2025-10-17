@@ -27,6 +27,7 @@
 
 <script setup lang="ts">
 import { computed } from "vue";
+import { formatDate } from "../../utils";
 
 interface ContainerHeaderProps {
   title: string;
@@ -46,30 +47,14 @@ const props = withDefaults(defineProps<ContainerHeaderProps>(), {
 });
 
 const formattedDateTime = computed(() => {
-  let datetime = "";
-
-  if (props.date) {
-    const dateObj = new Date(props.date);
-    if (!isNaN(dateObj.getTime())) {
-      if (props.dateFormat === "iso") {
-        datetime = dateObj.toISOString().split("T")[0];
-      } else {
-        const dateOptions: Intl.DateTimeFormatOptions = {
-          year: "numeric",
-          month: "long",
-          day: "numeric",
-        };
-        datetime = dateObj.toLocaleDateString(undefined, dateOptions);
-      }
-    } else {
-      datetime = props.date;
-    }
-  }
-
+  if (!props.date) return "";
+  
+  const datetime = formatDate(props.date, { format: props.dateFormat });
+  
   if (props.description && datetime) {
     return `${props.description} ${datetime}`;
   }
-
+  
   return datetime;
 });
 </script>

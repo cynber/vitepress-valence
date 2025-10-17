@@ -110,22 +110,6 @@ onUnmounted(() => {
   }
 });
 
-const formattedDate = computed(() => {
-  const options: Intl.DateTimeFormatOptions = {
-    year: "numeric",
-    month: "long",
-    day: "numeric",
-  };
-  const dateObj = new Date(props.date);
-  return isNaN(dateObj.getTime())
-    ? props.date
-    : dateObj.toLocaleDateString(undefined, options);
-});
-
-const containerComponent = computed(() => {
-  return VerticalContainer;
-});
-
 const layoutComponent = computed(() => {
   switch (props.layout) {
     case "grid": return ImageCardSquare;

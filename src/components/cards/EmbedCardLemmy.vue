@@ -122,6 +122,7 @@
 <script setup lang="ts">
 import { ref, onMounted, computed } from "vue";
 import { Icon } from "@iconify/vue";
+import { formatDate } from "../../utils";
 
 // Constants
 const PLACEHOLDER_IMAGE = 'https://placehold.co/24';
@@ -211,11 +212,7 @@ const shouldShowFooter = computed(() => !props.hideScore || !props.hideComments 
 
 const formattedDate = computed(() => {
   if (!published.value) return "";
-  const date = new Date(published.value);
-  const year = date.getFullYear();
-  const month = `0${date.getMonth() + 1}`.slice(-2);
-  const day = `0${date.getDate()}`.slice(-2);
-  return `${year}-${month}-${day}`;
+  return formatDate(published.value, { format: 'iso' });
 });
 
 const userLink = computed(() => {
