@@ -76,6 +76,7 @@ interface ArticleListProps {
   sortOrder?: "ascending" | "descending";
   filterAuthors?: string;
   excludeURLs?: string[];
+  dateFormat?: string;
 }
 
 const props = defineProps<ArticleListProps>();
@@ -166,7 +167,7 @@ function getCardProps(article: Article) {
     hideDomain: props.hideDomain,
     isExternal: false,
     author: getAuthorName(article.frontmatter.author || ""),
-    date: formatDate(article.frontmatter.date),
+    date: formatDate(article.frontmatter.date, { format: props.dateFormat || 'long' }),
     image: getImage(article),
     image_dark: getImageDark(article),
     category: article.frontmatter.category,

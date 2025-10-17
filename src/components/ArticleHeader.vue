@@ -45,13 +45,7 @@
           <div class="meta-data">
             <p v-if="!props.hideDate && frontmatter.date">
               <strong>Date:</strong>
-              {{
-                new Date(frontmatter.date).toLocaleDateString(undefined, {
-                  year: "numeric",
-                  month: "long",
-                  day: "numeric",
-                })
-              }}
+              {{ formatDate(frontmatter.date, { format: props.dateFormat || 'long' }) }}
             </p>
             <p v-if="!props.hideReadingTime && readingTime">
               <strong>Reading Time:</strong> {{ readingTime }}
@@ -91,6 +85,7 @@
 <script setup lang="ts">
 import { ref, inject, computed } from "vue";
 import { useData } from "vitepress";
+import { formatDate } from '@/utils/MyUtils';
 import VPVImage from "./cards/VPVImage.vue";
 
 interface Props {
@@ -106,6 +101,7 @@ interface Props {
   hideFeatImage?: boolean;
   hideFeatImageDescription?: boolean;
   authorsDataKey?: string;
+  dateFormat?: string;
 }
 
 interface FeaturedImageConfig {
