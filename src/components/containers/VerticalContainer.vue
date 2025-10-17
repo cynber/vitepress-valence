@@ -33,7 +33,7 @@ interface VerticalContainerProps {
   // Header display options
   titleLines?: number;
   subtitleLines?: number;
-  dateFormat?: "long" | "iso";
+  dateFormat?: "long" | "short" | "iso" | string;
 }
 
 const props = defineProps<VerticalContainerProps>();

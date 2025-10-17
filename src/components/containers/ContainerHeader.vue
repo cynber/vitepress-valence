@@ -36,7 +36,7 @@ interface ContainerHeaderProps {
   link?: string;
   titleLines?: number;
   subtitleLines?: number;
-  dateFormat?: "long" | "iso";
+  dateFormat?: "long" | "short" | "iso" | string;
   description?: string;
 }
 

@@ -26,7 +26,7 @@ interface TitleCardProps {
   time?: string;
   titleLines?: number;
   link?: string;
-  dateFormat?: "long" | "iso";
+  dateFormat?: "long" | "short" | "iso" | string;
   dateTimeDescription?: string;
 }
 

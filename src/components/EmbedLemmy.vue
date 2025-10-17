@@ -10,6 +10,7 @@
       v-for="(link, index) in links"
       :key="index"
       :url="link"
+      :dateFormat="dateFormat"
       :hideUser="hideUser"
       :hideCommunity="hideCommunity"
       :hideTitle="hideTitle"
@@ -45,6 +46,7 @@ interface EmbedLemmyProps {
   hideDate?: boolean;
   titleLines?: number;
   excerptLines?: number;
+  dateFormat?: string;
 }
 
 const props = withDefaults(defineProps<EmbedLemmyProps>(), {

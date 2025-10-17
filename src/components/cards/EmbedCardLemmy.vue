@@ -178,6 +178,7 @@ interface EmbedCardLemmyProps {
   hideDate?: boolean;
   titleLines?: number;
   excerptLines?: number;
+  dateFormat?: string;
 }
 
 const props = defineProps<EmbedCardLemmyProps>();
@@ -211,8 +212,8 @@ const shouldShowSeparator = computed(() => !props.hideUser && !props.hideCommuni
 const shouldShowFooter = computed(() => !props.hideScore || !props.hideComments || !props.hideDate);
 
 const formattedDate = computed(() => {
-  if (!published.value) return "";
-  return formatDate(published.value, { format: 'iso' });
+  if (!published.value) return '';
+  return formatDate(published.value, { format: props.dateFormat || 'iso' });
 });
 
 const userLink = computed(() => {
