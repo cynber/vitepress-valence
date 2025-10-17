@@ -7,7 +7,6 @@
     <p v-if="!props.hideSubtitle" class="article-subtitle">
       {{ frontmatter.subtitle }}
     </p>
-
     <VPVImage
       v-if="!props.hideFeatImage"
       :imageConfig="frontmatter.featured_image"
@@ -15,6 +14,11 @@
       defaultAlt="Featured Image"
       :enableBorder="true"
       :float="'none'"
+      :width="props.featImageWidth"
+      :height="props.featImageHeight"
+      :aspectRatio="props.featImageAspectRatio"
+      :maxWidth="props.featImageMaxWidth"
+      :enableZoom="props.enableFeatImageZoom"
     />
 
     <div class="article-info">
@@ -102,6 +106,11 @@ interface Props {
   hideFeatImageDescription?: boolean;
   authorsDataKey?: string;
   dateFormat?: string;
+  featImageWidth?: string;
+  featImageHeight?: string;
+  featImageAspectRatio?: string;
+  featImageMaxWidth?: string;
+  enableFeatImageZoom?: boolean;
 }
 
 interface FeaturedImageConfig {
@@ -132,7 +141,13 @@ interface Author {
 }
 
 const { page } = useData();
-const props = defineProps<Props>();
+const props = withDefaults(defineProps<Props>(), {
+  featImageWidth: '100%',
+  featImageHeight: 'auto',
+  featImageAspectRatio: '16 / 9',
+  featImageMaxWidth: '800px',
+  enableFeatImageZoom: false,
+});
 const frontmatter = page.value.frontmatter as Frontmatter;
 
 const authorsInjectKey = props.authorsDataKey || "authors";

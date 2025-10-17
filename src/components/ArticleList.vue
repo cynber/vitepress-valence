@@ -61,10 +61,13 @@ interface Author {
 interface ArticleListProps {
   articles?: Article[];
   articlesDataKey?: string;
+  postsDataKey?: string; // backward compatibility
   authorsDataKey?: string;
+  // card display options
   format?: "horizontal" | "vertical" | "debug";
   hideAuthor?: boolean;
   hideDate?: boolean;
+  dateFormat?: string;
   hideImage?: boolean;
   hideCategory?: boolean;
   hideTags?: boolean;
@@ -73,15 +76,24 @@ interface ArticleListProps {
   titleLines?: number;
   excerptLines?: number;
   maxCards?: number;
+  // filtering & sorting
   sortOrder?: "ascending" | "descending";
-  filterAuthors?: string;
+  filterAuthors?: string | string[];
+  excludeAuthors?: string[];
+  filterCategories?: string[];
+  excludeCategories?: string[];
+  filterTags?: string[];
+  excludeTags?: string[];
   excludeURLs?: string[];
-  dateFormat?: string;
+  featuredOnly?: boolean;
+  renderDrafts?: boolean;
+  startDate?: Date | string | null;
+  endDate?: Date | string | null;
 }
 
 const props = defineProps<ArticleListProps>();
-
-const injectedArticlesData = inject<Article[]>(props.articlesDataKey || 'postsData', []);
+const dataKey = props.articlesDataKey || props.postsDataKey || 'postsData';
+const injectedArticlesData = inject<Article[]>(dataKey, []);
 const authors = inject<Record<string, Author>>(props.authorsDataKey || 'authors', {});
 
 const articles = computed(() => props.articles || injectedArticlesData);
@@ -112,14 +124,64 @@ const containerComponent = computed(() => {
 // Article filtering and sorting logic
 const displayedArticles = computed(() => {
   let filteredArticles = articles.value.filter(article => {
-    // Filter out excluded URLs
-    if (props.excludeURLs?.includes(article.url)) return false;
+    const frontmatter = article.frontmatter;
     
-    // Filter by author if specified
-    if (props.filterAuthors && article.frontmatter.author !== props.filterAuthors) return false;
+    // Filter out excluded URLs (simple comparison as requested)
+    if (props.excludeURLs?.length) {
+      const articleURL = article.url.replace(/\.html$/, "");
+      const isExcluded = props.excludeURLs.some((excludeURL) => {
+        const normalizedExcludeURL = excludeURL.replace(/\.html$/, "");
+        return normalizedExcludeURL === articleURL;
+      });
+      if (isExcluded) return false;
+    }
     
-    // Filter out drafts (default to 'published' if status not specified)
-    if (article.frontmatter.status === 'draft') return false;
+    // Filter out drafts (unless renderDrafts is true)
+    if (!props.renderDrafts && frontmatter.status === 'draft') return false;
+    
+    // Featured only filter
+    if (props.featuredOnly && !frontmatter.featured) return false;
+    
+    // Author filtering - support both string and array
+    if (props.filterAuthors) {
+      const authorsToFilter = Array.isArray(props.filterAuthors) 
+        ? props.filterAuthors 
+        : [props.filterAuthors];
+      if (!authorsToFilter.includes(frontmatter.author || "")) return false;
+    }
+    
+    // Exclude authors
+    if (props.excludeAuthors?.length && 
+        props.excludeAuthors.includes(frontmatter.author || "")) return false;
+    
+    // Category filtering
+    if (props.filterCategories?.length && 
+        !props.filterCategories.includes(frontmatter.category || "")) return false;
+    
+    // Exclude categories
+    if (props.excludeCategories?.length && 
+        props.excludeCategories.includes(frontmatter.category || "")) return false;
+    
+    // Tags filtering - check if article has ANY of the specified tags
+    if (props.filterTags?.length) {
+      const articleTags = frontmatter.tags || [];
+      const hasMatchingTag = props.filterTags.some(tag => articleTags.includes(tag));
+      if (!hasMatchingTag) return false;
+    }
+    
+    // Exclude tags - exclude if article has ANY of the excluded tags
+    if (props.excludeTags?.length) {
+      const articleTags = frontmatter.tags || [];
+      const hasExcludedTag = props.excludeTags.some(tag => articleTags.includes(tag));
+      if (hasExcludedTag) return false;
+    }
+    
+    // Date range filtering
+    if (props.startDate || props.endDate) {
+      const articleDate = new Date(frontmatter.date);
+      if (props.startDate && articleDate < new Date(props.startDate)) return false;
+      if (props.endDate && articleDate > new Date(props.endDate)) return false;
+    }
     
     return true;
   });
