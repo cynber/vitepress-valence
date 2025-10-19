@@ -18,12 +18,17 @@
 </template>
 
 <script setup lang="ts">
-import { inject, computed } from "vue";
-import { formatDate } from '@/utils/MyUtils';
-import HorizontalCard from "./cards/HorizontalCard.vue";
-import VerticalCard from "./cards/VerticalCard.vue";
-import HorizontalContainer from "./containers/HorizontalContainer.vue";
-import VerticalContainer from "./containers/VerticalContainer.vue";
+import { onMounted,inject, computed } from "vue";
+import { formatDate, useDeprecationWarning } from '../../utils/MyUtils';
+import HorizontalCard from "../cards/HorizontalCard.vue";
+import VerticalCard from "../cards/VerticalCard.vue";
+import HorizontalContainer from "../containers/HorizontalContainer.vue";
+import VerticalContainer from "../containers/VerticalContainer.vue";
+
+onMounted(() => {
+  useDeprecationWarning('BlogPostList', 'ArticleList', 'v1.0.0');
+});
+
 
 interface Frontmatter {
   title: string;

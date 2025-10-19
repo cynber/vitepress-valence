@@ -58,3 +58,23 @@ export function formatDate(date: string | Date, options: DateFormatOptions = {})
       }
   }
 }
+
+/**
+ * Displays a deprecation warning for a component.
+ * @param oldComponentName - The name of the old component.
+ * @param newComponentName - The name of the new component.
+ * @param removalVersion - The version when the component will be removed.
+ */
+export function useDeprecationWarning(
+  oldComponentName: string, 
+  newComponentName: string, 
+  removalVersion: string = 'v3.0.0'
+): void {
+  if (process.env.NODE_ENV !== 'production') {
+    console.warn(
+      ` DEPRECATION WARNING: ${oldComponentName} will be removed in ${removalVersion}\n` +
+      `   Please migrate to the VPV-prefixed version: ${newComponentName}\n` +
+      `   See migration guide: https://your-docs-url.com/migration`
+    );
+  }
+}

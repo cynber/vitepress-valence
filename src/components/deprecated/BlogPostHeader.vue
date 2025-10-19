@@ -52,8 +52,13 @@
 </template>
 
 <script setup lang="ts">
-import { ref, inject } from "vue";
+import { onMounted, ref, inject } from "vue";
 import { useData } from "vitepress";
+import { useDeprecationWarning } from '../../utils/MyUtils';
+
+onMounted(() => {
+  useDeprecationWarning('BlogPostHeader', 'ArticleHeader', 'v1.0.0');
+});
 
 interface Props {
   returnLink?: string;

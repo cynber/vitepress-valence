@@ -89,7 +89,7 @@
 import { ref, inject, computed } from "vue";
 import { useData } from "vitepress";
 import { formatDate } from '@/utils/MyUtils';
-import VPVImage from "./cards/VPVImage.vue";
+import VPVImage from "./VPVImage.vue";
 
 interface Props {
   returnLink?: string;
