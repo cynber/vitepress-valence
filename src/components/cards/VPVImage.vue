@@ -50,8 +50,11 @@
 
 <script setup lang="ts">
 import { computed, onMounted, onUnmounted, ref, nextTick } from 'vue';
+import { useData } from 'vitepress';
 import mediumZoom from 'medium-zoom';
 import type { Zoom } from 'medium-zoom';
+
+const { isDark } = useData();
 
 interface ImageConfig {
   image?: string;
@@ -112,10 +115,16 @@ const lightAlt = computed(() => {
 });
 
 const darkAlt = computed(() => {
-  return props.imageConfig?.alt_dark || props.imageConfig?.alt || props.defaultAlt;
+  return isDark.value 
+    ? (props.imageConfig?.alt_dark || props.imageConfig?.alt || props.defaultAlt)
+    : (props.imageConfig?.alt || props.defaultAlt);
 });
 
 const descriptionText = computed(() => {
+  if (isDark.value && props.imageConfig?.description_dark) {
+    return props.imageConfig.description_dark;
+  }
+  
   return props.imageConfig?.description || props.defaultDescription;
 });
 
