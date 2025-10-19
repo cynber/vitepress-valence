@@ -1,23 +1,52 @@
 <template>
-  <div class="cards-container">
-    <slot></slot>
+  <div class="vpv-cards-container horizontal-container">
+    <ContainerHeader
+      v-if="title && !hideHeader"
+      :title="title"
+      :subtitle="subtitle"
+      :date="date"
+      :link="headerLink"
+      :title-lines="titleLines"
+      :subtitle-lines="subtitleLines"
+      :date-format="dateFormat"
+      :description="description"
+    />
+    <div class="container-content">
+      <slot></slot>
+    </div>
   </div>
 </template>
 
 <script setup lang="ts">
+import ContainerHeader from './ContainerHeader.vue';
 
+interface HorizontalContainerProps {
+  // Header props (optional)
+  title?: string;
+  subtitle?: string;
+  date?: string;
+  headerLink?: string;
+  hideHeader?: boolean;
+  description?: string;
+  
+  // Header display options
+  titleLines?: number;
+  subtitleLines?: number;
+  dateFormat?: "long" | "short" | "iso" | string;
+}
+
+const props = defineProps<HorizontalContainerProps>();
 </script>
 
 <style scoped>
-.cards-container {
+.horizontal-container {
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.container-content {
   display: flex;
   flex-direction: column;
-  gap: 2rem;
-  padding: 16px;
-  margin: 16px auto;
-  border-radius: 8px;
-  border: 1px solid var(--vp-c-divider);
-  background-color: var(--vp-c-bg-soft);
-  box-shadow: inset 0 1px 4px rgba(0, 0, 0, 0.05);
+  gap: 1rem;
 }
 </style>

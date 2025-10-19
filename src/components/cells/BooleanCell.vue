@@ -1,6 +1,10 @@
 <template>
   <div class="boolean-cell">
-    <div v-if="displayAs === 'icon'" class="icon-container">
+    <div
+      v-if="displayAs === 'icon'"
+      class="icon-container"
+      :title="value ? trueHoverText : falseHoverText"
+    >
       <Icon
         :icon="value ? trueIcon : falseIcon"
         :style="{
@@ -23,7 +27,6 @@
 </template>
 
 <script setup lang="ts">
-import { defineProps } from "vue";
 import { Icon } from "@iconify/vue";
 
 interface BooleanCellProps {
@@ -37,6 +40,8 @@ interface BooleanCellProps {
   falseText?: string;
   iconWidth?: string;
   iconHeight?: string;
+  trueHoverText?: string;
+  falseHoverText?: string;
 }
 
 const props = defineProps<BooleanCellProps>();
@@ -55,6 +60,8 @@ const falseColor = props.falseColor || "var(--vp-c-red-3)";
 const iconWidth = props.iconWidth || "1.5em";
 const iconHeight = props.iconHeight || "1.5em";
 const displayAs = props.displayAs || "icon";
+const trueHoverText = props.trueHoverText || undefined;
+const falseHoverText = props.falseHoverText || undefined;
 </script>
 
 <style scoped>

@@ -1,35 +1,33 @@
 <template>
-  <div class="featured-posts-container">
+  <div class="blog-post-list-container">
     <!-- Debug Format -->
-    <div v-if="false">
+    <div v-if="format === 'debug'">
       <pre>{{ JSON.stringify(displayedPosts, null, 2) }}</pre>
     </div>
 
-    <!-- Featured Posts Cards -->
-    <div class="cards-wrapper">
-      <div v-for="post in displayedPosts" :key="post.url" class="featured-post-card">
+    <!-- Vertical Cards Format -->
+    <div v-else-if="format === 'verticalCards'" class="cards-container">
+      <div v-for="post in displayedPosts" :key="post.url" class="post-card">
         <a :href="post.url" class="card-link">
-          <div class="card-image">
-            <img
-              v-if="post.frontmatter.banner"
-              :src="post.frontmatter.banner"
-              alt="Banner Image"
-            />
-          </div>
-          <div class="card-info">
-            <h3 class="post-title">{{ post.frontmatter.title }}</h3>
-            <div class="post-meta">
-              <span class="post-date">{{ formatDate(post.frontmatter.date) }}</span>
-              <span v-if="post.frontmatter.author" class="post-author">
-                by {{ getAuthorName(post.frontmatter.author) }}
-              </span>
+          <div class="card-content">
+            <div class="card-info">
+              <div class="post-title">{{ post.frontmatter.title }}</div>
+              <div class="post-meta">
+                <span class="post-date">{{ formatDate(post.frontmatter.date) }}</span>
+                <span v-if="post.frontmatter.author" class="post-author">
+                  by {{ getAuthorName(post.frontmatter.author) }}
+                </span>
+              </div>
+              <div class="post-tags">
+                <span v-if="post.frontmatter.category" class="tag">
+                  {{ post.frontmatter.category }}
+                </span>
+              </div>
+              <div class="post-excerpt">{{ post.frontmatter.excerpt }}</div>
             </div>
-            <div class="post-tags">
-              <span v-if="post.frontmatter.category" class="tag">
-                {{ post.frontmatter.category }}
-              </span>
+            <div class="card-image" v-if="post.frontmatter.banner">
+              <img :src="post.frontmatter.banner" alt="Banner Image" />
             </div>
-            <p class="post-excerpt">{{ post.frontmatter.excerpt }}</p>
           </div>
         </a>
       </div>
@@ -38,7 +36,12 @@
 </template>
 
 <script setup>
-import { inject, computed } from "vue";
+import { inject, computed, onMounted } from "vue";
+import { useDeprecationWarning } from '../../utils/MyUtils';
+
+onMounted(() => {
+  useDeprecationWarning('BlogPostsVertical', 'ArticleList', 'v1.0.0');
+});
 
 const props = defineProps({
   posts: {
@@ -56,6 +59,11 @@ const props = defineProps({
   endDate: {
     type: [Date, String],
     default: null,
+  },
+  format: {
+    type: String,
+    default: "verticalCards",
+    validator: (value) => ["debug", "verticalCards"].includes(value),
   },
   sortOrder: {
     type: String,
@@ -205,23 +213,22 @@ function getAuthorName(authorKey) {
 </script>
 
 <style scoped>
-.featured-posts-container {
+.blog-post-list-container {
   padding: 1rem 0;
 }
 
-.cards-wrapper {
+.cards-container {
   display: flex;
-  flex-wrap: wrap;
-  gap: 1.5rem;
+  flex-direction: column;
+  gap: 2rem;
   padding: 16px;
-  justify-content: center;
-  background-color: var(--vp-c-bg-soft);
   border-radius: 8px;
   border: 1px solid var(--vp-c-divider);
+  background-color: var(--vp-c-bg-soft);
   box-shadow: inset 0 1px 4px rgba(0, 0, 0, 0.05);
 }
 
-.featured-post-card {
+.post-card {
   background-color: var(--vp-c-bg);
   border-radius: 16px;
   overflow: hidden;
@@ -229,12 +236,9 @@ function getAuthorName(authorKey) {
   box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
   transition: box-shadow 0.3s ease-in-out, border-color 0.3s ease-in-out,
     transform 0.2s ease-in-out;
-  flex: 1 1 300px;
-  min-width: 300px;
-  max-width: calc(33.333% - 1rem);
 }
 
-.featured-post-card:hover {
+.post-card:hover {
   border-color: var(--vp-c-border);
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
   transform: translateY(-2px);
@@ -243,14 +247,26 @@ function getAuthorName(authorKey) {
 .card-link {
   text-decoration: none;
   color: inherit;
+}
+
+.card-content {
   display: flex;
-  flex-direction: column;
-  height: 100%;
+  flex-direction: row;
+  align-items: center;
+  padding: 10px;
+  gap: 10px;
+}
+
+.card-info {
+  flex: 1;
+  min-width: 0;
+  padding: 10px;
 }
 
 .card-image {
-  width: 100%;
-  aspect-ratio: 16 / 9;
+  flex: 0 0 45%;
+  aspect-ratio: 16/9;
+  margin: 10px;
   overflow: hidden;
 }
 
@@ -258,18 +274,23 @@ function getAuthorName(authorKey) {
   width: 100%;
   height: 100%;
   object-fit: cover;
+  border-radius: 8px;
 }
 
-.card-info {
-  padding: 1rem;
-  display: flex;
-  flex-direction: column;
-  flex: 1;
+@media screen and (max-width: 768px) {
+  .card-content {
+    flex-direction: column;
+  }
+  .card-image {
+    flex: 0 0 auto;
+    width: calc(100% - 20px);
+    margin: 10px;
+  }
 }
 
 .post-title {
-  font-size: 1.25rem;
-  margin: 0 0 0.5rem 0;
+  font-size: 1.5rem;
+  margin: 0;
   display: -webkit-box;
   -webkit-line-clamp: 2;
   line-clamp: 2;
@@ -278,17 +299,16 @@ function getAuthorName(authorKey) {
   text-overflow: ellipsis;
   line-height: 1.2;
 }
-
 .post-meta {
   display: flex;
   gap: 0.5rem;
   font-size: 0.9rem;
   color: var(--vp-c-text-2);
-  margin-bottom: 0.5rem;
+  margin-top: 0.5rem;
 }
 
 .post-tags {
-  margin-bottom: 0.75rem;
+  margin-top: 0.5rem;
 }
 
 .tag {
@@ -303,36 +323,18 @@ function getAuthorName(authorKey) {
   transition: background-color 0.3s ease-in-out, border 0.3s ease-in-out;
 }
 
-.featured-post-card:hover .tag {
+.post-card:hover .tag {
   background-color: var(--vp-c-brand-soft);
   border: 1px solid var(--vp-c-border);
 }
 
 .post-excerpt {
+  margin-top: 1rem;
   color: var(--vp-c-text-2);
   display: -webkit-box;
-  -webkit-line-clamp: 3;
-  line-clamp: 3;
+  -webkit-line-clamp: 4;
+  line-clamp: 4;
   -webkit-box-orient: vertical;
   overflow: hidden;
-  flex: 1;
-}
-
-@media screen and (max-width: 1024px) {
-  .featured-post-card {
-    max-width: calc(50% - 1rem);
-  }
-}
-
-@media screen and (max-width: 650px) {
-  .featured-post-card {
-    flex: 1 1 100%;
-    max-width: 100%;
-    min-width: unset;
-  }
-
-  .cards-wrapper {
-    gap: 1rem;
-  }
 }
 </style>

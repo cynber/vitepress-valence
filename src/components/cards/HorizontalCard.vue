@@ -2,30 +2,78 @@
   <div class="horizontal-card">
     <component
       :is="disableLinks ? 'div' : 'a'"
-      :href="!disableLinks ? url : null"
+      :href="disableLinks ? undefined : url"
       class="card-link"
+      :target="isExternal ? '_blank' : undefined"
+      :rel="isExternal ? 'noopener noreferrer' : undefined"
     >
       <div class="card-content">
         <div class="card-info">
-          <div class="card-title" :style="{ '--line-clamp-title': titleLines || 2 }">
+          <div
+            class="card-title"
+            :style="{ '--line-clamp-title': titleLines || 2 }"
+          >
             {{ title }}
           </div>
+
           <div class="card-meta">
-            <span v-if="!hideAuthor" class="card-author">By {{ author }}</span>
-            <span v-if="!hideDate" class="card-date">{{ date }}</span>
+            <span v-if="!hideAuthor && author">{{ author }}</span>
+            <span v-if="!hideDate && date && date !== 'Invalid Date'">{{
+              date
+            }}</span>
           </div>
-          <div
+
+          <p
             class="card-excerpt"
-            :style="{ '--line-clamp-excerpt': excerptLines || 5 }"
+            :style="{ '--line-clamp-excerpt': excerptLines }"
           >
             {{ excerpt }}
-          </div>
-          <div v-if="!hideCategory" class="card-tags">
-            <span class="tag">{{ category }}</span>
+          </p>
+
+          <div
+            v-if="
+              (!hideCategory && category) ||
+              (!hideTags && tags && tags.length > 0)
+            "
+            class="tags-container"
+          >
+            <div class="tags-content">
+              <span v-if="!hideCategory && category" class="tag category-tag">
+                {{ category }}
+              </span>
+              <span v-if="!hideTags" v-for="tag in tags" :key="tag" class="tag">
+                {{ tag }}
+              </span>
+            </div>
           </div>
         </div>
-        <div v-if="image && !hideImage" class="card-image">
-          <img :src="image" alt="Banner" />
+        <div v-if="!hideImage && (image || image_dark)" class="card-image">
+          <!-- Light mode image -->
+          <img
+            v-if="image"
+            :src="image"
+            :alt="title"
+            loading="lazy"
+            class="vpv-light-only"
+          />
+
+          <!-- Dark mode image (if provided) -->
+          <img
+            v-if="image_dark"
+            :src="image_dark"
+            :alt="title"
+            loading="lazy"
+            class="vpv-dark-only"
+          />
+
+          <!-- Fallback: use light mode image in dark mode if no dark image -->
+          <img
+            v-else-if="image"
+            :src="image"
+            :alt="title"
+            loading="lazy"
+            class="vpv-dark-only"
+          />
         </div>
       </div>
     </component>
@@ -33,20 +81,21 @@
 </template>
 
 <script setup lang="ts">
-import { computed, defineProps } from "vue";
-
 interface HorizontalCardProps {
   title: string;
   excerpt: string;
-  author: string;
-  date: string;
+  author?: string;
+  date?: string;
   image?: string;
+  image_dark?: string;
   category?: string;
+  tags?: string[];
   url?: string;
   hideAuthor?: boolean;
   hideDate?: boolean;
   hideImage?: boolean;
   hideCategory?: boolean;
+  hideTags?: boolean;
   hideDomain?: boolean;
   disableLinks?: boolean;
   isExternal?: boolean;
@@ -57,22 +106,15 @@ interface HorizontalCardProps {
 const props = defineProps<HorizontalCardProps>();
 </script>
 
-<style scoped>
-.horizontal-card {
-  background-color: var(--vp-c-bg);
-  border-radius: 16px;
-  overflow: hidden;
-  border: 1px solid var(--vp-c-divider);
-  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
-  transition: box-shadow 0.3s ease-in-out, border-color 0.3s ease-in-out,
-    transform 0.2s ease-in-out;
-  margin-bottom: 1rem;
-}
+<style lang="scss" scoped>
+@use "../../assets/main.scss" as main;
 
-.horizontal-card:hover {
-  border-color: var(--vp-c-border);
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-  transform: translateY(-2px);
+.horizontal-card {
+  @include main.vpv-card-base;
+
+  &:hover {
+    @include main.vpv-card-base-hover;
+  }
 }
 
 .card-link {
@@ -107,7 +149,7 @@ const props = defineProps<HorizontalCardProps>();
   height: 100%;
   object-fit: cover;
   border-radius: 8px;
-  border: 1px solid var(--vp-c-border);
+  border: 2px solid var(--vp-c-divider);
 }
 
 .card-title {
@@ -145,52 +187,47 @@ const props = defineProps<HorizontalCardProps>();
   margin-bottom: 0.5rem;
 }
 
-.card-tags {
+.tags-container {
+  position: relative;
+  overflow: hidden;
   margin-top: 0.5rem;
+
+  &::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 2rem;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, var(--vp-c-bg));
+    pointer-events: none;
+  }
+}
+
+.tags-content {
   display: flex;
-  flex-wrap: wrap;
   gap: 0.5rem;
+  align-items: center;
+  white-space: nowrap;
+  overflow: hidden;
 }
 
 .tag {
-  display: inline-block;
-  background-color: var(--vp-c-bg-soft);
-  color: var(--vp-c-text-1);
-  padding: 0.3rem 0.6rem;
-  border-radius: 9999px;
-  border: 1px solid var(--vp-c-divider);
-  font-size: 0.8rem;
-  transition: background-color 0.3s ease-in-out, border 0.3s ease-in-out;
+  @include main.vpv-tag-card;
 }
 
-.horizontal-card:hover .tag {
-  background-color: var(--vp-c-brand-soft);
-  border: 1px solid var(--vp-c-border);
+.category-tag {
+  @include main.vpv-tag-card-branded;
 }
-
-/* .horizontal-card:hover  .card-image {
-  border: 1px solid var(--vp-c-brand);
-  border-radius: 8px;
-} */
 
 @media screen and (max-width: 768px) {
   .card-content {
     flex-direction: column;
   }
-
   .card-image {
     flex: 0 0 auto;
     width: calc(100% - 20px);
     margin: 10px;
-  }
-
-  .card-meta {
-    justify-content: flex-start;
-    align-items: flex-start;
-  }
-
-  .card-meta .card-date {
-    margin-left: auto;
   }
 }
 </style>

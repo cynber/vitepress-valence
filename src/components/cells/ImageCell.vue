@@ -1,22 +1,22 @@
 <template>
   <div class="image-cell">
     <img
-      :src="image"
-      :alt="altText"
+      :src="value"
+      :alt="computedAltText"
       :width="computedWidth"
       :height="computedHeight"
-      v-if="image"
+      @error="handleImageError"
+      v-if="value"
     />
-    <span v-else>{{ value }}</span>
+    <span v-else class="no-image">No image</span>
   </div>
 </template>
 
 <script setup lang="ts">
-import { defineProps, computed } from "vue";
+import { computed } from "vue";
 
 interface ImageCellProps {
   value: string;
-  image: string;
   width?: string;
   height?: string;
   altText?: string;
@@ -26,7 +26,13 @@ const props = defineProps<ImageCellProps>();
 
 const computedWidth = computed(() => props.width || "50px");
 const computedHeight = computed(() => props.height || "50px");
-const altText = computed(() => props.altText || "Image");
+const computedAltText = computed(() => props.altText || "Image");
+
+const handleImageError = (event: Event) => {
+  const img = event.target as HTMLImageElement;
+  img.style.display = 'none';
+  // Optionally show a placeholder or error message
+};
 </script>
 
 <style scoped>
@@ -39,5 +45,10 @@ const altText = computed(() => props.altText || "Image");
 img {
   object-fit: cover;
   border-radius: 4px;
+}
+
+.no-image {
+  color: var(--vp-c-text-2);
+  font-style: italic;
 }
 </style>

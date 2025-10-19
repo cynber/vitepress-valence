@@ -1,17 +1,22 @@
 <template>
   <div class="icon-cell">
-    <Icon
+    <div
       v-if="icon"
-      :icon="icon"
-      :style="{ color: iconColor, width: computedWidth, height: computedHeight }"
-      class="icon"
-    />
+      class="icon-container"
+      :title="hoverText"
+    >
+      <Icon
+        :icon="icon"
+        :style="{ color: iconColor, width: computedWidth, height: computedHeight }"
+        class="icon"
+      />
+    </div>
     <span v-else>{{ value }}</span>
   </div>
 </template>
 
 <script setup lang="ts">
-import { defineProps, computed } from "vue";
+import { computed } from "vue";
 import { Icon } from "@iconify/vue";
 
 interface IconCellProps {
@@ -22,6 +27,8 @@ interface IconCellProps {
   defaultIconColor?: string;
   width?: string;
   height?: string;
+  hoverTextMap?: Record<string, string>;
+  defaultHoverText?: string;
 }
 
 const props = defineProps<IconCellProps>();
@@ -32,10 +39,17 @@ const iconColor = computed(
 );
 const computedWidth = computed(() => props.width || "1.5em");
 const computedHeight = computed(() => props.height || "1.5em");
+const hoverText = computed(() => props.hoverTextMap?.[props.value] || props.defaultHoverText);
 </script>
 
 <style scoped>
 .icon-cell {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.icon-container {
   display: flex;
   justify-content: center;
   align-items: center;

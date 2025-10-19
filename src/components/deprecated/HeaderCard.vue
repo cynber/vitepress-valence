@@ -18,7 +18,12 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from "vue";
+import { computed, onMounted } from "vue";
+import { useDeprecationWarning } from '../../utils/MyUtils';
+
+onMounted(() => {
+  useDeprecationWarning('HeaderCard', 'ContainerHeader', 'v1.0.0');
+});
 
 interface TitleCardProps {
   title: string;
@@ -26,7 +31,7 @@ interface TitleCardProps {
   time?: string;
   titleLines?: number;
   link?: string;
-  dateFormat?: "long" | "iso";
+  dateFormat?: "long" | "short" | "iso" | string;
   dateTimeDescription?: string;
 }
 
@@ -87,7 +92,7 @@ const formattedDateTime = computed(() => {
   justify-content: space-between;
   align-items: flex-start;
   background-color: var(--vp-c-bg);
-  border-radius: 8px;
+  border-radius: 14px;
   border: 1px solid var(--vp-c-divider);
   box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
   padding: 8px 16px;

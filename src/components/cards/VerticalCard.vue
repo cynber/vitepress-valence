@@ -2,31 +2,76 @@
   <div class="card">
     <component
       :is="disableLinks ? 'div' : 'a'"
-      :href="!disableLinks ? url : null"
+      :href="disableLinks ? undefined : url"
       class="card-link"
+      :target="isExternal ? '_blank' : undefined"
+      :rel="isExternal ? 'noopener noreferrer' : undefined"
     >
-      <div v-if="image && !hideImage" class="card-image">
-        <img :src="image" alt="Banner Image" />
+      <div v-if="!hideImage && (image || image_dark)" class="card-image">
+        <!-- Light mode image -->
+        <img
+          v-if="image"
+          :src="image"
+          :alt="title"
+          loading="lazy"
+          class="vpv-light-only"
+        />
+
+        <!-- Dark mode image (if provided) -->
+        <img
+          v-if="image_dark"
+          :src="image_dark"
+          :alt="title"
+          loading="lazy"
+          class="vpv-dark-only"
+        />
+
+        <!-- Fallback: use light mode image in dark mode if no dark image -->
+        <img
+          v-else-if="image"
+          :src="image"
+          :alt="title"
+          loading="lazy"
+          class="vpv-dark-only"
+        />
       </div>
       <div class="card-info">
-        <h3 class="card-title" :style="{ '--line-clamp-title': titleLines || 2 }">
+        <div
+          class="card-title"
+          :style="{ '--line-clamp-title': titleLines || 2 }"
+        >
           {{ title }}
-        </h3>
-        <div class="card-meta">
-          <span v-if="!hideAuthor && author" class="card-author">by {{ author }}</span>
-          <span v-if="!hideDate" class="post-date">{{ date }}</span>
         </div>
-        <p class="card-body" :style="{ '--line-clamp-excerpt': excerptLines || 3 }">
+        <div class="card-meta">
+          <span v-if="!hideAuthor && author">{{ author }}</span>
+          <span v-if="!hideDate && date && date !== 'Invalid Date'">{{
+            date
+          }}</span>
+        </div>
+        <p class="card-body" :style="{ '--line-clamp-excerpt': excerptLines }">
           {{ excerpt }}
         </p>
-        <div v-if="!hideCategory && category" class="card-tags">
-          <span class="tag">{{ category }}</span>
+        <div
+          v-if="
+            (!hideCategory && category) ||
+            (!hideTags && tags && tags.length > 0)
+          "
+          class="tags-container"
+        >
+          <div class="tags-content">
+            <span v-if="!hideCategory && category" class="tag category-tag">
+              {{ category }}
+            </span>
+            <span v-if="!hideTags" v-for="tag in tags" :key="tag" class="tag">
+              {{ tag }}
+            </span>
+          </div>
         </div>
       </div>
-      <div v-if="isExternal && !hideDomain" class="card-footer">
-        <!-- <hr class="card-footer-hr" /> -->
+      <div v-if="!hideDomain && isExternal" class="card-footer">
         <div class="footer-content">
-          <Icon :icon="'gridicons:external'" class="external-icon" />
+          <Icon icon="mdi:external-link" class="external-icon" />
+          <span>External Link</span>
         </div>
       </div>
     </component>
@@ -35,50 +80,39 @@
 
 <script setup lang="ts">
 import { Icon } from "@iconify/vue";
-import { defineProps } from "vue";
-
 interface CardProps {
   title: string;
   excerpt: string;
-  author: string;
-  date: string;
+  author?: string;
+  date?: string;
   image?: string;
+  image_dark?: string;
   category?: string;
+  tags?: string[];
   url?: string;
   hideAuthor?: boolean;
   hideDate?: boolean;
   hideImage?: boolean;
   hideCategory?: boolean;
+  hideTags?: boolean;
   hideDomain?: boolean;
   disableLinks?: boolean;
   isExternal?: boolean;
   titleLines?: number;
   excerptLines?: number;
 }
-
 const props = defineProps<CardProps>();
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
+@use "../../assets/main.scss" as main;
 .card {
-  background-color: var(--vp-c-bg);
-  border-radius: 16px;
-  overflow: hidden;
-  border: 1px solid var(--vp-c-divider);
-  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
-  transition: box-shadow 0.3s ease-in-out, border-color 0.3s ease-in-out,
-    transform 0.2s ease-in-out;
-  flex: 1 1 300px;
-  min-width: 300px;
-  max-width: calc(33.333% - 1rem);
+  @include main.vpv-card-base;
+  &:hover {
+    @include main.vpv-card-base-hover;
+  }
+  width: 100%;
 }
-
-.card:hover {
-  border-color: var(--vp-c-border);
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-  transform: translateY(-2px);
-}
-
 .card-link {
   text-decoration: none;
   color: inherit;
@@ -86,29 +120,29 @@ const props = defineProps<CardProps>();
   flex-direction: column;
   height: 100%;
 }
-
 .card-image {
   width: 100%;
   aspect-ratio: 16 / 9;
   overflow: hidden;
-  border-bottom: 1px solid var(--vp-c-border);
+  padding: 0.7rem;
+  padding-bottom: 0;
 }
-
 .card-image img {
   width: 100%;
   height: 100%;
   object-fit: cover;
+  border-radius: 10px;
+  border: 2px solid var(--vp-c-divider);
 }
-
 .card-info {
   padding: 1rem;
   display: flex;
   flex-direction: column;
   flex: 1;
 }
-
 .card-title {
-  font-size: 1.25rem;
+  font-size: 1.5rem;
+  font-weight: 500;
   margin: 0 0 0.5rem 0;
   display: -webkit-box;
   -webkit-line-clamp: var(--line-clamp-title, 2);
@@ -118,37 +152,42 @@ const props = defineProps<CardProps>();
   text-overflow: ellipsis;
   line-height: 1.2;
 }
-
 .card-meta {
   display: flex;
   justify-content: space-between;
   align-items: center;
   gap: 0.5rem;
   font-size: 0.9rem;
-  color: var(--vp-c-text-2);
-}
-
-.card-tags {
+  color: var(--vp-c-text-3);
   margin-bottom: 0.75rem;
 }
-
+.tags-container {
+  position: relative;
+  overflow: hidden;
+  &::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 2rem;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, var(--vp-c-bg));
+    pointer-events: none;
+  }
+}
+.tags-content {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+  white-space: nowrap;
+  overflow: hidden;
+}
 .tag {
-  display: inline-block;
-  background-color: var(--vp-c-bg-soft);
-  color: var(--vp-c-text-1);
-  padding: 0.3rem 0.6rem;
-  border-radius: 9999px;
-  border: 1px solid var(--vp-c-divider);
-  font-size: 0.8rem;
-  margin-right: 0.5rem;
-  transition: background-color 0.3s ease-in-out, border 0.3s ease-in-out;
+  @include main.vpv-tag-card;
 }
-
-.card:hover .tag {
-  background-color: var(--vp-c-brand-soft);
-  border: 1px solid var(--vp-c-border);
+.category-tag {
+  @include main.vpv-tag-card-branded;
 }
-
 .card-body {
   color: var(--vp-c-text-2);
   display: -webkit-box;
@@ -157,8 +196,8 @@ const props = defineProps<CardProps>();
   -webkit-box-orient: vertical;
   overflow: hidden;
   flex: 1;
+  margin: 0 auto 1rem;
 }
-
 .card-footer {
   padding: 0.5rem;
   display: flex;
@@ -168,33 +207,20 @@ const props = defineProps<CardProps>();
   color: var(--vp-c-text-2);
   border-top: 1px solid var(--vp-c-divider);
 }
-
 .footer-content {
   display: flex;
   align-items: center;
   gap: 0.5rem;
 }
-
 .external-icon {
   width: 1.2em;
   height: 1.2em;
 }
-
-@media screen and (max-width: 1024px) {
-  .card {
-    max-width: calc(50% - 1rem);
-  }
-}
-
 @media screen and (max-width: 650px) {
   .card {
     flex: 1 1 100%;
     max-width: 100%;
     min-width: unset;
-  }
-
-  .cards-wrapper {
-    gap: 1rem;
   }
 }
 </style>

@@ -4,7 +4,7 @@
     :data-pswp-width="imageDetails.width"
     :data-pswp-height="imageDetails.height"
     target="_blank"
-    class="vertical-image-card"
+    class="masonry-image-card"
   >
     <img :src="image" :alt="image" @load="onImageLoad" />
   </a>
@@ -32,23 +32,24 @@ const onImageLoad = (event: Event) => {
 </script>
 
 <style scoped>
-.vertical-image-card {
-  display: flex;
-  justify-content: center;
-  max-width: 100%;
-  margin: 0px -16px;
-  text-decoration: none;
+.masonry-image-card {
+  display: block;
+  width: 100%;
+  margin-bottom: 1rem;
   border-radius: 8px;
   overflow: hidden;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  break-inside: avoid;
 }
 
-.vertical-image-card img {
-  max-width: 100%;
-  margin: 0px -16px;
+.masonry-image-card img {
+  width: 100%;
   height: auto;
-  object-fit: contain;
   display: block;
-  border-radius: 8px;
+}
+
+.masonry-image-card:hover {
+  transform: scale(1.02);
+  transition: transform 0.2s ease-in-out;
 }
 </style>
