@@ -41,6 +41,7 @@ const props = defineProps<HorizontalContainerProps>();
 <style scoped>
 .horizontal-container {
   flex-direction: column;
+  gap: 1rem;
 }
 
 .container-content {

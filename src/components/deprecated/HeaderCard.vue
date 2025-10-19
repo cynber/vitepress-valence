@@ -18,7 +18,12 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from "vue";
+import { computed, onMounted } from "vue";
+import { useDeprecationWarning } from '../../utils/MyUtils';
+
+onMounted(() => {
+  useDeprecationWarning('HeaderCard', 'ContainerHeader', 'v1.0.0');
+});
 
 interface TitleCardProps {
   title: string;

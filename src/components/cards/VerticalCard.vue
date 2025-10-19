@@ -83,8 +83,8 @@ import { Icon } from "@iconify/vue";
 interface CardProps {
   title: string;
   excerpt: string;
-  author: string;
-  date: string;
+  author?: string;
+  date?: string;
   image?: string;
   image_dark?: string;
   category?: string;

@@ -38,7 +38,12 @@
 </template>
 
 <script setup>
-import { inject, computed } from "vue";
+import { inject, computed, onMounted } from "vue";
+import { useDeprecationWarning } from '../../utils/MyUtils';
+
+onMounted(() => {
+  useDeprecationWarning('BlogPostsHorizontal', 'ArticleList', 'v1.0.0');
+});
 
 const props = defineProps({
   posts: {
