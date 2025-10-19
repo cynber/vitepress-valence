@@ -22,7 +22,6 @@
     />
 
     <div class="article-info">
-      <!-- First Row: Two Cards -->
       <div class="info-cards">
         <a
           v-if="!props.hideAuthor && author.name"
@@ -230,22 +229,27 @@ const hasMetaData = computed((): boolean => {
   padding: 10px;
   background-color: var(--vp-c-bg);
   border-radius: 16px;
-  border: 2px solid var(--vp-c-soft);
+  border: 2px solid var(--vp-c-bg);
   transition: border-color 0.1s ease-in-out;
   height: 100%;
 }
 
 .author-section:hover {
-  border-color: var(--vp-c-brand);
+  border-color: var(--vp-c-divider);
 }
 
 .meta-data-card {
   flex: 1;
   padding: 10px;
   background-color: var(--vp-c-bg);
+  border: 2px solid var(--vp-c-bg);
   border-radius: 16px;
   display: flex;
   align-items: center;
+}
+
+.meta-data-card:hover {
+  border-color: var(--vp-c-divider);
 }
 
 .author-avatar {
@@ -310,11 +314,11 @@ const hasMetaData = computed((): boolean => {
 }
 
 .pill {
-  @include main.vpv-pill-header;
+  @include main.vpv-tag-card;
 }
 
 .category-pill {
-  @include main.vpv-pill-header-branded;
+  @include main.vpv-tag-card-branded;
 }
 
 @media (max-width: 500px) {
