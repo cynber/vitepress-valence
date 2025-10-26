@@ -1,15 +1,15 @@
 <template>
   <div class="vpv-cards-container horizontal-container">
     <ContainerHeader
-      v-if="title && !hideHeader"
-      :title="title"
-      :subtitle="subtitle"
-      :date="date"
-      :link="headerLink"
-      :title-lines="titleLines"
-      :subtitle-lines="subtitleLines"
-      :date-format="dateFormat"
-      :description="description"
+      v-if="headerTitle"
+      :header-title="headerTitle"
+      :header-subtitle="headerSubtitle"
+      :header-date="headerDate"
+      :header-link="headerLink"
+      :header-title-lines="headerTitleLines"
+      :header-subtitle-lines="headerSubtitleLines"
+      :header-date-format="headerDateFormat"
+      :header-date-prefix="headerDatePrefix"
     />
     <div class="container-content">
       <slot></slot>
@@ -22,17 +22,14 @@ import ContainerHeader from './ContainerHeader.vue';
 
 interface HorizontalContainerProps {
   // Header props (optional)
-  title?: string;
-  subtitle?: string;
-  date?: string;
+  headerTitle?: string;
+  headerSubtitle?: string;
+  headerDate?: string;
+  headerDateFormat?: "long" | "short" | "iso" | string;
+  headerDatePrefix?: string;
   headerLink?: string;
-  hideHeader?: boolean;
-  description?: string;
-  
-  // Header display options
-  titleLines?: number;
-  subtitleLines?: number;
-  dateFormat?: "long" | "short" | "iso" | string;
+  headerTitleLines?: number;
+  headerSubtitleLines?: number;
 }
 
 const props = defineProps<HorizontalContainerProps>();

@@ -2,24 +2,24 @@
   <div class="container-header">
     <div class="title-content">
       <component
-        :is="link ? 'a' : 'span'"
+        :is="headerLink ? 'a' : 'span'"
         class="header-title"
-        :href="link || undefined"
-        :style="{ '--line-clamp-title': titleLines || 2 }"
+        :href="headerLink || undefined"
+        :style="{ '--line-clamp-header-title': headerTitleLines || 2 }"
       >
-        {{ title }}
+        {{ headerTitle }}
       </component>
       <span
-        v-if="subtitle"
+        v-if="headerSubtitle"
         class="header-subtitle"
-        :style="{ '--line-clamp-subtitle': subtitleLines || 1 }"
+        :style="{ '--line-clamp-header-subtitle': headerSubtitleLines || 1 }"
       >
-        {{ subtitle }}
+        {{ headerSubtitle }}
       </span>
       <span
-        v-if="formattedDateTime"
+        v-if="formattedHeaderDateTime"
         class="header-date"
-        v-html="formattedDateTime"
+        v-html="formattedHeaderDateTime"
       ></span>
     </div>
   </div>
@@ -30,29 +30,29 @@ import { computed } from "vue";
 import { formatDate } from "../../utils";
 
 interface ContainerHeaderProps {
-  title: string;
-  subtitle?: string;
-  date?: string;
-  link?: string;
-  titleLines?: number;
-  subtitleLines?: number;
-  dateFormat?: "long" | "short" | "iso" | string;
-  description?: string;
+  headerTitle: string;
+  headerSubtitle?: string;
+  headerDate?: string;
+  headerDateFormat?: "long" | "short" | "iso" | string;
+  headerDatePrefix?: string;
+  headerLink?: string;
+  headerTitleLines?: number;
+  headerSubtitleLines?: number;
 }
 
 const props = withDefaults(defineProps<ContainerHeaderProps>(), {
-  titleLines: 2,
-  subtitleLines: 1,
-  dateFormat: "long",
+  headerTitleLines: 2,
+  headerSubtitleLines: 1,
+  headerDateFormat: "long",
 });
 
-const formattedDateTime = computed(() => {
-  if (!props.date) return "";
+const formattedHeaderDateTime = computed(() => {
+  if (!props.headerDate) return "";
   
-  const datetime = formatDate(props.date, { format: props.dateFormat });
+  const datetime = formatDate(props.headerDate, { format: props.headerDateFormat });
   
-  if (props.description && datetime) {
-    return `${props.description} ${datetime}`;
+  if (props.headerDatePrefix && datetime) {
+    return `${props.headerDatePrefix} ${datetime}`;
   }
   
   return datetime;
@@ -86,8 +86,8 @@ const formattedDateTime = computed(() => {
   font-size: 1.1rem;
   color: var(--vp-c-text-1);
   display: -webkit-box;
-  -webkit-line-clamp: var(--line-clamp-title);
-  line-clamp: var(--line-clamp-title);
+  -webkit-line-clamp: var(--line-clamp-header-title);
+  line-clamp: var(--line-clamp-header-title);
   -webkit-box-orient: vertical;
   overflow: hidden;
   word-break: break-word;
@@ -99,8 +99,8 @@ const formattedDateTime = computed(() => {
   font-size: 0.9rem;
   color: var(--vp-c-text-2);
   display: -webkit-box;
-  -webkit-line-clamp: var(--line-clamp-subtitle);
-  line-clamp: var(--line-clamp-subtitle);
+  -webkit-line-clamp: var(--line-clamp-header-subtitle);
+  line-clamp: var(--line-clamp-header-subtitle);
   -webkit-box-orient: vertical;
   overflow: hidden;
   word-break: break-word;
