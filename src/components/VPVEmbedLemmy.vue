@@ -8,7 +8,6 @@
     :header-subtitle-lines="headerSubtitleLines"
     :header-date-format="headerDateFormat"
     :header-date-prefix="headerDatePrefix"
-    :hide-header="!showTitleCard"
   >
     <EmbedCardLemmy
       v-for="(link, index) in links"
@@ -66,10 +65,6 @@ const props = withDefaults(defineProps<EmbedLemmyProps>(), {
   headerTitleLines: 2,
   headerSubtitleLines: 1,
   headerDateFormat: "long",
-});
-
-const showTitleCard = computed(() => {
-  return !!(props.headerTitle || props.headerSubtitle || props.headerDate || props.headerLink);
 });
 
 const {

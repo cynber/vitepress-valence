@@ -1,0 +1,56 @@
+[
+  {
+    "id": "P01",
+    "name": "Wireless Headphones",
+    "category": "Electronics",
+    "price": 199.99,
+    "inStock": true,
+    "rating": 4.5,
+    "tags": ["audio", "wireless"]
+  },
+  {
+    "id": "P02",
+    "name": "Coffee Maker",
+    "category": "Appliances",
+    "price": 89.99,
+    "inStock": true,
+    "rating": 4.2,
+    "tags": ["kitchen", "coffee"]
+  },
+  {
+    "id": "P03",
+    "name": "Running Shoes",
+    "category": "Sports",
+    "price": 129.99,
+    "inStock": false,
+    "rating": 4.8,
+    "tags": ["footwear", "running"]
+  },
+  {
+    "id": "P04",
+    "name": "Smartphone",
+    "category": "Electronics",
+    "price": 699.99,
+    "inStock": true,
+    "rating": 4.3,
+    "tags": ["mobile", "tech"]
+  },
+  {
+    "id": "P05",
+    "name": "Yoga Mat",
+    "category": "Sports",
+    "price": 29.99,
+    "inStock": true,
+    "rating": 4.1,
+    "tags": ["fitness", "yoga"]
+  },
+  {
+    "id": "P06",
+    "name": "Blender",
+    "category": "Appliances",
+    "price": 149.99,
+    "inStock": false,
+    "rating": 4.6,
+    "tags": ["kitchen", "smoothies"]
+  }
+]

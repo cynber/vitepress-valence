@@ -28,7 +28,7 @@
     "Lemmy",
     "Mailchimp"
   ],
-  "homepage": "https://cynber.dev/projects/vitepress-valence/",
+  "homepage": "https://vitepress-valence.cynber.dev",
   "bugs": {
     "url": "https://github.com/cynber/vitepress-valence/issues"
   },
@@ -48,7 +48,10 @@
   "scripts": {
     "build": "rimraf dist && vue-tsc --noEmit && vite build",
     "prepublishOnly": "npm run build",
-    "type-check": "vue-tsc"
+    "type-check": "vue-tsc",
+    "docs:dev": "vitepress dev docs",
+    "docs:build": "vitepress build docs",
+    "docs:preview": "vitepress preview docs"
   },
   "files": [
     "dist",

@@ -74,7 +74,7 @@ export function useDeprecationWarning(
     console.warn(
       ` DEPRECATION WARNING: ${oldComponentName} will be removed in ${removalVersion}\n` +
       `   Please migrate to the VPV-prefixed version: ${newComponentName}\n` +
-      `   See migration guide: https://cynber.dev/projects/vitepress-valence/`
+      `   See migration guide: https://vitepress-valence.cynber.dev`
     );
   }
 }

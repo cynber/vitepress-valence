@@ -3,8 +3,18 @@ dist-ssr
 *.local
 types
 .vscode
+node_modules/
 
-# Template below from https://github.com/github/gitignore/blob/main/Node.gitignore
+####
+# recommended vitepress ignores
+####
+docs/.vitepress/dist
+docs/.vitepress/cache
+
+#### 
+#Template below from https://github.com/github/gitignore/blob/main/Node.gitignore
+####
+
 # Logs
 logs
 *.log

@@ -1,0 +1,33 @@
+[
+    {
+        "modelName": "Chrono Cruiser 3000",
+        "maxTimeJump": 100,
+        "isAvailable": true,
+        "fuelType": [
+            "Quantum",
+            "Dark Matter"
+        ],
+        "productLink": "https://example.com/"
+    },
+    {
+        "modelName": "Temporal Trekker X5",
+        "maxTimeJump": 500,
+        "isAvailable": false,
+        "fuelType": [
+            "Neutrino Core",
+            "Solar"
+        ],
+        "productLink": "https://example.com/"
+    },
+    {
+        "modelName": "Era Explorer V2",
+        "maxTimeJump": 200,
+        "isAvailable": true,
+        "fuelType": [
+            "Quantum",
+            "Dark Matter",
+            "Solar"
+        ],
+        "productLink": "https://example.com/"
+    }
+]
