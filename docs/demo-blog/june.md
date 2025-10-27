@@ -46,10 +46,13 @@ head:
       content: June - Beach Days and Sunrise Swimming
   - - meta
     - property: og:url
-      content: https://example.com/demo-blog/june
+      content: https://vitepress-valence.cynber.dev/demo-blog/june
   - - meta
     - property: og:description
       content: June ushers in summer with perfect beach days and refreshing sunrise swimming adventures.
+  - - meta
+    - property: og:image
+      content: https://vitepress-valence.cynber.dev/demo-blog/june-dark.jpg
   - - meta
     - property: article:section
       content: Seasonal

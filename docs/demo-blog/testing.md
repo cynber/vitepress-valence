@@ -42,7 +42,7 @@ head:
       content: Testing - Draft Article
   - - meta
     - property: og:url
-      content: https://example.com/demo-blog/testing
+      content: https://vitepress-valence.cynber.dev/demo-blog/testing
   - - meta
     - property: og:description
       content: This is a draft article for testing purposes only.

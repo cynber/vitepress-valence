@@ -17,7 +17,7 @@ The entire sample file for [March](/demo-blog/march) can be found here.
 
 ::: details View Code
 
-<<< @/demo-blog/april.md {1-56 md:line-numbers }
+<<< @/demo-blog/march.md {1-56 md:line-numbers }
 :::
 
 In particular, note the frontmatter at the top of the file:
@@ -72,10 +72,13 @@ head:
       content: March - First Garden Planning and Seed Starting
   - - meta
     - property: og:url
-      content: https://example.com/demo-blog/march
+      content: https://vitepress-valence.cynber.dev/demo-blog/march
   - - meta
     - property: og:description
       content: March awakens the gardener's spirit with garden planning and seed starting for the season ahead.
+  - - meta
+    - property: og:image
+      content: https://vitepress-valence.cynber.dev/demo-blog/march-dark.jpg
   - - meta
     - property: article:section
       content: Seasonal
@@ -83,6 +86,13 @@ head:
 :::
 
 In order to use the components in this package, the `title` field is required and the `summary` field is highly recommended. An explanation of the fields is provided below.
+
+::: warning Be careful when copying this template
+
+You should update all the fields in the frontmatter to match your own content, including the `head` section. The `head` fields are used to generate the social media preview cards and help with SEO.
+
+If you do not have that information ready for your site, you should remove that section from the frontmatter. Keeping the existing fields will send your visitors to this website...
+:::
 
 ## Details
 
