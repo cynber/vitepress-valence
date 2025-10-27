@@ -4,12 +4,14 @@
       <pre>{{ galleryData }}</pre>
     </div>
     <VerticalContainer 
-      :title="title"
-      :date="date"
-      :date-format="dateFormat"
-      :title-lines="titleLines"
-      :header-link="link"
-      :description="dateTimeDescription"
+      :header-title="headerTitle"
+      :header-subtitle="headerSubtitle"
+      :header-date="headerDate"
+      :header-date-format="headerDateFormat"
+      :header-title-lines="headerTitleLines"
+      :header-subtitle-lines="headerSubtitleLines"
+      :header-link="headerLink"
+      :header-date-prefix="headerDatePrefix"
       class="gallery-container"
     >
       <div v-if="displayImages.length === 0" class="no-images">
@@ -42,13 +44,17 @@ interface GalleryImage {
 }
 
 interface ImageGalleryProps {
-  title: string;
-  titleLines?: number;
-  date?: string;
-  dateFormat?: 'long' | 'iso';
-  time?: string;
-  dateTimeDescription?: string;
-  link?: string;
+  // Header props - now with consistent "header" prefix
+  headerTitle?: string;
+  headerSubtitle?: string;
+  headerDate?: string;
+  headerDateFormat?: "long" | "short" | "iso" | string;
+  headerDatePrefix?: string;
+  headerLink?: string;
+  headerTitleLines?: number;
+  headerSubtitleLines?: number;
+  
+  // Gallery-specific props
   folders?: string[];
   images?: string[];
   excludeExtensions?: string[];
@@ -58,6 +64,22 @@ interface ImageGalleryProps {
   forceSort?: string[];
   layout?: "full" | "grid" | "masonry";
   directUrls?: string[];
+  
+  // Legacy props for backwards compatibility (deprecated)
+  /** @deprecated Use headerTitle instead */
+  title?: string;
+  /** @deprecated Use headerTitleLines instead */
+  titleLines?: number;
+  /** @deprecated Use headerDate instead */
+  date?: string;
+  /** @deprecated Use headerDateFormat instead */
+  dateFormat?: 'long' | 'iso';
+  /** @deprecated Use headerDatePrefix instead */
+  dateTimeDescription?: string;
+  /** @deprecated Use headerLink instead */
+  link?: string;
+  /** @deprecated No longer used */
+  time?: string;
 }
 
 const galleryId = ref(`gallery-${Math.random().toString(36).substr(2, 9)}`);
@@ -69,13 +91,10 @@ const initPhotoSwipe = async () => {
     lightbox.destroy();
     lightbox = null;
   }
-
   // Wait for next tick to ensure DOM is ready
   await nextTick();
-
   // Dynamically import PhotoSwipe
   const { default: PhotoSwipeLightbox } = await import("photoswipe/lightbox");
-
   // Initialize with a small delay to ensure everything is hydrated
   setTimeout(() => {
     try {
@@ -92,10 +111,21 @@ const initPhotoSwipe = async () => {
 };
 
 const props = withDefaults(defineProps<ImageGalleryProps>(), {
-  titleLines: 2,
+  headerTitleLines: 2,
+  headerSubtitleLines: 1,
+  headerDateFormat: "long",
   layout: "grid",
-  date: "",
 });
+
+// Computed props for backwards compatibility
+const headerTitle = computed(() => props.headerTitle || props.title || '');
+const headerSubtitle = computed(() => props.headerSubtitle || '');
+const headerDate = computed(() => props.headerDate || props.date || '');
+const headerLink = computed(() => props.headerLink || props.link || '');
+const headerTitleLines = computed(() => props.headerTitleLines || props.titleLines || 2);
+const headerSubtitleLines = computed(() => props.headerSubtitleLines || 1);
+const headerDateFormat = computed(() => props.headerDateFormat || props.dateFormat || 'long');
+const headerDatePrefix = computed(() => props.headerDatePrefix || props.dateTimeDescription || '');
 
 const galleryData = inject<GalleryImage[]>(props.galleryDataKey || "galleryData", []);
 
@@ -118,6 +148,7 @@ const layoutComponent = computed(() => {
     default: return ImageCardSquare;
   }
 });
+
 const galleryLayoutClass = computed(() => {
   return {
     "image-grid": props.layout === "grid",
@@ -143,7 +174,6 @@ const filteredImages = computed(() => {
       return true;
     });
   }
-
   return galleryData.filter((image) => {
     // Check extensions first
     const ext = image.filename.split(".").pop()?.toLowerCase();
@@ -151,11 +181,9 @@ const filteredImages = computed(() => {
       return false;
     if (props.includeExtensions?.length && ext && !props.includeExtensions.includes(ext))
       return false;
-
     // Include image if it's in specified folders OR it's in specified images
     const inFolder = props.folders?.includes(image.folder) || false;
     const inImages = props.images?.includes(image.path) || false;
-
     return inFolder || inImages;
   });
 });
@@ -164,7 +192,6 @@ const displayImages = computed(() => {
   if (props.directUrls && props.directUrls.length > 0) {
     return props.directUrls;
   }
-
   if (props.forceSort && props.forceSort.length > 0) {
     const sorted = [...props.forceSort];
     filteredImages.value.forEach((img) => {
@@ -174,7 +201,6 @@ const displayImages = computed(() => {
     });
     return sorted;
   }
-
   return filteredImages.value.map((img) => img.path).sort();
 });
 

@@ -1,10 +1,13 @@
 <template>
   <VerticalContainer
-    :title="headerTitle"
-    :date="headerDate"
+    :header-title="headerTitle"
+    :header-subtitle="headerSubtitle"
+    :header-date="headerDate"
     :header-link="headerLink"
-    :title-lines="headerTitleLines"
-    :hide-header="!showTitleCard"
+    :header-title-lines="headerTitleLines"
+    :header-subtitle-lines="headerSubtitleLines"
+    :header-date-format="headerDateFormat"
+    :header-date-prefix="headerDatePrefix"
   >
     <EmbedCardLemmy
       v-for="(link, index) in links"
@@ -31,10 +34,17 @@ import VerticalContainer from "./containers/VerticalContainer.vue";
 import EmbedCardLemmy from "./cards/EmbedCardLemmy.vue";
 
 interface EmbedLemmyProps {
+  // Header props (matching ContainerHeader)
   headerTitle?: string;
-  headerTitleLines?: number;
-  headerLink?: string;
+  headerSubtitle?: string;
   headerDate?: string;
+  headerDateFormat?: "long" | "short" | "iso" | string;
+  headerDatePrefix?: string;
+  headerLink?: string;
+  headerTitleLines?: number;
+  headerSubtitleLines?: number;
+  
+  // Embed content props
   links: string[];
   hideUser?: boolean;
   hideCommunity?: boolean;
@@ -52,10 +62,9 @@ interface EmbedLemmyProps {
 const props = withDefaults(defineProps<EmbedLemmyProps>(), {
   headerTitle: '',
   headerDate: '',
-});
-
-const showTitleCard = computed(() => {
-  return !!(props.headerTitle || props.headerDate || props.headerLink);
+  headerTitleLines: 2,
+  headerSubtitleLines: 1,
+  headerDateFormat: "long",
 });
 
 const {

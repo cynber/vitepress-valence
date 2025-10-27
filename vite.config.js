@@ -1,9 +1,18 @@
 import { defineConfig } from 'vite'
 import vue from '@vitejs/plugin-vue'
+import dts from 'vite-plugin-dts'
 import path from 'path'
 
 export default defineConfig({
-  plugins: [vue()],
+  plugins: [
+    vue(),
+    dts({
+      insertTypesEntry: true,
+      outDir: 'dist/types',
+      include: ['src/**/*'],
+      exclude: ['src/**/*.stories.*', 'src/**/*.test.*']
+    })
+  ],
   resolve: {
     alias: {
       '@': path.resolve(__dirname, 'src'),
@@ -26,7 +35,7 @@ export default defineConfig({
     rollupOptions: {
       external: ['vue', 'vitepress', '@iconify/vue'],
       output: {
-        exports: 'named', // Prevent Rollup warning for named exports
+        exports: 'named',
         globals: {
           vue: 'Vue',
           vitepress: 'VitePress',
@@ -34,7 +43,7 @@ export default defineConfig({
         },
       },
     },
-    emptyOutDir: false, // Retain 'dist/types' for TypeScript declarations
+    emptyOutDir: false,
     target: 'esnext',
     minify: true,
   }

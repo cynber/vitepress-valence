@@ -1,6 +1,6 @@
 {
   "name": "@cynber/vitepress-valence",
-  "version": "0.1.13",
+  "version": "0.2.0-rc.3",
   "description": "Get even more out of VitePress with VitePress Valence, a comprehensive suite of components that add additional functionality, style, and customization to your VitePress projects.",
   "keywords": [
     "vitepress",
@@ -28,7 +28,7 @@
     "Lemmy",
     "Mailchimp"
   ],
-  "homepage": "https://cynber.dev/projects/vitepress-valence/",
+  "homepage": "https://vitepress-valence.cynber.dev",
   "bugs": {
     "url": "https://github.com/cynber/vitepress-valence/issues"
   },
@@ -48,7 +48,10 @@
   "scripts": {
     "build": "rimraf dist && vue-tsc --noEmit && vite build",
     "prepublishOnly": "npm run build",
-    "type-check": "vue-tsc"
+    "type-check": "vue-tsc",
+    "docs:dev": "vitepress dev docs",
+    "docs:build": "vitepress build docs",
+    "docs:preview": "vitepress preview docs"
   },
   "files": [
     "dist",
@@ -88,6 +91,7 @@
     "sass": "^1.93.2",
     "typescript": "^5.9.3",
     "vite": "^5.4.20",
+    "vite-plugin-dts": "^4.5.4",
     "vitepress": "^1.6.4",
     "vitest": "^3.2.4",
     "vue": "^3.5.22",
