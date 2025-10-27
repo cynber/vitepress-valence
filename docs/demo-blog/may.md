@@ -46,10 +46,13 @@ head:
       content: May - Outdoor Picnics and Nature Walks
   - - meta
     - property: og:url
-      content: https://example.com/demo-blog/may
+      content: https://vitepress-valence.cynber.dev/demo-blog/may
   - - meta
     - property: og:description
       content: May beckons us outdoors with perfect weather for picnics and nature walks in blooming landscapes.
+  - - meta
+    - property: og:image
+      content: https://vitepress-valence.cynber.dev/demo-blog/may-dark.jpg
   - - meta
     - property: article:section
       content: Seasonal

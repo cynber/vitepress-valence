@@ -46,10 +46,13 @@ head:
       content: March - First Garden Planning and Seed Starting
   - - meta
     - property: og:url
-      content: https://example.com/demo-blog/march
+      content: https://vitepress-valence.cynber.dev/demo-blog/march
   - - meta
     - property: og:description
       content: March awakens the gardener's spirit with garden planning and seed starting for the season ahead.
+  - - meta
+    - property: og:image
+      content: https://vitepress-valence.cynber.dev/demo-blog/march-dark.jpg
   - - meta
     - property: article:section
       content: Seasonal

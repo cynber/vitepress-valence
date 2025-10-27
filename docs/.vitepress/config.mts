@@ -3,12 +3,17 @@ import { defineConfig } from "vitepress";
 // https://vitepress.dev/reference/site-config
 export default defineConfig({
   title: "VP-Valence",
+  titleTemplate: ':title | VP-Valence',
   description: "Documentation for the VitePress-Valence component library",
   head: [
     ["link", { rel: "icon", href: "/icon/diam_dark-512.png" }],
     [
       "meta",
-      { property: "og:image", content: "https://cynber.dev/social_share.png" },
+      { 
+        property: "og:image", 
+        content: "https://vitepress-valence.cynber.dev/og_image-dark.png" 
+      },
+
     ],
   ],
   cleanUrls: true,

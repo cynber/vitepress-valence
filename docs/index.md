@@ -7,23 +7,39 @@ hero:
   tagline: A comprehensive suite of components that add additional functionality, style, and customization to your VitePress projects.
   actions:
     - theme: brand
-      text: Get Started with VitePress Valence
+      text: Get Started
       link: /guide/install
-    - theme: alt
-      text: ❤️ Donate
-      link: https://ko-fi.com/cynber
     - theme: alt
       text: GitHub
       link: https://github.com/cynber/vitepress-valence
     - theme: alt
       text: NPM
       link: https://npmjs.com/package/@cynber/vitepress-valence
+    - theme: alt
+      text: ❤️ Fund Development
+      link: https://ko-fi.com/cynber
 
   image:
     light: /vitepress-valence/icon-light.png
     dark: /vitepress-valence/icon-dark.png
     alt: Logo
 
+head:
+  - - meta
+    - property: og:locale
+      content: en_CA
+  - - meta
+    - property: og:title
+      content: VitePress Valence Component Library
+  - - meta
+    - property: og:url
+      content: https://vitepress-valence.cynber.dev
+  - - meta
+    - property: og:description
+      content: A comprehensive suite of components that add additional functionality, style, and customization to your VitePress projects.
+  - - meta
+    - property: og:image
+      content: https://vitepress-valence.cynber.dev/og_image-dark.png
 ---
 
 See below for information and demonstrations of the components in this package.

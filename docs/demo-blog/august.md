@@ -46,10 +46,13 @@ head:
       content: August - Board Game Tournaments Indoors
   - - meta
     - property: og:url
-      content: https://example.com/demo-blog/august
+      content: https://vitepress-valence.cynber.dev/demo-blog/august
   - - meta
     - property: og:description
       content: August heat drives us indoors for epic board game tournaments and strategic fun.
+  - - meta
+    - property: og:image
+      content: https://vitepress-valence.cynber.dev/demo-blog/august-dark.jpg
   - - meta
     - property: article:section
       content: Seasonal

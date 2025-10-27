@@ -46,10 +46,13 @@ head:
       content: December - Holiday Crafting and Gift Making
   - - meta
     - property: og:url
-      content: https://example.com/demo-blog/december
+      content: https://vitepress-valence.cynber.dev/demo-blog/december
   - - meta
     - property: og:description
       content: December sparkles with handmade holiday magic through thoughtful crafting and gift making.
+  - - meta
+    - property: og:image
+      content: https://vitepress-valence.cynber.dev/demo-blog/december-dark.jpg
   - - meta
     - property: article:section
       content: Seasonal

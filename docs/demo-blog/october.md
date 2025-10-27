@@ -46,10 +46,13 @@ head:
       content: October - Hiking Through Golden Forests
   - - meta
     - property: og:url
-      content: https://example.com/demo-blog/october
+      content: https://vitepress-valence.cynber.dev/demo-blog/october
   - - meta
     - property: og:description
       content: October transforms forests into golden masterpieces perfect for breathtaking hiking adventures.
+  - - meta
+    - property: og:image
+      content: https://vitepress-valence.cynber.dev/demo-blog/october-dark.jpg
   - - meta
     - property: article:section
       content: Seasonal

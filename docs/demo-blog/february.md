@@ -46,10 +46,13 @@ head:
       content: February - Warm Baking and Hot Chocolate
   - - meta
     - property: og:url
-      content: https://example.com/demo-blog/february
+      content: https://vitepress-valence.cynber.dev/demo-blog/february
   - - meta
     - property: og:description
       content: February brings the heart of winter indoors with comfort baking and steaming hot chocolate.
+  - - meta
+    - property: og:image
+      content: https://vitepress-valence.cynber.dev/demo-blog/february-dark.jpg
   - - meta
     - property: article:section
       content: Seasonal

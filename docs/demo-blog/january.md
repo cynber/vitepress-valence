@@ -46,10 +46,13 @@ head:
       content: January - Cozy Reading by the Fireplace
   - - meta
     - property: og:url
-      content: https://example.com/demo-blog/january
+      content: https://vitepress-valence.cynber.dev/demo-blog/january
   - - meta
     - property: og:description
       content: Embrace the warmth of indoor activities as winter settles in with cozy reading and creative projects.
+  - - meta
+    - property: og:image
+      content: https://vitepress-valence.cynber.dev/demo-blog/january-dark.jpg
   - - meta
     - property: article:section
       content: Seasonal

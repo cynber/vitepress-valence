@@ -46,10 +46,13 @@ head:
       content: November - Cozy Soup Making and Gratitude
   - - meta
     - property: og:url
-      content: https://example.com/demo-blog/november
+      content: https://vitepress-valence.cynber.dev/demo-blog/november
   - - meta
     - property: og:description
       content: November brings perfect weather for hearty soup making and cultivating gratitude.
+  - - meta
+    - property: og:image
+      content: https://vitepress-valence.cynber.dev/demo-blog/november-dark.jpg
   - - meta
     - property: article:section
       content: Seasonal

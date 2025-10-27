@@ -46,10 +46,13 @@ head:
       content: April - Spring Cleaning and Fresh Air
   - - meta
     - property: og:url
-      content: https://example.com/demo-blog/april
+      content: https://vitepress-valence.cynber.dev/demo-blog/april
   - - meta
     - property: og:description
       content: April brings the irresistible urge to spring clean and breathe new life into our spaces.
+  - - meta
+    - property: og:image
+      content: https://vitepress-valence.cynber.dev/demo-blog/april-dark.jpg
   - - meta
     - property: article:section
       content: Seasonal

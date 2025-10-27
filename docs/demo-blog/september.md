@@ -46,10 +46,13 @@ head:
       content: September - Apple Picking and Harvest Adventures
   - - meta
     - property: og:url
-      content: https://example.com/demo-blog/september
+      content: https://vitepress-valence.cynber.dev/demo-blog/september
   - - meta
     - property: og:description
       content: September signals harvest season with apple picking adventures and autumn's first whispers.
+  - - meta
+    - property: og:image
+      content: https://vitepress-valence.cynber.dev/demo-blog/september-dark.jpg
   - - meta
     - property: article:section
       content: Seasonal

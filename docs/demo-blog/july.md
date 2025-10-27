@@ -46,10 +46,13 @@ head:
       content: July - Camping Under the Stars
   - - meta
     - property: og:url
-      content: https://example.com/demo-blog/july
+      content: https://vitepress-valence.cynber.dev/demo-blog/july
   - - meta
     - property: og:description
       content: July nights are made for camping adventures under star-filled skies and magical campfire moments.
+  - - meta
+    - property: og:image
+      content: https://vitepress-valence.cynber.dev/demo-blog/july-dark.jpg
   - - meta
     - property: article:section
       content: Seasonal
