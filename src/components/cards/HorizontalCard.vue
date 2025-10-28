@@ -242,7 +242,7 @@ const props = defineProps<HorizontalCardProps>();
   }
 }
 
-@media screen and (max-width: 550px) {
+@media screen and (max-width: 639px) {
   .card-excerpt {
     -webkit-line-clamp: var(--line-clamp-excerpt, 2) !important;
     line-clamp: var(--line-clamp-excerpt, 2) !important;
