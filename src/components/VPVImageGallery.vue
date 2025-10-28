@@ -14,23 +14,29 @@
       :header-date-prefix="headerDatePrefix"
       class="gallery-container"
     >
-      <div v-if="displayImages.length === 0" class="no-images">
+      <div v-if="displayImages.length === 0 && isClient" class="no-images">
         No images found for this gallery.
       </div>
-      <div :class="galleryLayoutClass" :id="galleryId" v-else>
-        <component
-          :is="layoutComponent"
-          v-for="(img, index) in displayImages"
-          :key="index"
-          :image="img"
-        />
-      </div>
+      <ClientOnly>
+        <div :class="galleryLayoutClass" :id="galleryId" v-if="displayImages.length > 0">
+          <component
+            :is="layoutComponent"
+            v-for="(img, index) in displayImages"
+            :key="index"
+            :image="img"
+          />
+        </div>
+        <template #fallback>
+          <div class="gallery-loading">Loading gallery...</div>
+        </template>
+      </ClientOnly>
     </VerticalContainer>
   </div>
 </template>
 
 <script setup lang="ts">
 import { inject, computed, onMounted, onUnmounted, ref, nextTick, watch } from "vue";
+import { inBrowser } from "vitepress";
 import "photoswipe/style.css";
 import VerticalContainer from "./containers/VerticalContainer.vue";
 import ImageCardFull from "./cards/ImageCardFull.vue";
@@ -83,19 +89,18 @@ interface ImageGalleryProps {
 }
 
 const galleryId = ref(`gallery-${Math.random().toString(36).substr(2, 9)}`);
+const isClient = ref(false);
 let lightbox: any = null;
 
 const initPhotoSwipe = async () => {
-  // Ensure any existing instance is destroyed
+  if (!inBrowser) return;
+  
   if (lightbox) {
     lightbox.destroy();
     lightbox = null;
   }
-  // Wait for next tick to ensure DOM is ready
   await nextTick();
-  // Dynamically import PhotoSwipe
   const { default: PhotoSwipeLightbox } = await import("photoswipe/lightbox");
-  // Initialize with a small delay to ensure everything is hydrated
   setTimeout(() => {
     try {
       lightbox = new PhotoSwipeLightbox({
@@ -130,7 +135,10 @@ const headerDatePrefix = computed(() => props.headerDatePrefix || props.dateTime
 const galleryData = inject<GalleryImage[]>(props.galleryDataKey || "galleryData", []);
 
 onMounted(() => {
-  initPhotoSwipe();
+  isClient.value = true;
+  nextTick(() => {
+    initPhotoSwipe();
+  });
 });
 
 onUnmounted(() => {
@@ -210,6 +218,13 @@ watch(displayImages, () => {
 </script>
 
 <style scoped>
+.gallery-loading {
+  text-align: center;
+  color: var(--vp-c-text-3);
+  padding: 2rem;
+  font-size: 1.2rem;
+}
+
 .image-gallery-container {
   margin: 1rem auto;
   display: flex;
