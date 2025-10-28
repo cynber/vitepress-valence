@@ -224,10 +224,42 @@ const props = defineProps<HorizontalCardProps>();
   .card-content {
     flex-direction: column;
   }
+  
   .card-image {
     flex: 0 0 auto;
     width: calc(100% - 20px);
     margin: 10px;
+  }
+  
+  .card-excerpt {
+    -webkit-line-clamp: var(--line-clamp-excerpt, 3);
+    line-clamp: var(--line-clamp-excerpt, 3);
+  }
+  
+  .card-info {
+    min-height: 0;
+    overflow: hidden;
+  }
+}
+
+@media screen and (max-width: 639px) {
+  .card-excerpt {
+    -webkit-line-clamp: var(--line-clamp-excerpt, 2) !important;
+    line-clamp: var(--line-clamp-excerpt, 2) !important;
+    display: -webkit-box !important;
+    -webkit-box-orient: vertical !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+  }
+  
+  .card-info {
+    max-width: 100%;
+    word-break: break-word;
+    overflow-wrap: break-word;
+  }
+  
+  .card-content {
+    min-width: 0;
   }
 }
 </style>
