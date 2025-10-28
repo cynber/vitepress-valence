@@ -56,9 +56,4 @@ const props = defineProps<VerticalContainerProps>();
   justify-content: stretch;
 }
 
-@media screen and (max-width: 1024px) {
-  .container-content {
-    gap: 1rem;
-  }
-}
 </style>
