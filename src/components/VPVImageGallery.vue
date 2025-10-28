@@ -269,7 +269,7 @@ watch(displayImages, () => {
 }
 
 .image-masonry {
-  columns: 3;
+  columns: 4;
   column-gap: 1rem;
   break-inside: avoid;
 }
@@ -283,13 +283,13 @@ watch(displayImages, () => {
 
 @media (max-width: 768px) {
   .image-masonry {
-    columns: 2;
+    columns: 3;
   }
 }
 
-@media (max-width: 480px) {
+@media (max-width: 639px) {
   .image-masonry {
-    columns: 1;
+    columns: 2;
   }
 }
 
