@@ -154,6 +154,39 @@ If you set direct links, for either local images or external URLs, the component
     ]"
 />
 
+::: details View Code
+```vue
+<VpvImageGallery
+    headerTitle="Sample Gallery with Errors"
+    headerDate="2025-10-01"
+    :folders="[
+        '/gallery/error',
+    ]"
+/>
+
+If some directories are valid, while others are not, only the valid ones will be displayed.
+
+<VpvImageGallery
+    headerTitle="Combine Multiple Folders, with an error"
+    headerDate="2025-10-01"
+    :folders="['/gallery/error', '/gallery/urban']"
+/>
+
+If you set direct links, for either local images or external URLs, the component will try to load them even if there are errors.
+
+<VpvImageGallery
+    headerTitle="Direct links with errors"
+    headerDate="2025-10-01"
+    :direct-urls="[
+        'https://picsum.photos/id/11/2500/1667',
+        'https://example.com/error',
+        '/demo-blog/june-light.jpg',
+        '/demo-blog/error.jpg',
+    ]"
+/>
+```
+:::
+
 
 ## Credits
 

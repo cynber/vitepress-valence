@@ -27,8 +27,8 @@ export default defineConfig({
       provider: "local",
     },
     socialLinks: [
-      { icon: "github", link: "https://github.com/cynber/" },
-      { icon: "npm", link: "https://www.npmjs.com/~cynber" },
+      { icon: "github", link: "https://github.com/cynber/vitepress-valence" },
+      { icon: "npm", link: "https://www.npmjs.com/package/@cynber/vitepress-valence" },
       { icon: "kofi", link: "https://ko-fi.com/cynber" },
     ],
     nav: [

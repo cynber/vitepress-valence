@@ -29,21 +29,21 @@ You can find the rest of the documentation below.
 You can load data from a JSON file by providing the path:
 
 ```vue
-<VpvJsonTable jsonPath="/data/my-data.json" />
+<VpvTableJSON jsonPath="/data/my-data.json" />
 ```
 
 ### From Prop Data
 You can pass data directly as a prop:
 
 ```vue
-<VpvJsonTable :jsonDataProp="myDataArray" />
+<VpvTableJSON :jsonDataProp="myDataArray" />
 ```
 
 ### With Custom Columns
 Define specific columns and their formatting:
 
 ```vue
-<VpvJsonTable 
+<VpvTableJSON 
   :jsonDataProp="myData"
   :columns="[
     { key: 'name', title: 'Full Name', format: 'text' },
@@ -60,13 +60,13 @@ Define specific columns and their formatting:
 #### `title`
 Add a heading above your table:
 ```vue
-<VpvJsonTable title="User Directory" :jsonDataProp="users" />
+<VpvTableJSON title="User Directory" :jsonDataProp="users" />
 ```
 
 #### `sortable`
 Control whether columns can be sorted by clicking headers (default: `true`):
 ```vue
-<VpvJsonTable :sortable="false" :jsonDataProp="myData" />
+<VpvTableJSON :sortable="false" :jsonDataProp="myData" />
 ```
 
 ### Data Sources
@@ -74,13 +74,13 @@ Control whether columns can be sorted by clicking headers (default: `true`):
 #### `jsonPath`
 Load data from a JSON file:
 ```vue
-<VpvJsonTable jsonPath="/data/products.json" />
+<VpvTableJSON jsonPath="/data/products.json" />
 ```
 
 #### `jsonDataProp`
 Pass data directly as an array:
 ```vue
-<VpvJsonTable :jsonDataProp="myDataArray" />
+<VpvTableJSON :jsonDataProp="myDataArray" />
 ```
 
 ### Column Configuration
@@ -89,7 +89,7 @@ Pass data directly as an array:
 Define custom column configuration with formatting options:
 
 ```vue
-<VpvJsonTable 
+<VpvTableJSON 
   :columns="[
     { key: 'id', title: 'ID', format: 'number' },
     { key: 'name', title: 'Product Name', format: 'text' },
@@ -119,13 +119,13 @@ Available cell formats:
 #### `defaultSortField`
 Set which column should be sorted by default:
 ```vue
-<VpvJsonTable defaultSortField="name" :jsonDataProp="myData" />
+<VpvTableJSON defaultSortField="name" :jsonDataProp="myData" />
 ```
 
 #### `defaultSortDirection`
 Set the default sort direction (default: `"ascending"`):
 ```vue
-<VpvJsonTable 
+<VpvTableJSON 
   defaultSortField="date"
   defaultSortDirection="descending"
   :jsonDataProp="myData" 
@@ -138,7 +138,7 @@ Set the default sort direction (default: `"ascending"`):
 Apply complex filtering logic using conditions and groups:
 
 ```vue
-<VpvJsonTable 
+<VpvTableJSON 
   :filters="{
     type: 'and',
     conditions: [
@@ -164,7 +164,7 @@ Filter groups can use `and` or `or` logic and can be nested for complex conditio
 You can access nested object properties using dot notation:
 
 ```vue
-<VpvJsonTable 
+<VpvTableJSON 
   :columns="[
     { key: 'user.name', title: 'Name' },
     { key: 'user.profile.email', title: 'Email' },
