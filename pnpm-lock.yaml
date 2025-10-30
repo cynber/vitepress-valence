@@ -58,6 +58,15 @@ importers:
         specifier: ^2.2.12
         version: 2.2.12(typescript@5.9.3)
 
+  documentation:
+    devDependencies:
+      '@cynber/vitepress-valence':
+        specifier: ^0.2.1
+        version: 0.2.1(@iconify/vue@4.3.0(vue@3.5.22(typescript@5.9.3)))(vitepress@1.6.4(@algolia/client-search@5.40.0)(@types/node@22.18.10)(postcss@8.5.6)(sass@1.93.2)(search-insights@2.17.3)(typescript@5.9.3))(vue@3.5.22(typescript@5.9.3))
+      vitepress:
+        specifier: ^1.6.4
+        version: 1.6.4(@algolia/client-search@5.40.0)(@types/node@22.18.10)(postcss@8.5.6)(sass@1.93.2)(search-insights@2.17.3)(typescript@5.9.3)
+
 packages:
 
   '@algolia/abtesting@1.6.0':
@@ -152,6 +161,13 @@ packages:
   '@babel/types@7.28.4':
     resolution: {integrity: sha512-bkFqkLhh3pMBUQQkpVgWDWq/lqzc2678eUyDlTBhRqhCHFguYYGM0Efga7tYk4TogG/3x0EEl66/OQ+WGbWB/Q==}
     engines: {node: '>=6.9.0'}
+
+  '@cynber/vitepress-valence@0.2.1':
+    resolution: {integrity: sha512-5qzAYJyD+9npjLqnBx8YEmSbw6C6cXnyhQKTa4/GsoWU7VB/wd3hCDW73UvTViuqmUBfXEfjYf5Mu1AxHw7oGg==}
+    peerDependencies:
+      '@iconify/vue': ^4.1.2
+      vitepress: ^1.0.0
+      vue: ^3.3.0
 
   '@docsearch/css@3.8.2':
     resolution: {integrity: sha512-y05ayQFyUmCXze79+56v/4HpycYF3uFqB78pLPrSV5ZKAlDuIAAJNhaRi8tTdRNXh05yxX/TyNnzD6LwSM89vQ==}
@@ -1983,6 +1999,15 @@ snapshots:
     dependencies:
       '@babel/helper-string-parser': 7.27.1
       '@babel/helper-validator-identifier': 7.27.1
+
+  '@cynber/vitepress-valence@0.2.1(@iconify/vue@4.3.0(vue@3.5.22(typescript@5.9.3)))(vitepress@1.6.4(@algolia/client-search@5.40.0)(@types/node@22.18.10)(postcss@8.5.6)(sass@1.93.2)(search-insights@2.17.3)(typescript@5.9.3))(vue@3.5.22(typescript@5.9.3))':
+    dependencies:
+      '@iconify/vue': 4.3.0(vue@3.5.22(typescript@5.9.3))
+      date-fns: 4.1.0
+      medium-zoom: 1.1.0
+      photoswipe: 5.4.4
+      vitepress: 1.6.4(@algolia/client-search@5.40.0)(@types/node@22.18.10)(postcss@8.5.6)(sass@1.93.2)(search-insights@2.17.3)(typescript@5.9.3)
+      vue: 3.5.22(typescript@5.9.3)
 
   '@docsearch/css@3.8.2': {}
 
