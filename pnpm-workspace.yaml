@@ -1,3 +1,6 @@
+packages:
+  - 'documentation'
+
 onlyBuiltDependencies:
   - '@parcel/watcher'
   - esbuild
