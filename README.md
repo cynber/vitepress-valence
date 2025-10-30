@@ -7,6 +7,7 @@ A comprehensive suite of components that add additional functionality, style, an
 ![GitHub license](https://img.shields.io/github/license/cynber/vitepress-valence)
 ![NPM version](https://img.shields.io/npm/v/@cynber/vitepress-valence)
 ![NPM downloads](https://img.shields.io/npm/dt/@cynber/vitepress-valence)
+
 <!-- [![GitHub release](https://img.shields.io/github/v/release/cynber/vitepress-valence)]
 [![GitHub issues](https://img.shields.io/github/issues/cynber/vitepress-valence)]
 [![GitHub pull requests](https://img.shields.io/github/issues-pr/cynber/vitepress-valence)]
@@ -29,9 +30,6 @@ This component is very flexible and it supports various cell formats, filtering,
 Give it a try: https://vitepress-valence.cynber.dev/guide/table-json/
 
 ![](https://vitepress-valence.cynber.dev/screenshots/table-json.png)
-
-
-
 
 ## Image & Gallery Components
 
