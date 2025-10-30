@@ -60,7 +60,7 @@ Below you can see the component in action, displaying 3 of the articles from the
     articlesDataKey="demoBlogData"
   />
 
-[Get started with the Article / Blog Components -->](/guide/article/)
+Read more: [Article / Blog Components](/guide/article/)
 
 <br><br><br>
 
@@ -141,7 +141,7 @@ This component is very flexible and it supports various cell formats, filtering,
   ]"
 />
 
-[Get started with the Table Components -->](/guide/table-json/)
+Read more: [Table Components](/guide/table-json/)
 
 <br><br><br>
 
@@ -156,7 +156,7 @@ This package includes two components that improve the display of images and gall
     :folders="['/gallery/nature', '/gallery/urban']"
 />
 
-[Get started with the Image & Gallery Components -->](/guide/image-gallery/)
+Read more: [Image & Gallery Components](/guide/image-gallery/)
 
 <br><br><br>
 
@@ -175,7 +175,7 @@ Here is non-functional example of the Mailchimp component:
   :referralLink="'http://eepurl.com/i6OAK-'"
 />
 
-[Get started with the Embed Components -->](/guide/embed/mailchimp)
+Read more: [Embed Components](/guide/embed/mailchimp)
 
 <br><br><br>
 
@@ -183,7 +183,7 @@ Here is non-functional example of the Mailchimp component:
 
 The cards and containers used throughout this package can also be used independently. This will let you create cards linking to custom content, in whatever order you prefer!
 
-[Get started with the Card & Container Components -->](/guide/cards/usage)
+Read more: [Card & Container Components](/guide/cards/usage)
 
 <br><br><br>
 
@@ -193,21 +193,11 @@ If you would like to have your site listed here, please let me know! You can use
 
 <VpvContainerVertical>
     <VpvCardVertical
-      title="guides.techcareernorth.ca"
-      excerpt="A collection of guides and resources created by Tech Career North."
-      image="/other-sites/TechCareerNorth.png"
-      url="https://guides.techcareernorth.ca/"
-      :hideCategory="true"
-      :hideAuthor="true"
-      isExternal="true"
-    />
-    <VpvCardVertical
       title="fedecan.ca"
       excerpt="Discover a new way to connect online. We can help you join a growing network of federated social media that prioritizes community over profit"
       image="/other-sites/Fedecan.png"
       url="https://fedecan.ca/"
-      :hideCategory="true"
-      :hideAuthor="true"
+      :tags="['Article Components', 'Cards & Containers', 'Image']"
       isExternal="true"
     />
     <VpvCardVertical
@@ -215,8 +205,31 @@ If you would like to have your site listed here, please let me know! You can use
       excerpt="What do the narratives in the media we consume really imply?  Follow along for some unsolicited takes on the matter."
       image="/other-sites/Narratives-blog.png"
       url="https://narratives.blog/"
-      :hideCategory="true"
-      :hideAuthor="true"
+      :tags="['Article Components', 'EmbedMailchimp']"
       isExternal="true"
+    />
+    <VpvCardVertical
+      title="guides.techcareernorth.ca"
+      excerpt="A collection of guides and resources created by Tech Career North."
+      image="/other-sites/TechCareerNorth.png"
+      url="https://guides.techcareernorth.ca/"
+      isExternal="true"
+      :tags="['Article Components']"
+    />
+    <VpvCardVertical
+      title="Digital Literacy Project"
+      excerpt="This is an arts based initiative by the UBC A.R.T. & Justice Research Project group, to support the well-being of people in prison."
+      image="/other-sites/DigitalLiteracy.png"
+      url="https://digital-literacy.pages.dev/"
+      isExternal="true"
+      :tags="['ImageGallery', 'Article Components']"
+    />
+    <VpvCardVertical
+      title="ubcwiki.ca"
+      excerpt="This is an open and community driven project, with information compiled by the wider UBC community."
+      image="/other-sites/UBCWiki.png"
+      url="https://ubcwiki.ca/"
+      isExternal="true"
+      :tags="['JSONTable', 'ImageGallery', 'Cards & Containers']"
     />
   </VpvContainerVertical>

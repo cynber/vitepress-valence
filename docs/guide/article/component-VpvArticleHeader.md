@@ -16,11 +16,11 @@ This component is to be used in the body of a blog post. It displays information
 To see this in action, select any of the posts in the [Demo Blog](/blog-demo).
 
 
-The entire sample file for [March](/demo-blog/march) can be found here. The relevant section (lines `58-61`) has been highlighted:
+The entire sample file for [March](/demo-blog/march) can be found here:
 
 ::: details View Code
 
-<<< @/demo-blog/april.md {58-61 md:line-numbers }
+<<< @/demo-blog/april.md {md:line-numbers }
 :::
 
 ## Article Setup
