@@ -62,8 +62,8 @@ importers:
         version: 1.6.4(@algolia/client-search@5.42.0)(@types/node@24.9.2)(postcss@8.5.6)(sass@1.93.2)(search-insights@2.17.3)(typescript@5.9.3)
     devDependencies:
       '@cynber/vitepress-valence':
-        specifier: ^0.2.1
-        version: 0.2.1(@iconify/vue@5.0.0(vue@3.5.22(typescript@5.9.3)))(vitepress@1.6.4(@algolia/client-search@5.42.0)(@types/node@24.9.2)(postcss@8.5.6)(sass@1.93.2)(search-insights@2.17.3)(typescript@5.9.3))(vue@3.5.22(typescript@5.9.3))
+        specifier: 0.2.3-rc.1
+        version: 0.2.3-rc.1(vitepress@1.6.4(@algolia/client-search@5.42.0)(@types/node@24.9.2)(postcss@8.5.6)(sass@1.93.2)(search-insights@2.17.3)(typescript@5.9.3))(vue@3.5.22(typescript@5.9.3))
       vue:
         specifier: ^3.5.22
         version: 3.5.22(typescript@5.9.3)
@@ -163,10 +163,9 @@ packages:
     resolution: {integrity: sha512-qQ5m48eI/MFLQ5PxQj4PFaprjyCTLI37ElWMmNs0K8Lk3dVeOdNpB3ks8jc7yM5CDmVC73eMVk/trk3fgmrUpA==}
     engines: {node: '>=6.9.0'}
 
-  '@cynber/vitepress-valence@0.2.1':
-    resolution: {integrity: sha512-5qzAYJyD+9npjLqnBx8YEmSbw6C6cXnyhQKTa4/GsoWU7VB/wd3hCDW73UvTViuqmUBfXEfjYf5Mu1AxHw7oGg==}
+  '@cynber/vitepress-valence@0.2.3-rc.1':
+    resolution: {integrity: sha512-BNOvuLUgvXGC5c2BEaX9/jzDw7QSN74W1CtYRwLkf/KjHzCcI//CPJfX89jd5XYUVIQDewXrc5QAopefecke+g==}
     peerDependencies:
-      '@iconify/vue': ^4.1.2
       vitepress: ^1.0.0
       vue: ^3.3.0
 
@@ -2070,7 +2069,7 @@ snapshots:
       '@babel/helper-string-parser': 7.27.1
       '@babel/helper-validator-identifier': 7.28.5
 
-  '@cynber/vitepress-valence@0.2.1(@iconify/vue@5.0.0(vue@3.5.22(typescript@5.9.3)))(vitepress@1.6.4(@algolia/client-search@5.42.0)(@types/node@24.9.2)(postcss@8.5.6)(sass@1.93.2)(search-insights@2.17.3)(typescript@5.9.3))(vue@3.5.22(typescript@5.9.3))':
+  '@cynber/vitepress-valence@0.2.3-rc.1(vitepress@1.6.4(@algolia/client-search@5.42.0)(@types/node@24.9.2)(postcss@8.5.6)(sass@1.93.2)(search-insights@2.17.3)(typescript@5.9.3))(vue@3.5.22(typescript@5.9.3))':
     dependencies:
       '@iconify/vue': 5.0.0(vue@3.5.22(typescript@5.9.3))
       date-fns: 4.1.0

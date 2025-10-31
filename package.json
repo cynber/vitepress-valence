@@ -69,7 +69,7 @@
       },
       "require": "./dist/vitepress-valence.umd.cjs"
     },
-    "./style.css": "./dist/style.css"
+    "./vitepress-valence.css": "./dist/vitepress-valence.css"
   },
   "type": "module",
   "peerDependencies": {
