@@ -1,6 +1,6 @@
 {
   "name": "@cynber/vitepress-valence",
-  "version": "0.2.3-rc.1",
+  "version": "0.3.0-rc.1",
   "description": "Get even more out of VitePress with VitePress Valence, a comprehensive suite of components that add additional functionality, style, and customization to your VitePress projects.",
   "keywords": [
     "vitepress",
@@ -69,7 +69,7 @@
       },
       "require": "./dist/vitepress-valence.umd.cjs"
     },
-    "./style.css": "./dist/style.css"
+    "./vitepress-valence.css": "./dist/vitepress-valence.css"
   },
   "type": "module",
   "peerDependencies": {
