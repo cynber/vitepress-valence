@@ -33,13 +33,12 @@ export default defineConfig({
       fileName: (format) => `vitepress-valence.${format}.js`,
     },
     rollupOptions: {
-      external: ['vue', 'vitepress', '@iconify/vue'],
+      external: ['vue', 'vitepress'],
       output: {
         exports: 'named',
         globals: {
           vue: 'Vue',
-          vitepress: 'VitePress',
-          '@iconify/vue': 'IconifyVue',
+          vitepress: 'VitePress'
         },
       },
     },
