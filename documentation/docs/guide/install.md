@@ -32,7 +32,7 @@ yarn add @cynber/vitepress-valence
 ``` ts [docs/.vitepress/theme/index.ts]
 // ...
 import './style.css'
-import '@cynber/vitepress-valence/style.css' // [!code ++]
+import "@cynber/vitepress-valence/vitepress-valence.css"; // [!code ++]
 // ...
 ```
 :::
