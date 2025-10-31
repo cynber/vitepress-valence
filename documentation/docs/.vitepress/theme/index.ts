@@ -3,7 +3,7 @@ import { h } from 'vue'
 import type { Theme } from 'vitepress'
 import DefaultTheme from 'vitepress/theme'
 import './style.css'
-import '@cynber/vitepress-valence/style.css'
+import "@cynber/vitepress-valence/vitepress-valence.css";
 import {
   VpvCardHorizontal,
   VpvCardVertical,
