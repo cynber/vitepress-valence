@@ -4,6 +4,7 @@ dist-ssr
 types
 .vscode
 node_modules/
+local/
 
 ####
 # recommended vitepress ignores
